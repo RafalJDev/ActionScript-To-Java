@@ -24,6 +24,7 @@ public class FileReader {
         while ((line = br.readLine()) != null)   {
             // Print the content on the console
             System.out.println (line);
+            //changes
         }
 //Close the input stream
         br.close();
