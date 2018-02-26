@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<db:DBQuery id="dbConsultant"  sqlFrom="Common_CustomerConsultant"
+                xmlns:db="pl.logicsynergy.database" sqlFieldString="Id, Symbol , Name"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_CustomerConsultant" >
+                
+                  <property name="sqlField" type="XML">
+                  <fields>
+                  </fields>
+                  </property>
+                  </db:DBQuery>

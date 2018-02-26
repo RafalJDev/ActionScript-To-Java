@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdi:UiMDITab xmlns:fx="http://ns.adobe.com/mxml/2009" 
+              xmlns:s="library://ns.adobe.com/flex/spark" 
+              xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:mdi="pl.logicsynergy.components.mdi.*" 
+              xmlns:db="pl.logicsynergy.database.*"
+              xmlns:c="pl.logicsynergy.components.*"
+              width="100%" height="100%" 
+              formName="Dane"
+              GUID="54BCCED1">
+  <fx:Script>
+    <![CDATA[
+      import mx.events.FlexEvent;
+      import mx.rpc.events.ResultEvent;
+      import mx.utils.StringUtil;
+      
+      import pl.logicsynergy.components.ui.UiMessageBox;
+      import pl.logicsynergy.database.DBManager;
+      import pl.logicsynergy.events.DBEvent;
+      import pl.logicsynergy.events.MDIEvent;
+      import pl.logicsynergy.ro.ROManager;
+      import pl.logicsynergy.ro.ROUiEventService;
+      import pl.logicsynergy.utils.StringUtils;
+      import pl.logicsynergy.validator.NipValidator;
+      import pl.logicsynergy.validator.PeselValidator;
+      import pl.logicsynergy.validator.RegonValidator;
+
+      private var _checkNipPeselRegonTimer:int = 0;
+      /** Flagi wskazujące na to czy istnieje rekord z pesel/nip/regon */
+      private var _customerWithSomethingElseExists:Object = {};
+      
+      override protected function load(event:FlexEvent):void
+      {
+        super.load(event);
+      }   
+
+      override protected function mdiMainSetDbManager(event:MDIEvent):void
+      {
+        super.mdiMainSetDbManager(event);
+        setEvents(); 
+      }
+      
+      private function setEvents():void
+      {
+        txtPESEL.addEventListener("valueChanged", checkNipPeselRegon);
+        txtNIP.addEventListener("valueChanged", checkNipPeselRegon);
+        txtREGON.addEventListener("valueChanged", checkNipPeselRegon);
+        
+        _dbManager.addEventListener(DBEvent.BEGIN_SAVE, gridDbManagerBeginSave);
+        _dbManager.addEventListener(DBEvent.SAVE_RESULT, gridDbManagerSaveResult);
+        _dbManager.addEventListener(DBEvent.SAVE_FAULT, gridDbManagerSaveResult);
+      }
+      
+      override public function set dbManager(value:DBManager):void
+      {
+        super.dbManager = value;
+        setEvents();
+      }
+      
+      protected function checkNipPeselRegon(event:Event):void
+      {
+        if (_dbManager.mode == 0)
+          return;
+        
+        // co należy sprawdzić, czyli id pola tekstowego
+        var componentId:String = event.target["id"];
+        
+        clearTimeout(_checkNipPeselRegonTimer);
+        _checkNipPeselRegonTimer = setTimeout(checkIfCustomerExists, 500, componentId);
+      }
+      
+      /** Sprawdzenie czy istnieje kontrahent z podanym... (PESEL/NIP/REGON w zależności od pola). Sprawdzamy tylko jedno pole na raz.
+       * @param checkWhat - id pola do sprawdzenia 
+       */
+      protected function checkIfCustomerExists(componentId:String):void
+      {
+        _customerWithSomethingElseExists[componentId] = false;
+        
+        var sqlWhere:String = "Active=1";
+        var sqlParams:Array = [];
+        
+        if (componentId == "txtPESEL" && !StringUtils.IsNullOrEmpty(txtPESEL.value)) 
+        {
+          sqlWhere += " And Pesel=? ";
+          sqlParams.push(StringUtil.trim(txtPESEL.value as String));
+        }
+        
+        if (componentId == "txtNIP" && !StringUtils.IsNullOrEmpty(txtNIP.value))  
+        {
+          sqlWhere += " And NIP=? ";
+          sqlParams.push(StringUtil.trim(txtNIP.value as String));
+        }
+        
+        if (componentId == "txtREGON" && !StringUtils.IsNullOrEmpty(txtREGON.value)) 
+        {
+          sqlWhere += " And Regon=? ";
+          sqlParams.push(StringUtil.trim(txtREGON.value as String));
+        }
+        
+        if (sqlParams.length < 1)  // nie było zmiany w kontrolkach
+          return;
+
+        if(_dbManager.mode == 2) //podczas modyfikacji rekordu pominąć rekordy modyfikowanego kontrahenta
+        {
+          var customerCode:* = _dbManager.getCurrentValue("CODE");
+          if(customerCode != null)
+          {
+            sqlWhere += " And Code <> ?";
+            sqlParams.push(customerCode);
+          }
+        }
+        
+        var data:Object = {
+          // sprawdź ilość rekordów, dodaj jeszcze id pola sprawdzanego, tak abyśmy mogli dowiedzieć się co za pole uległo sprawdzaniu
+          "Select":   "count(1) as CNT, '" + componentId + "' as CHECKEDFIELD",
+            "From":     "Common_Customer",
+            "Where":    sqlWhere,
+            "PARAMS":   sqlParams
+        };
+          
+        var ro:ROUiEventService = new ROUiEventService(checkCustomerExistsResult);
+          ro.call("logica.uiservice.db.DatabaseManager", "getData", data);
+      }
+      
+      private function checkCustomerExistsResult(event:ResultEvent):void
+      {
+        var data:Object = event.result;
+        if (!ROManager.isResultOK(this, data))
+          return;
+        
+        var cnt:int = data["DataTable"][0]["CNT"];
+        var field:String = data["DataTable"][0]["CHECKEDFIELD"];
+        if (cnt > 0)
+          _customerWithSomethingElseExists[field] = true; // rekord istnieje
+      }
+      
+      protected function gridDbManagerBeginSave(event:Event):void
+      {
+        var fields:Array = [];
+        if (!PeselValidator.validate(txtPESEL.value as String))
+          fields.push(" PESEL");
+        if (!NipValidator.validate(txtNIP.value as String))
+          fields.push(" NIP");
+        if (!RegonValidator.validate(txtREGON.value as String))
+          fields.push(" REGON");
+        
+        var customerExistsMsg:Array = [];
+        for (var field:String in _customerWithSomethingElseExists)
+        {
+          if (_customerWithSomethingElseExists[field])
+            customerExistsMsg.push(field.replace("txt", " ").toUpperCase());
+        }
+        
+        // jeśli są błędy, nie pozwól na zapis, usuń listenera i wyświetl okienko z pytaniem o potwierdzenie
+        if (fields.length > 0 || customerExistsMsg.length > 0)
+        {
+          _dbManager.allowSave = false;
+          var o:Object =  {"TextField" : fields[0]};
+          
+          var msg:Array = [];
+          if (fields.length > 0)
+            msg.push("Nieprawidłowe wartości pól: " + fields + ".");
+          if (customerExistsMsg.length > 0)
+            msg.push("Istnieje już kontrahent z podanym numerem: " + customerExistsMsg + ".");
+          
+          msg.push("Czy chcesz zatwierdzić wprowadzanie rekordu?");
+          
+          UiMessageBox.showYESNO(this, msg.join("\n\n"), "Błędna walidacja pól", onValidationMessage, o); 
+        }
+      }
+      
+      private function onValidationMessage(data:Object):void
+      {
+        _dbManager.allowSave = true;
+        if (data && data["DialogResult"] != "YES")
+          return;
+        
+        // potwierdzenie zapisu rekordu mimo niepoprawnych wartości NIP/PESEL/REGON
+        _dbManager.removeEventListener(DBEvent.BEGIN_SAVE, gridDbManagerBeginSave);
+        _dbManager.save();
+        _dbManager.mode = 0;
+        
+        // przywróć listenera nasłuchującego na beginsave
+        _dbManager.addEventListener(DBEvent.BEGIN_SAVE, gridDbManagerBeginSave);
+      }
+      
+      protected function gridDbManagerSaveResult(event:Event):void
+      {
+        // po zapisie rekordu wyczyść flagi
+        _customerWithSomethingElseExists = {};
+      }
+      
+      
+    ]]>
+  </fx:Script>
+  <fx:Declarations>
+
+    <db:DBQuery id="dbConsultant" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_CustomerConsultant" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_CustomerConsultant"/>
+    
+    <db:DBQuery id="dbDataSource" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_CustomerDataSource" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_CustomerDataSource"/>
+    
+    <db:DBQuery id="dbStatus" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_CustomerStatus" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_CustomerStatus"/>
+    
+    <db:DBQuery id="dbCustomer" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_Customer" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_Customer"/>
+    
+    <db:DBQuery id="dbGroupCustomer1" sqlFieldString="Id, Symbol, Name, Description"
+                sqlFrom="Common_GroupCustomer1" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_GroupCustomer1"/>
+    
+    <db:DBQuery id="dbGroupCustomer2" sqlFieldString="Id, Symbol, Name, Description"
+                sqlFrom="Common_GroupCustomer2" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_GroupCustomer2"/>
+    
+    <db:DBQuery id="dbGroupCustomer3" sqlFieldString="Id, Symbol, Name, Description"
+                sqlFrom="Common_GroupCustomer3" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_GroupCustomer3"/>
+    
+  </fx:Declarations>
+  <s:Scroller left="5" right="5" top="5" bottom="5">
+    <s:VGroup id="groupMain" width="100%" height="100%">
+      <s:HGroup width="100%" minWidth="600">
+        <c:TextInput id="txtPESEL" width="25%" label="Pesel" dataField="PESEL"
+                     columnName="Pesel" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtNIP" width="25%" label="NIP" dataField="NIP"
+                     columnName="Nip" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtREGON" width="25%" label="REGON" dataField="REGON"
+                     columnName="Regon" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtFamilyName" width="25%" label="Nazwisko rodowe" columnName="FamilyName" 
+                     dataField="FAMILY_NAME" dbProvider="{_dbManager}"/>
+      </s:HGroup>
+      <s:HGroup width="100%" minWidth="600">
+        <c:TextInput id="txtFirstName" width="25%" label="Imię" columnName="FirstName"
+                     dataField="FIRST_NAME" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtLastName" width="25%" label="Nazwisko"
+                     columnName="LastName" dataField="LAST_NAME" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtFatherName" width="25%" label="Imię ojca"
+                     columnName="FatherName" dataField="FATHER_NAME" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtMotherName" width="25%" label="Imię matki"
+                     columnName="MotherName" dataField="MOTHER_NAME" dbProvider="{_dbManager}"/>
+      </s:HGroup>
+      <s:HGroup width="100%" minWidth="600">
+        <c:DateField id="dfBirthDate" width="120" label="Data urodzenia" columnName="BirthDate"
+                     dataField="BIRTH_DATE" dbProvider="{_dbManager}" useDefaultHours="true"/>
+        <c:ComboBox id="cbCustomerStatus" width="50%" label="Status kontrahenta" columnName="CustomerStatusId"
+                    dataField="CUSTOMER_STATUS_ID" dbProvider="{_dbManager}" 
+                    descField="[Symbol] | [Name]" dbQuery="{dbStatus}"/> 
+        <c:ComboBox id="cbDataSource" width="50%"
+                    label="Źródło pozyskiwania danych" columnName="DataSourceId"
+                    dataField="DATA_SOURCE_ID" dbProvider="{_dbManager}" 
+                    descField="[Symbol] | [Name]" dbQuery="{dbDataSource}"/> 
+      </s:HGroup>
+      <c:DatabaseField id="dbfParentCustomer" width="100%" label="Kontrahent nadrzędny"
+                       columnName="ParentCustomerCode" dataField="PARENT_CUSTOMER_CODE" dbProvider="{_dbManager}"
+                       descField="Name" history="true" idField="Code" sqlTable="Common_Customer"
+                       swfClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
+                       swfFile="eMediaUiCommon.swf"/>
+      <c:DatabaseField id="dbfGroup1" width="100%" minWidth="600" label="Grupa podziału I"
+                       columnName="GroupCustomer1Id"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_GroupCustomer1', 'dbQuery.sqlFrom':'Common_GroupCustomer1', formName:'Grupa podziału I'}}"
+                       dataField="GROUP_CUSTOMER_1_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbGroupCustomer1}" descField ="[Name] | [Description]" idField="Id"
+                       sqlTable="Common_GroupCustomer1" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+      <c:DatabaseField id="dbfGroup2" width="100%" minWidth="600" label="Grupa podziału II"
+                       columnName="GroupCustomer2Id"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_GroupCustomer2', 'dbQuery.sqlFrom':'Common_GroupCustomer2', formName:'Grupa podziału II'}}"
+                       dataField="GROUP_CUSTOMER_2_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbGroupCustomer2}" descField ="[Name] | [Description]" idField="Id"      
+                       sqlTable="Common_GroupCustomer2" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+      <c:DatabaseField id="dbfGroup3" width="100%" minWidth="600" label="Grupa podziału III"
+                       columnName="GroupCustomer3Id"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_GroupCustomer3', 'dbQuery.sqlFrom':'Common_GroupCustomer3', formName:'Grupa podziału III'}}"
+                       dataField="GROUP_CUSTOMER_3_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbGroupCustomer3}" descField ="[Name] | [Description]" idField="Id"    
+                       sqlTable="Common_GroupCustomer3" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+      <c:DatabaseField id="dbfCustomerConsultant" width="100%" minWidth="600" label="Opiekun kontrahenta"
+                       columnName="CustomerConsultantId"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_CustomerConsultant', 'dbQuery.sqlFrom':'Common_CustomerConsultant', formName:'Opiekunowie kontrahentów'}}"
+                       dataField="CUSTOMER_CONSULTANT_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbConsultant}" descField="[Symbol] | [Name]" 
+                       idField="Id"     
+                       sqlTable="Common_CustomerConsultant" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+
+      <s:HGroup width="100%" verticalAlign="bottom">
+        <c:CheckBox id="chbDataProcessingConsent" width="200" height="23"
+                    label="Zgoda na przetwarzanie danych" columnName="DataProcesingConset"
+                    dataField="DATA_PROCESSING_CONSENT" dbProvider="{_dbManager}" defaultValue="true"/>
+        <c:CheckBox id="chbMarketingProcessingConsent" width="400" height="23"
+                    label="Zgoda na przetwarzanie danych w celach marketingowych"
+                    dataField="MARKETING_PROCESSING_CONSENT" dbProvider="{_dbManager}"
+                    columnName="MarketingProcesingConset"
+                    defaultValue="false"/>
+      </s:HGroup>
+      <c:TextArea id="txtaDescription" width="100%" minWidth="600" label="Opis"
+                  columnName="Description"
+                  dataField="DESCRIPTION" dbProvider="{_dbManager}"/>
+      
+    </s:VGroup>
+  </s:Scroller>
+</mdi:UiMDITab>
