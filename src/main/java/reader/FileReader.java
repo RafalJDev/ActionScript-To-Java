@@ -9,8 +9,8 @@ import java.io.*;
  */
 public class FileReader {
 
-    private static final String fileToReadFrom = "D:\\Programowanko\\jaszc\\Intelij_projects\\doit\\files\\flashCode.txt";
-    private static final String fileToWrite = "D:\\Programowanko\\jaszc\\Intelij_projects\\doit\\files\\javaCodeByRJ.txt";
+    private static final String fileToReadFrom = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\flashCodeJustActionScript.txt";
+    private static final String fileToWrite = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\javaCodeByRJ.txt";
 
     private static StringBuilder stringBuilder = new StringBuilder();
 
@@ -20,14 +20,28 @@ public class FileReader {
         FileInputStream fstream = new FileInputStream(fileToReadFrom);
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
 
-        String line;
 
+        String line;
+        int countEmptyLines = 0;
 //Read File Line By Line
-        while ((line = br.readLine()) != null)   {
-            // Print the content on the console
-            System.out.println (line);
-            //changes
+        Parser.initializeReplaceMap();
+        while ((line = br.readLine()) != null) {
+            line = Parser.logicForLines(line);
+
+            if (line.isEmpty()) {
+                countEmptyLines++;
+            } else {
+                countEmptyLines = 0;
+            }
+            if (countEmptyLines > 1) {
+                continue;
+            }
+
+            stringBuilder.append(line + "\n");
         }
+        stringBuilder.append("}");
+
+        System.out.println(stringBuilder);
 //Close the input stream
         br.close();
     }
@@ -35,14 +49,13 @@ public class FileReader {
     public static void saveFile() throws IOException {
 
         BufferedWriter writer = null;
-        try  {
-//            writer = new BufferedWriter(new FileWriter(fileToWrite));
-//            writer.write(stringBuilder.toString());
+        try {
+            writer = new BufferedWriter(new FileWriter(fileToWrite));
+            writer.write(stringBuilder.toString());
         } finally {
             if (writer != null) {
                 writer.close();
             }
         }
-        Parser.logicForLines("var componentId:String = event.target[\"id\"];");
     }
 }

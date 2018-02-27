@@ -12,6 +12,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
 //        FileReader.readTextFileWithActionScript();
+        FileReader.readTextFileWithActionScript();
         FileReader.saveFile();
+
     }
 }
