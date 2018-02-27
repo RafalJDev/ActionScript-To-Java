@@ -1,11 +1,15 @@
 package parser;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class Parser {
 
@@ -31,6 +35,8 @@ public class Parser {
     private static String methodToCallAfterRo = "";
     private static boolean letsCreateDataMap = false;
     private static List<String> methodsForEventListeners = new ArrayList<>();
+    private static List<String> candidatesForComponents = new ArrayList<>();
+    private static String componentsThatNeedField = "";
 
     //Stage 4
     private static int countDbQuery = 0;
@@ -68,7 +74,7 @@ public class Parser {
         return line;
     }
 
-    private static String getSpacingAndCutHalf() {
+    public static String getSpacingAndCutHalf() {
         pattern = Pattern.compile("\\s{2,}");
         matcher = pattern.matcher(line);
         String spaces = "";
@@ -112,7 +118,7 @@ public class Parser {
         return spaces;
     }
 
-    private static void searchFirstStage() {
+    public static void searchFirstStage() {
         pattern = Pattern.compile("ui:\\s+\\w");
         matcher = pattern.matcher(line);
 
@@ -138,7 +144,7 @@ public class Parser {
         line = "";
     }
 
-    private static void convertActionScriptToJava() {
+    public static void convertActionScriptToJava() {
         if (line.contains("CDATA")) {
             line = "";
             return;
@@ -186,11 +192,17 @@ public class Parser {
         }
         if (line.trim().startsWith("for") && line.contains(" in ")) {
             line = line.replace(" in ", " : ");
+
         }
-        //TODO !!!!!!!!!!!!!!!
+        pattern = Pattern.compile("\\w* = [{]");
+        matcher = pattern.matcher(line);
         if (line.contains(" = {")) {
             letsCreateDataMap = true;
         }
+        if (letsCreateDataMap) {
+
+        }
+
         if (line.contains("ROUiEventService") && !line.contains(" import ")) {
             thereIsRoCall = true;
             pattern = Pattern.compile("\\(.*\\)");
@@ -259,6 +271,12 @@ public class Parser {
             }
         }
 
+        pattern = Pattern.compile("\\s{3}\\w+.");
+        matcher = pattern.matcher(line);
+        if (matcher.find()) {
+            candidatesForComponents.add(matcher.group().trim().replace(".",""));
+        }
+
         parseXmlComponents();
 
 //        pattern = Pattern.compile(":[a-zA-Z0-9]*\\s{0}");
@@ -307,12 +325,25 @@ public class Parser {
         methodString += "}";
     }
 
-    private static void parseXmlComponents() {
+    //stage 3
+    public static void parseXmlComponents() {
 
         if (line.contains("skinClass=\"")) {
             line = line.replaceAll("skinClass=\".*\"", "");
         }
         simpleReplaceAllOnMap();
+
+        pattern = Pattern.compile("id=\".*\"\\s\\w{0}");
+        matcher = pattern.matcher(line);
+        if (matcher.find()) {
+            String id = matcher.group().substring(3, matcher.group().length() -2);
+            for (String candidateForComponent : candidatesForComponents) {
+                if (id.equals(candidateForComponent)) {
+                    componentsThatNeedField = id;
+                    break;
+                }
+            }
+        }
     }
 
     public static void initializeReplaceMap() {
@@ -334,24 +365,157 @@ public class Parser {
         replaceMap4.put("</mx:", "</c:");
     }
 
-    private static void simpleReplaceAllOnMap() {
+    public static void simpleReplaceAllOnMap() {
         if (parsedPart == 2) {
-            for (Map.Entry<String, String> entry : replaceMap2.entrySet()) {
-                String oldValue = entry.getKey();
-                String newValue = entry.getValue();
-                if (line.contains(oldValue)) {
-                    line = line.replaceAll(oldValue, newValue);
-                }
-            }
+            replaceLogic();
         } else if (parsedPart == 4) {
+            replaceLogic();
+        }
+    }
 
-            for (Map.Entry<String, String> entry : replaceMap4.entrySet()) {
-                String oldValue = entry.getKey();
-                String newValue = entry.getValue();
-                if (line.contains(oldValue)) {
-                    line = line.replaceAll(oldValue, newValue);
-                }
+    private static void replaceLogic() {
+        for (Map.Entry<String, String> entry : replaceMap4.entrySet()) {
+            String oldValue = entry.getKey();
+            String newValue = entry.getValue();
+            if (line.contains(oldValue)) {
+                line = line.replaceAll(oldValue, newValue);
             }
         }
+    }
+
+    public static int getParsedPart() {
+        return parsedPart;
+    }
+
+    public static void setParsedPart(int parsedPart) {
+        Parser.parsedPart = parsedPart;
+    }
+
+    public static String getLine() {
+        return line;
+    }
+
+    public static void setLine(String line) {
+        Parser.line = line;
+    }
+
+    public static Pattern getPattern() {
+        return pattern;
+    }
+
+    public static void setPattern(Pattern pattern) {
+        Parser.pattern = pattern;
+    }
+
+    public static Matcher getMatcher() {
+        return matcher;
+    }
+
+    public static void setMatcher(Matcher matcher) {
+        Parser.matcher = matcher;
+    }
+
+    public static Map<String, String> getClassMap() {
+        return classMap;
+    }
+
+    public static void setClassMap(Map<String, String> classMap) {
+        Parser.classMap = classMap;
+    }
+
+    public static Map<String, String> getReplaceMap2() {
+        return replaceMap2;
+    }
+
+    public static void setReplaceMap2(Map<String, String> replaceMap2) {
+        Parser.replaceMap2 = replaceMap2;
+    }
+
+    public static Map<String, String> getReplaceMap4() {
+        return replaceMap4;
+    }
+
+    public static void setReplaceMap4(Map<String, String> replaceMap4) {
+        Parser.replaceMap4 = replaceMap4;
+    }
+
+    public static boolean isImportIsAlreadyDone() {
+        return importIsAlreadyDone;
+    }
+
+    public static void setImportIsAlreadyDone(boolean importIsAlreadyDone) {
+        Parser.importIsAlreadyDone = importIsAlreadyDone;
+    }
+
+    public static boolean isFirstImportStatementOccured() {
+        return firstImportStatementOccured;
+    }
+
+    public static void setFirstImportStatementOccured(boolean firstImportStatementOccured) {
+        Parser.firstImportStatementOccured = firstImportStatementOccured;
+    }
+
+    public static boolean isThereIsRoCall() {
+        return thereIsRoCall;
+    }
+
+    public static void setThereIsRoCall(boolean thereIsRoCall) {
+        Parser.thereIsRoCall = thereIsRoCall;
+    }
+
+    public static String getMethodToCallAfterRo() {
+        return methodToCallAfterRo;
+    }
+
+    public static void setMethodToCallAfterRo(String methodToCallAfterRo) {
+        Parser.methodToCallAfterRo = methodToCallAfterRo;
+    }
+
+    public static boolean isLetsCreateDataMap() {
+        return letsCreateDataMap;
+    }
+
+    public static void setLetsCreateDataMap(boolean letsCreateDataMap) {
+        Parser.letsCreateDataMap = letsCreateDataMap;
+    }
+
+    public static List<String> getMethodsForEventListeners() {
+        return methodsForEventListeners;
+    }
+
+    public static void setMethodsForEventListeners(List<String> methodsForEventListeners) {
+        Parser.methodsForEventListeners = methodsForEventListeners;
+    }
+
+    public static List<String> getCandidatesForComponents() {
+        return candidatesForComponents;
+    }
+
+    public static void setCandidatesForComponents(List<String> candidatesForComponents) {
+        Parser.candidatesForComponents = candidatesForComponents;
+    }
+
+    public static int getCountDbQuery() {
+        return countDbQuery;
+    }
+
+    public static void setCountDbQuery(int countDbQuery) {
+        Parser.countDbQuery = countDbQuery;
+    }
+
+    public static List<String> getDbQueryAtributes() {
+        return dbQueryAtributes;
+    }
+
+    public static void setDbQueryAtributes(List<String> dbQueryAtributes) {
+        Parser.dbQueryAtributes = dbQueryAtributes;
+    }
+
+    public static String getComponentsThatNeedField() {
+        return componentsThatNeedField;
+    }
+
+    public static void setComponentsThatNeedField(String componentsThatNeedField) {
+        Parser.componentsThatNeedField = componentsThatNeedField;
     }
 }
