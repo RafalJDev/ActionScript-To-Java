@@ -301,10 +301,10 @@ public class Parser {
                 "    DBQuery result = new DBQuery();\n";
 
         for (int i = 1; i < dbQueryAtributes.size(); i++) {
-            methodString += "    result." + dbQueryAtributes.get(i)+";";
+            methodString += "    result." + dbQueryAtributes.get(i)+";\n";
         }
 
-        methodString += "\n}";
+        methodString += "}";
     }
 
     private static void parseXmlComponents() {
