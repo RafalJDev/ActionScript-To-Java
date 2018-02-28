@@ -3,6 +3,7 @@ package parser;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ public class Parser {
     private static boolean letsCreateDataMap = false;
     private static List<String> methodsForEventListeners = new ArrayList<>();
     private static List<String> candidatesForComponents = new ArrayList<>();
-    private static String componentsThatNeedField = "";
+    private static Map<String, String> componentsThatNeedField = new HashMap<>();
 
     //Stage 4
     private static int countDbQuery = 0;
@@ -167,7 +168,8 @@ public class Parser {
                         "  public YOURCLASSNAME()\n" +
                         "  {\n" +
                         "\tUiCreator.getInstance(self).executeXML();\n" +
-                        "  }\n";
+                        "  }\n" +
+                        "HANYS\n";
 
                 line = classAndConstructor;
                 return;
@@ -274,7 +276,7 @@ public class Parser {
         pattern = Pattern.compile("\\s{3}\\w+.");
         matcher = pattern.matcher(line);
         if (matcher.find()) {
-            candidatesForComponents.add(matcher.group().trim().replace(".",""));
+            candidatesForComponents.add(matcher.group().trim().replace(".", ""));
         }
 
         parseXmlComponents();
@@ -319,7 +321,7 @@ public class Parser {
                 "    DBQuery result = new DBQuery();\n";
 
         for (int i = 1; i < dbQueryAtributes.size(); i++) {
-            methodString += "    result." + dbQueryAtributes.get(i)+";\n";
+            methodString += "    result." + dbQueryAtributes.get(i) + ";\n";
         }
 
         methodString += "}";
@@ -333,13 +335,25 @@ public class Parser {
         }
         simpleReplaceAllOnMap();
 
-        pattern = Pattern.compile("id=\".*\"\\s\\w{0}");
+        findComponents();
+    }
+
+    public static void findComponents() {
+        pattern = Pattern.compile("id=\"[^\"]*\"");
         matcher = pattern.matcher(line);
         if (matcher.find()) {
-            String id = matcher.group().substring(3, matcher.group().length() -2);
+            String id = matcher.group().substring(4, matcher.group().length() - 1);
+
+            String componentClass = "";
+            pattern = Pattern.compile("[^<c:]\\w*\\s{1}");
+            matcher = pattern.matcher(line);
+            if (matcher.find()) {
+                componentClass = matcher.group().trim();
+            }
+
             for (String candidateForComponent : candidatesForComponents) {
                 if (id.equals(candidateForComponent)) {
-                    componentsThatNeedField = id;
+                    componentsThatNeedField.put(id, componentClass);
                     break;
                 }
             }
@@ -382,6 +396,18 @@ public class Parser {
             }
         }
     }
+
+    public static StringBuilder secondParsingForAddindComponents(StringBuilder sb) {
+
+        String componentFields = "\n";
+        for (Map.Entry<String, String> entry : componentsThatNeedField.entrySet()) {
+            componentFields += "  public " + entry.getValue() + " " + entry.getKey() + ";\n\n";
+        }
+        int hanysIndex = sb.indexOf("HANYS");
+
+        return sb.replace(hanysIndex, hanysIndex+"hanys".length(), componentFields);
+    }
+
 
     public static int getParsedPart() {
         return parsedPart;
@@ -511,11 +537,11 @@ public class Parser {
         Parser.dbQueryAtributes = dbQueryAtributes;
     }
 
-    public static String getComponentsThatNeedField() {
+    public static Map<String, String> getComponentsThatNeedField() {
         return componentsThatNeedField;
     }
 
-    public static void setComponentsThatNeedField(String componentsThatNeedField) {
+    public static void setComponentsThatNeedField(Map<String, String> componentsThatNeedField) {
         Parser.componentsThatNeedField = componentsThatNeedField;
     }
 }

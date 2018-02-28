@@ -3,6 +3,7 @@ package parser;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.sound.midi.Soundbank;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
@@ -13,16 +14,9 @@ import static org.junit.Assert.*;
  * Created by Jaszczynski.Rafal on 27.02.2018.
  */
 public class ParserTest {
-    @Before
-    public void setUp() throws Exception {
-    }
 
     @Test
-    public void logicForLines() throws Exception {
-    }
-
-    @Test
-    public void testGivenXmlLineWhenSearchForMatchingIdThenMatchIdValue() throws Exception {
+    public void givenXmlLineWhenSearchForMatchingIdThenMatchIdValue() throws Exception {
         String componentsXml = "<c:TextInput id=\"txtMeter1No\" width=\"80\" label=\"Liczba cyfr\" restrict=\"0-9\" columnName=\"Meter1No\"";
 
         //actually it's java, but that's enough here
@@ -50,9 +44,56 @@ public class ParserTest {
         System.out.println(Parser.getCandidatesForComponents().toString());
 
         Parser.setLine(componentsXml);
-        Parser.parseXmlComponents();
 
-        assertEquals("txtMeter1No", Parser.getComponentsThatNeedField());
+        Parser.findComponents();
+        assertEquals("TextInput", Parser.getComponentsThatNeedField().get("txtMeter1No"));
     }
 
+    @Test
+    public void givenParsedSbWhenAddingComponentsThenComponentFieldsAdded() throws Exception {
+
+        StringBuilder actionsScriptCode = new StringBuilder("\n" +
+                "  \n" +
+                "  import pl.logicsynergy.common.SwfObject;\n" +
+                "  import pl.logicsynergy.components.mdi.View;\n" +
+                "  import pl.logicsynergy.components.ui.UiCommon;\n" +
+                "  import pl.logicsynergy.components.ui.UiMessageBox;\n" +
+                "  import pl.logicsynergy.skins.TextInputDecimalSkin;\n" +
+                "  import pl.logicsynergy.utils.StringUtils;\n" +
+                "  import pl.logicsynergy.utils.UiUtils;\n" +
+                "  \n" +
+                "@UiDesign(formName = \"Typy liczników\", guid = \"formName=Typy liczników\")\n" +
+                "public class YOURCLASSNAME extends null \n" +
+                "{\n" +
+                "  /** Konstruktor */\n" +
+                "  public YOURCLASSNAME()\n" +
+                "  {\n" +
+                "\tUiCreator.getInstance(self).executeXML();\n" +
+                "  }\n" +
+                "  HANYS\n" +
+                "  ViewTypeCounter;\n" +
+                "  ViewTypeHeatCounter;\n" +
+                "  ViewTypeWaterCounter;\n" +
+                "  ViewTypePairTemperatureSensor;\n" +
+                "  ViewTypeFlowCounter;\n" +
+                "  \n" +
+                "  private Object m_viewList =\n" +
+                "    {\n" +
+                "      I:{SWF:\"eMediaUiNetwork.swf\", FUNC:\"pl.logicsynergy.ui.network.meter.ViewTypeIntegrator\"},\n" +
+                "      L:{SWF:\"eMediaUiNetwork.swf\", FUNC:\"pl.logicsynergy.ui.network.meter.ViewTypeCounter\"},\n" +
+                "      C:{SWF:\"eMediaUiNetwork.swf\", FUNC:\"pl.logicsynergy.ui.network.meter.ViewTypeHeatCounter\"},\n" +
+                "      W:{SWF:\"eMediaUiNetwork.swf\", FUNC:\"pl.logicsynergy.ui.network.meter.ViewTypeWaterCounter\"},\n" +
+                "      T:{SWF:\"eMediaUiNetwork.swf\", FUNC:\"pl.logicsynergy.ui.network.meter.ViewTypePairTemperatureSensor\"},\n" +
+                "      P:{SWF:\"eMediaUiNetwork.swf\", FUNC:\"pl.logicsynergy.ui.network.meter.ViewTypeFlowCounter\"}\n" +
+                "    };");
+
+                Parser.getComponentsThatNeedField().put("txtMeter1No", "TextInput");
+        Parser.getComponentsThatNeedField().put("cbMeterKind", "TextInput");
+        Parser.getComponentsThatNeedField().put("lblMeter1Digit", "TextInput");
+        actionsScriptCode = Parser.secondParsingForAddindComponents(actionsScriptCode);
+
+        assertTrue(actionsScriptCode.toString().contains("public TextInput cbMeterKind;"));
+
+        System.out.println(actionsScriptCode);
+    }
 }
