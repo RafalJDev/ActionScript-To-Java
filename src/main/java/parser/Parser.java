@@ -1,9 +1,5 @@
 package parser;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,10 +36,11 @@ public class Parser {
     private static Map<String, String> componentsThatNeedField = new HashMap<>();
     private static List<String> dbQueryMethods = new ArrayList<>();
 
-    //Stage 4
-    private static int countDbQuery = 0;
     //Stage 3
     private static List<String> dbQueryAtributes = new ArrayList<>();
+
+    //Stage 4
+    private static int countDbQuery = 0;
 
     public static String logicForLines(String lineToParse) {
         line = lineToParse;
@@ -65,6 +62,8 @@ public class Parser {
         } else if (parsedPart == 3) {
             if (line.contains("</fx:XML>")) {
                 parsedPart = 4;
+                line = getSpacingAndCutHalf() + line.trim();
+                return line;
             }
             parseDbQuery();
             parseXmlFields();
@@ -73,7 +72,6 @@ public class Parser {
         }
 
         line = getSpacingAndCutHalf() + line.trim();
-
         return line;
     }
 
@@ -84,7 +82,7 @@ public class Parser {
         if (matcher.find()) {
             int spacesInActionScript = matcher.group().length();
 
-            while ((spacesInActionScript-- - 4) >0) {
+            while ((spacesInActionScript-- - 4) > 0) {
                 spaces += " ";//TODO CHECK IT, IT MAY WORK
             }
 
@@ -306,22 +304,33 @@ public class Parser {
                 dbQueryAtributes.add(matcher.group().trim());
             }
             if (!dbQueryAtributes.isEmpty() && line.contains("/>")) {
-                createJavaMethodFromArrayList();
+                createMethodForDbQuery();
             }
         }
     }
 
+    private static boolean iHaveDoneIt = false;
     public static void parseXmlFields() {
 
-        pattern = Pattern.compile("\\w+=\"\\w+\"");
-        matcher = pattern.matcher(line);
+        if (!iHaveDoneIt) {
+            iHaveDoneIt = true;
+            pattern = Pattern.compile("\\w+=\"\\w+\"");
+            matcher = pattern.matcher(line);
 
-        if(matcher.find()) {
+            if (matcher.find()) {
+                String idRegex = matcher.group();
+                XmlField.id = idRegex.substring(idRegex.indexOf("\""), idRegex.length() - 1);
+            }
+        } else {
+            XmlField.xmlFieldLines.add(line);
+        }
 
+        if (!XmlField.xmlFieldLines.isEmpty() && line.contains("</fields>")) {
+            createMethodForFields();
         }
     }
 
-    private static void createJavaMethodFromArrayList() {
+    private static void createMethodForDbQuery() {
 
         String firstString = dbQueryAtributes.get(0);
         String methodName = firstString.substring(firstString.indexOf("\"") + 1, firstString.lastIndexOf("\""));
@@ -337,6 +346,23 @@ public class Parser {
         for (int i = 1; i < dbQueryAtributes.size(); i++) {
             methodString += "    result." + dbQueryAtributes.get(i) + ";\n";
         }
+        methodString += " }\n\n";
+        dbQueryMethods.add(methodString);
+    }
+
+    public static void createMethodForFields() {
+
+        String methodString = "/*\n" +
+                "\t * Metoda wyciągająca nazwy pól z XMLa\n" +
+                "\t * \n" +
+                "\t * @return obiekt Element zawierający nazwy pól\n" +
+                "\t */\n" +
+                "\t private Element " + XmlField.id+"()\n" +
+                "\t {\n" +
+                "\t\treturn XMLUtils.getXMLElement(\"";
+
+        methodString +="\"" + XmlField.xmlFieldLines.toString() + "\"";
+
         methodString += " }\n\n";
         dbQueryMethods.add(methodString);
     }
@@ -406,12 +432,12 @@ public class Parser {
             String oldValue = entry.getKey();
             String newValue = entry.getValue();
 //            if (line.contains(oldValue)) {
-                line = line.replaceAll(oldValue, newValue);
+            line = line.replaceAll(oldValue, newValue);
 //            }
         }
     }
 
-    public static StringBuilder secondParsingForAddindComponents(StringBuilder sb) {
+    public static StringBuilder secondParsingForAddingComponents(StringBuilder sb) {
 
         String componentFields = "\n";
         for (Map.Entry<String, String> entry : componentsThatNeedField.entrySet()) {
@@ -566,4 +592,10 @@ public class Parser {
     public static void setDbQueryMethods(List<String> dbQueryMethods) {
         Parser.dbQueryMethods = dbQueryMethods;
     }
+}
+
+class XmlField {
+
+    static String id;
+    static List<String> xmlFieldLines = new ArrayList<>();
 }

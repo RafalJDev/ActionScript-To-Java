@@ -41,7 +41,7 @@ public class FileReader {
         }
         stringBuilder.append("}");
 
-        stringBuilder = Parser.secondParsingForAddindComponents(stringBuilder);
+        stringBuilder = Parser.secondParsingForAddingComponents(stringBuilder);
 
         System.out.println(stringBuilder);
 //Close the input stream

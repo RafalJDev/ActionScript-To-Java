@@ -1,12 +1,6 @@
 package parser;
 
-import org.junit.Before;
 import org.junit.Test;
-
-import javax.sound.midi.Soundbank;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -90,7 +84,7 @@ public class ParserTest {
                 Parser.getComponentsThatNeedField().put("txtMeter1No", "TextInput");
         Parser.getComponentsThatNeedField().put("cbMeterKind", "TextInput");
         Parser.getComponentsThatNeedField().put("lblMeter1Digit", "TextInput");
-        actionsScriptCode = Parser.secondParsingForAddindComponents(actionsScriptCode);
+        actionsScriptCode = Parser.secondParsingForAddingComponents(actionsScriptCode);
 
         assertTrue(actionsScriptCode.toString().contains("public TextInput cbMeterKind;"));
 
