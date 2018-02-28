@@ -63,10 +63,11 @@ public class Parser {
         } else if (parsedPart == 2) {
             convertActionScriptToJava();
         } else if (parsedPart == 3) {
-            if (line.contains("</fx:Declarations>")) {
+            if (line.contains("</fx:XML>")) {
                 parsedPart = 4;
             }
             parseDbQuery();
+            parseXmlFields();
         } else if (parsedPart == 4) {
             parseXmlComponents();
         }
@@ -82,6 +83,10 @@ public class Parser {
         String spaces = "";
         if (matcher.find()) {
             int spacesInActionScript = matcher.group().length();
+
+            while ((spacesInActionScript-- - 4) >0) {
+                spaces += " ";//TODO CHECK IT, IT MAY WORK
+            }
 
 //            final String spaceFinal = "                  ";
             switch (spacesInActionScript) {
@@ -282,7 +287,7 @@ public class Parser {
         }
 
         parseXmlComponents();
-        
+
     }
 
     public static void parseDbQuery() {
@@ -306,6 +311,16 @@ public class Parser {
         }
     }
 
+    public static void parseXmlFields() {
+
+        pattern = Pattern.compile("\\w+=\"\\w+\"");
+        matcher = pattern.matcher(line);
+
+        if(matcher.find()) {
+
+        }
+    }
+
     private static void createJavaMethodFromArrayList() {
 
         String firstString = dbQueryAtributes.get(0);
@@ -326,12 +341,9 @@ public class Parser {
         dbQueryMethods.add(methodString);
     }
 
-    //stage 3
+    //stage 4
     public static void parseXmlComponents() {
 
-        if (line.contains("skinClass=\"")) {
-            line = line.replaceAll("skinClass=\".*\"", "");
-        }
         simpleReplaceAllOnMap();
 
         findComponents();
@@ -378,23 +390,24 @@ public class Parser {
         replaceMap4.put("</s:", "</c:");
         replaceMap4.put("<mx:", "</c:");
         replaceMap4.put("</mx:", "</c:");
+        replaceMap4.put("skinClass=\".*\"", "");
     }
 
     public static void simpleReplaceAllOnMap() {
         if (parsedPart == 2) {
-            replaceLogic();
+            replaceLogic(replaceMap2);
         } else if (parsedPart == 4) {
-            replaceLogic();
+            replaceLogic(replaceMap4);
         }
     }
 
-    private static void replaceLogic() {
-        for (Map.Entry<String, String> entry : replaceMap4.entrySet()) {
+    private static void replaceLogic(Map<String, String> map) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             String oldValue = entry.getKey();
             String newValue = entry.getValue();
-            if (line.contains(oldValue)) {
+//            if (line.contains(oldValue)) {
                 line = line.replaceAll(oldValue, newValue);
-            }
+//            }
         }
     }
 
