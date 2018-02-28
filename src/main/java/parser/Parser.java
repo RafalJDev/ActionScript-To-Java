@@ -62,8 +62,12 @@ public class Parser {
         } else if (parsedPart == 2) {
             convertActionScriptToJava();
         } else if (parsedPart == 3) {
-            if (line.contains("<fx:XML")) {
+            if (line.contains("<fx:XML") ) {
                 parsedPart = 4;
+                line = getSpacingAndCutHalf() + line.trim();
+                return line;
+            } else if (line.contains("</fx:Declarations>")) {
+                parsedPart = 5;
                 line = getSpacingAndCutHalf() + line.trim();
                 return line;
             }
@@ -280,7 +284,8 @@ public class Parser {
             methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.indexOf(")")).trim());
             line = line.replace(")", "(event))");
             line = line.replace(", ", ", event -> ");
-            line = line.replace("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
+            line = line.replaceAll("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
+            line = line.replaceAll("\"indexChanged\"", "BaseEvent.VALUE_CHANGED");
         }
         for (String method : methodsForEventListeners) {
             if (line.contains(method) && line.contains(" void ")) {
@@ -307,7 +312,7 @@ public class Parser {
             countDbQuery++;
         }
         if (countDbQuery >= 1) {
-            pattern = Pattern.compile("\\w+=\"\\w+\"");
+            pattern = Pattern.compile("\\w+=\"[a-zA-Z0-9_, ]+\"");
             matcher = pattern.matcher(line);
 
             while (matcher.find()) {
@@ -365,7 +370,7 @@ public class Parser {
         for (int i = 1; i < dbQueryAtributes.size(); i++) {
             methodString += "    result." + dbQueryAtributes.get(i).trim() + ";\n";
         }
-        methodString += " }\n\n";
+        methodString += "    return result;\n }\n\n";
         dbMethods.add(methodString);
         dbQueryAtributes.clear();
     }
@@ -391,7 +396,7 @@ public class Parser {
         XmlField.getXmlFieldLines().clear();
     }
 
-    //stage 4
+    //stage 5
     public static void parseXmlComponents() {
 
         simpleReplaceAllOnMap();
@@ -435,6 +440,8 @@ public class Parser {
         replaceMap2.put("SWF", "FRM");
 
         replaceMap4.put("grid.dbManager", "getDbManager");
+        replaceMap4.put("_dbManager", "getDbManager");
+        replaceMap4.put("frmFile=\"\\w+.frm\"", ""); //TODO something with sorting hashMap
         replaceMap4.put("swf", "frm");
         replaceMap4.put("<s:", "<c:");
         replaceMap4.put("</s:", "</c:");
@@ -446,7 +453,7 @@ public class Parser {
     public static void simpleReplaceAllOnMap() {
         if (parsedPart == 2) {
             replaceLogic(replaceMap2);
-        } else if (parsedPart == 4) {
+        } else if (parsedPart == 5) {
             replaceLogic(replaceMap4);
         }
     }
