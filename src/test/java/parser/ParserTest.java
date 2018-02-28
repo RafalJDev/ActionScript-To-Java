@@ -84,7 +84,7 @@ public class ParserTest {
                 Parser.getComponentsThatNeedField().put("txtMeter1No", "TextInput");
         Parser.getComponentsThatNeedField().put("cbMeterKind", "TextInput");
         Parser.getComponentsThatNeedField().put("lblMeter1Digit", "TextInput");
-        actionsScriptCode = Parser.secondParsingForAddingComponents(actionsScriptCode);
+        actionsScriptCode = Parser.secondParsingForAddingComponents(actionsScriptCode, "HANYS");
 
         assertTrue(actionsScriptCode.toString().contains("public TextInput cbMeterKind;"));
 
@@ -112,7 +112,7 @@ public class ParserTest {
             Parser.parseDbQuery();
         }
 
-        System.out.println(Parser.getDbQueryMethods().toString());
-        assertTrue(Parser.getDbQueryMethods().size() == 2);
+        System.out.println(Parser.getDbMethods().toString());
+        assertTrue(Parser.getDbMethods().size() == 2);
     }
 }

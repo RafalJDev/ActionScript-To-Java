@@ -36,12 +36,17 @@ public class FileReader {
             if (countEmptyLines > 1) {
                 continue;
             }
+            if (line.equals("AddMethods")) {
+                String methods = Parser.addDbQueryAndElementFieldsMethods();
+                stringBuilder = stringBuilder.replace(stringBuilder.lastIndexOf("}"), stringBuilder.length(),
+                        methods +"\n  }\n\n");
+            }
 
             stringBuilder.append(line + "\n");
         }
         stringBuilder.append("}");
 
-        stringBuilder = Parser.secondParsingForAddingComponents(stringBuilder);
+        stringBuilder = Parser.secondParsingForAddingComponents(stringBuilder, "HANYS");
 
         System.out.println(stringBuilder);
 //Close the input stream

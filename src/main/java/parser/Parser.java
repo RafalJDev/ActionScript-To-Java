@@ -34,13 +34,15 @@ public class Parser {
     private static List<String> methodsForEventListeners = new ArrayList<>();
     private static List<String> candidatesForComponents = new ArrayList<>();
     private static Map<String, String> componentsThatNeedField = new HashMap<>();
-    private static List<String> dbQueryMethods = new ArrayList<>();
+    private static List<String> dbMethods = new ArrayList<>();
 
     //Stage 3
     private static List<String> dbQueryAtributes = new ArrayList<>();
 
     //Stage 4
     private static int countDbQuery = 0;
+
+    private static boolean justOnce = true;
 
     public static String logicForLines(String lineToParse) {
         line = lineToParse;
@@ -60,14 +62,24 @@ public class Parser {
         } else if (parsedPart == 2) {
             convertActionScriptToJava();
         } else if (parsedPart == 3) {
-            if (line.contains("</fx:XML>")) {
+            if (line.contains("<fx:XML")) {
                 parsedPart = 4;
                 line = getSpacingAndCutHalf() + line.trim();
                 return line;
             }
             parseDbQuery();
-            parseXmlFields();
         } else if (parsedPart == 4) {
+            if (line.contains("</fx:XML>")) {
+                parsedPart = 5;
+                line = getSpacingAndCutHalf() + line.trim();
+                return line;
+            }
+            parseXmlFields();
+        } else if (parsedPart == 5) {
+            if (justOnce) {
+                justOnce = false;
+                return "AddMethods";
+            }
             parseXmlComponents();
         }
 
@@ -82,9 +94,9 @@ public class Parser {
         if (matcher.find()) {
             int spacesInActionScript = matcher.group().length();
 
-            while ((spacesInActionScript-- - 4) > 0) {
-                spaces += " ";//TODO CHECK IT, IT MAY WORK
-            }
+//            while ((spacesInActionScript-- - 4) > 0) {
+//                spaces += " ";//TODO CHECK IT, IT MAY WORK
+//            }
 
 //            final String spaceFinal = "                  ";
             switch (spacesInActionScript) {
@@ -268,6 +280,7 @@ public class Parser {
             methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.indexOf(")")).trim());
             line = line.replace(")", "(event))");
             line = line.replace(", ", ", event -> ");
+            line = line.replace("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
         }
         for (String method : methodsForEventListeners) {
             if (line.contains(method) && line.contains(" void ")) {
@@ -284,7 +297,7 @@ public class Parser {
             candidatesForComponents.add(matcher.group().trim().replace(".", ""));
         }
 
-        parseXmlComponents();
+        simpleReplaceAllOnMap();
 
     }
 
@@ -303,13 +316,16 @@ public class Parser {
                 }
                 dbQueryAtributes.add(matcher.group().trim());
             }
-            if (!dbQueryAtributes.isEmpty() && line.contains("/>")) {
-                createMethodForDbQuery();
+            if (line.contains("/>")) {
+                if (!dbQueryAtributes.isEmpty()) {
+                    createMethodForDbQuery();
+                }
             }
         }
     }
 
     private static boolean iHaveDoneIt = false;
+
     public static void parseXmlFields() {
 
         if (!iHaveDoneIt) {
@@ -319,14 +335,17 @@ public class Parser {
 
             if (matcher.find()) {
                 String idRegex = matcher.group();
-                XmlField.id = idRegex.substring(idRegex.indexOf("\""), idRegex.length() - 1);
+                XmlField.setId(idRegex.substring(idRegex.indexOf("\""), idRegex.length() - 1));
             }
         } else {
-            XmlField.xmlFieldLines.add(line);
+            XmlField.getXmlFieldLines().add(line);
         }
 
-        if (!XmlField.xmlFieldLines.isEmpty() && line.contains("</fields>")) {
-            createMethodForFields();
+        if (line.contains("</fields>")) {
+            if (!XmlField.xmlFieldLines.isEmpty()) {
+                createMethodForFields();
+                iHaveDoneIt=false;
+            }
         }
     }
 
@@ -344,10 +363,11 @@ public class Parser {
                 "    DBQuery result = new DBQuery();\n";
 
         for (int i = 1; i < dbQueryAtributes.size(); i++) {
-            methodString += "    result." + dbQueryAtributes.get(i) + ";\n";
+            methodString += "    result." + dbQueryAtributes.get(i).trim() + ";\n";
         }
         methodString += " }\n\n";
-        dbQueryMethods.add(methodString);
+        dbMethods.add(methodString);
+        dbQueryAtributes.clear();
     }
 
     public static void createMethodForFields() {
@@ -357,14 +377,18 @@ public class Parser {
                 "\t * \n" +
                 "\t * @return obiekt Element zawierający nazwy pól\n" +
                 "\t */\n" +
-                "\t private Element " + XmlField.id+"()\n" +
+                "\t private Element " + XmlField.getId() + "()\n" +
                 "\t {\n" +
                 "\t\treturn XMLUtils.getXMLElement(\"";
 
-        methodString +="\"" + XmlField.xmlFieldLines.toString() + "\"";
+        for (String line : XmlField.getXmlFieldLines()) {
+            methodString += line;
+        }
 
-        methodString += " }\n\n";
-        dbQueryMethods.add(methodString);
+        methodString += "); }\n\n";
+        dbMethods.add(methodString);
+        XmlField.setId("");
+        XmlField.getXmlFieldLines().clear();
     }
 
     //stage 4
@@ -382,10 +406,10 @@ public class Parser {
             String id = matcher.group().substring(4, matcher.group().length() - 1);
 
             String componentClass = "";
-            pattern = Pattern.compile("[^<c:]\\w*\\s{1}");
+            pattern = Pattern.compile("(<c:){1}(\\w+)");
             matcher = pattern.matcher(line);
             if (matcher.find()) {
-                componentClass = matcher.group().trim();
+                componentClass = matcher.group().trim().substring(3, matcher.group().length());
             }
 
             for (String candidateForComponent : candidatesForComponents) {
@@ -404,9 +428,9 @@ public class Parser {
         replaceMap2.put("length", "length()");
         replaceMap2.put(".mode", "getMode()");
         replaceMap2.put(".value", ".getValue()");
-        replaceMap2.put("super.load(event);", "super.load();");
+        replaceMap2.put("super.load\\(event\\);", "super.load();");
         replaceMap2.put(".getNavigatorContent", ".getContent");
-        replaceMap2.put("parseInt(", "Integer.valueOf(");
+        replaceMap2.put("parseInt\\(", "Integer.valueOf(");
         replaceMap2.put("swf", "frm");
         replaceMap2.put("SWF", "FRM");
 
@@ -437,15 +461,23 @@ public class Parser {
         }
     }
 
-    public static StringBuilder secondParsingForAddingComponents(StringBuilder sb) {
+    public static StringBuilder secondParsingForAddingComponents(StringBuilder sb, String oldValue) {
 
         String componentFields = "\n";
         for (Map.Entry<String, String> entry : componentsThatNeedField.entrySet()) {
             componentFields += "  public " + entry.getValue() + " " + entry.getKey() + ";\n\n";
         }
-        int hanysIndex = sb.indexOf("HANYS");
+        int hanysIndex = sb.indexOf(oldValue);
 
-        return sb.replace(hanysIndex, hanysIndex + "hanys".length(), componentFields);
+        return sb.replace(hanysIndex, hanysIndex + oldValue.length(), componentFields);
+    }
+
+    public static String addDbQueryAndElementFieldsMethods() {
+        String methods = "";
+        for (String method : dbMethods) {
+            methods += method;
+        }
+        return methods;
     }
 
 
@@ -585,12 +617,12 @@ public class Parser {
         Parser.componentsThatNeedField = componentsThatNeedField;
     }
 
-    public static List<String> getDbQueryMethods() {
-        return dbQueryMethods;
+    public static List<String> getDbMethods() {
+        return dbMethods;
     }
 
-    public static void setDbQueryMethods(List<String> dbQueryMethods) {
-        Parser.dbQueryMethods = dbQueryMethods;
+    public static void setDbMethods(List<String> dbMethods) {
+        Parser.dbMethods = dbMethods;
     }
 }
 
@@ -598,4 +630,20 @@ class XmlField {
 
     static String id;
     static List<String> xmlFieldLines = new ArrayList<>();
+
+    public static String getId() {
+        return id;
+    }
+
+    public static void setId(String id) {
+        XmlField.id = id;
+    }
+
+    public static List<String> getXmlFieldLines() {
+        return xmlFieldLines;
+    }
+
+    public static void setXmlFieldLines(List<String> xmlFieldLines) {
+        XmlField.xmlFieldLines = xmlFieldLines;
+    }
 }
