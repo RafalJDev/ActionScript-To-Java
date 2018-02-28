@@ -192,7 +192,7 @@ public class YOURCLASSNAME extends null
                   <db:DBQuery id="dbDescMeterProducer" sqlFrom="Network_MeterProducer"
             sqlFieldString="Id, Symbol, Name" sqlOrderBy="Symbol"
             sqlTable="Network_MeterProducer" sqlIdentityColumn="Id"  />
-                  
+                  </fx:Declarations>
                   <fx:XML id="dbField" xmlns="">
   <fields>
     <field name="Id" dataField="ID" displayText="Id" width="100"/>

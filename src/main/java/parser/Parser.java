@@ -38,6 +38,7 @@ public class Parser {
     private static List<String> methodsForEventListeners = new ArrayList<>();
     private static List<String> candidatesForComponents = new ArrayList<>();
     private static Map<String, String> componentsThatNeedField = new HashMap<>();
+    private static List<String> dbQueryMethods = new ArrayList<>();
 
     //Stage 4
     private static int countDbQuery = 0;
@@ -84,6 +85,7 @@ public class Parser {
 
 //            final String spaceFinal = "                  ";
             switch (spacesInActionScript) {
+                //TODO UUUUUUUUUUUUUUUUUUUUUUUUUUGLY or ciuuuuuuuuuuuulowe
                 case 6:
                     spaces = "  ";
                     break;
@@ -280,25 +282,16 @@ public class Parser {
         }
 
         parseXmlComponents();
-
-//        pattern = Pattern.compile(":[a-zA-Z0-9]*\\s{0}");
-//        matcher = pattern.matcher(line);
-//
-//        if (matcher.find()) {
-//
-//        }
+        
     }
 
-    private static void parseDbQuery() {
+    public static void parseDbQuery() {
 
         if (line.contains("db:DBQuery")) {
             countDbQuery++;
-            if (!dbQueryAtributes.isEmpty()) {
-                createJavaMethodFromArrayList();
-            }
         }
-        if (countDbQuery > 1) {
-            pattern = Pattern.compile("\\s\\w+\".*\"\\s");
+        if (countDbQuery >= 1) {
+            pattern = Pattern.compile("\\w+=\"\\w+\"");
             matcher = pattern.matcher(line);
 
             while (matcher.find()) {
@@ -307,24 +300,30 @@ public class Parser {
                 }
                 dbQueryAtributes.add(matcher.group().trim());
             }
+            if (!dbQueryAtributes.isEmpty() && line.contains("/>")) {
+                createJavaMethodFromArrayList();
+            }
         }
     }
 
     private static void createJavaMethodFromArrayList() {
+
+        String firstString = dbQueryAtributes.get(0);
+        String methodName = firstString.substring(firstString.indexOf("\"") + 1, firstString.lastIndexOf("\""));
         String methodString = "/**\n" +
                 " * Zwrócenie obiektu DBQuery dla tabeli XXXXXX\n" +
                 " * \n" +
                 " * @return From XXXXXX\n" +
                 " */\n" +
-                " public DBQuery " + dbQueryAtributes.get(0) + "()\n" +
-                "{\n" +
+                " public DBQuery " + methodName + "()\n" +
+                " {\n" +
                 "    DBQuery result = new DBQuery();\n";
 
         for (int i = 1; i < dbQueryAtributes.size(); i++) {
             methodString += "    result." + dbQueryAtributes.get(i) + ";\n";
         }
-
-        methodString += "}";
+        methodString += " }\n\n";
+        dbQueryMethods.add(methodString);
     }
 
     //stage 3
@@ -370,6 +369,8 @@ public class Parser {
         replaceMap2.put("super.load(event);", "super.load();");
         replaceMap2.put(".getNavigatorContent", ".getContent");
         replaceMap2.put("parseInt(", "Integer.valueOf(");
+        replaceMap2.put("swf", "frm");
+        replaceMap2.put("SWF", "FRM");
 
         replaceMap4.put("grid.dbManager", "getDbManager");
         replaceMap4.put("swf", "frm");
@@ -405,7 +406,7 @@ public class Parser {
         }
         int hanysIndex = sb.indexOf("HANYS");
 
-        return sb.replace(hanysIndex, hanysIndex+"hanys".length(), componentFields);
+        return sb.replace(hanysIndex, hanysIndex + "hanys".length(), componentFields);
     }
 
 
@@ -543,5 +544,13 @@ public class Parser {
 
     public static void setComponentsThatNeedField(Map<String, String> componentsThatNeedField) {
         Parser.componentsThatNeedField = componentsThatNeedField;
+    }
+
+    public static List<String> getDbQueryMethods() {
+        return dbQueryMethods;
+    }
+
+    public static void setDbQueryMethods(List<String> dbQueryMethods) {
+        Parser.dbQueryMethods = dbQueryMethods;
     }
 }

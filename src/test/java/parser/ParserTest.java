@@ -96,4 +96,29 @@ public class ParserTest {
 
         System.out.println(actionsScriptCode);
     }
+
+    @Test
+    public void givenDbQueryThenCreateDbQueryMethod() throws Exception {
+
+        String dbQueryString = "<fx:Declarations>\n" +
+                "                  <db:DBQuery id=\"dbQuery\" sqlFrom=\"Network_MeterType\"\n" +
+                "            sqlField=\"{dbField}\"\n" +
+                "            sqlOrderBy=\"Id\"\n" +
+                "            sqlIdentityColumn=\"Id\" sqlTable=\"Network_MeterType\"/>\n" +
+                "                  \n" +
+                "                  <db:DBQuery id=\"dbDescMeterProducer\" sqlFrom=\"Network_MeterProducer\"\n" +
+                "            sqlFieldString=\"Id, Symbol, Name\" sqlOrderBy=\"Symbol\"\n" +
+                "            sqlTable=\"Network_MeterProducer\" sqlIdentityColumn=\"Id\"  />\n" +
+                "                  </fx:Declarations>";
+
+        String[] dbQueryLines = dbQueryString.split("\n");
+
+        for (String line : dbQueryLines) {
+            Parser.setLine(line);
+            Parser.parseDbQuery();
+        }
+
+        System.out.println(Parser.getDbQueryMethods().toString());
+        assertTrue(Parser.getDbQueryMethods().size() == 2);
+    }
 }
