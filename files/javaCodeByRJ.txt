@@ -7,19 +7,29 @@ import pl.logicsynergy.database.DBQuery;
 
 
   import pl.logicsynergy.common.GridModes;
-  import pl.logicsynergy.common.SwfObject;
   import pl.logicsynergy.components.ui.UiMessageBox;
+  import pl.logicsynergy.database.DBManager;
   import pl.logicsynergy.events.DBEvent;
   import pl.logicsynergy.ro.ROManager;
   import pl.logicsynergy.ro.ROUiEventService;
-  import pl.logicsynergy.ui.gis.CalendarUtils;
-  import pl.logicsynergy.ui.gis.FrmTaskGantCalendar;
+  import pl.logicsynergy.skins.ui.UiDictionaryComponentSkin;
+  import pl.logicsynergy.ui.gis.order.FrmOrderPosition;
+  import pl.logicsynergy.ui.gis.resources.TaskResourceType;
   import pl.logicsynergy.ui.gis.task.FrmTask;
+  import pl.logicsynergy.ui.gis.task.FrmTaskRelation;
+  import pl.logicsynergy.ui.gis.task.FrmTaskResource;
+  import pl.logicsynergy.ui.gis.task.components.TaskRelation;
+  import pl.logicsynergy.ui.gis.task.components.TaskToAction;
+  import pl.logicsynergy.ui.gis.task.components.TaskToAttachment;
+  import pl.logicsynergy.ui.gis.task.components.TaskToDocumentType;
+  import pl.logicsynergy.ui.gis.task.components.TaskToMaterial;
+  import pl.logicsynergy.ui.gis.task.components.TaskToOther;
+  import pl.logicsynergy.utils.MenuUtils;
   import pl.logicsynergy.utils.StringUtils;
   import pl.logicsynergy.utils.UiUtils;
 
-      /** Ustawienie trybu po załadowania danych*/
-@UiDesign(formName = "Zlecenia", guid = "formName=Zlecenia")
+      /** Czy zadanie typu plan*/
+@UiDesign(formName = "null", guid = "null")
 public class YOURCLASSNAME extends null 
 {
   /** Konstruktor */
@@ -28,587 +38,421 @@ public class YOURCLASSNAME extends null
 	UiCreator.getInstance(self).executeXML();
   }
 
-  public VGroup grPosition;
+  public  gtbTask;
 
-  public  tOrderPlanPosition;
+  public Button btnFromPlan;
+
+  public  gridTask;
 
 
-  public Boolean closeAfterSave = false;
 
-  public int smsPriority = 0;
-  public String smsFrom = null;
+  [Bindable]
+  private DBManager getDbManager();
 
-                  @Override
-  protected void  load(FlexEvent event)
+  public Boolean showButtonMove = false;
+  public String additionalSqlWhere = null;
+
+                  /** Nadpisana metoda load z klasy bazowej */
+      public void load(FlexEvent event)
   {
-    grid.selectionEnabled = true;
-    super.load();
+    dbTaskQuery.sqlWhereAdditional = "IsValid = 1 And IsPlan = " + isPlan;
+    if (!StringUtils.isNullOrEmpty(additionalSqlWhere))
+      dbTaskQuery.sqlWhereAdditional += " And " + additionalSqlWhere;
 
-    grid.getDBManager().addEventListener(ResultEvent.RESULT, event -> loadResult(event));
-    grid.getDBManager().addEventListener(DBEvent.MODE_CHANGED, event ->.getDBManager().hangeMode(event));
-    grid.getDBManager().addEventListener(DBEvent.BEGIN_SAVE, event -> gridBeginSave(event));
-    grid.deleteFunction = gridDeleteFunction;
-
-    grid.getDBManager().insertFunction = insertRecord;
-
-    gridToolBar.deleteIcon.toolTip = "Usuń zlecenie (ustaw jako nieważne)";
-
-    grid.getDBManager().addEventListener(DBEvent.SAVE_RESULT, event -> function.getDBManager().aveResult(event:DBEvent(event)):void
+    if (isPlan == 0 && showButtonMove)
     {
-      dataExchange["DialogResult"] = "OK";
-      if (closeAfterSave)
-        close();
-    });
-
-        //odświeżenie grida po zmianie pozycji planu
-    if (tOrderPlanPosition)
-      tOrderPlanPosition.addEventListener("saveResult", event -> onPositionSaveResult(event));
-
-    grid.printFunction = printFunction;
-  }
-
-  private void printFunction()
-  {
-                  typeId* = grid.getValue("ORDER_TYPE_ID");
-    if (typeId == null)
-    {
-      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
-      return;
+      btnFromPlan.visible = true;
+      btnFromPlan.includeInLayout = true;
     }
 
-    String sqlQuery = "Select Name From System_PrintManager Where Id = (Select PrintManagerId From GIS_OrderType Where Id = ?)";
+    gridTask.addEventListener("columnCreated", event -> gridColumnCreated(event))
+    gridTask.open();
 
-    Array params = [];
-    params.push(typeId);
+    gridTask.checkInsertAccessFunction = taskInsertFunction;
+    gridTask.checkModifyAccessFunction = taskModifyFunction;
+    gridTask.addEventListener(MouseEvent.DOUBLE_CLICK, event -> gridTaskDoubleClick(event));
+    gridTask.deleteFunction = gridDeleteFunction;
 
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.db.DatabaseManager", "getValueTable", sqlQuery, params);
-       onGetPrintReportNam()
+    gtbTask.deleteIcon.toolTip = "Usuń zadanie (ustaw jako nieważne)";
+    gridTask.addEventListener(DBEvent.RIGHT_CLICK, event -> gridRightClick(event));
   }
 
-  private void onGetPrintReportName(ResultEvent event)
+  private void gridColumnCreated(BaseEvent event)
   {
-    Object data = event.result;
-    if (!ROUiEventService.isResultOK(this, data))
-      return;
-
-    Array.getValue()s = data["VALUE"];
-    if .getValue()s == null || StringUtils.IsNullOrEmpty.getValue()s[0]))
-    {
-      UiMessageBox.show(this, "Brak zdefiniowanego szablonu wydruku", "Komunikat");
-      return;
-    }
-
-    printReport.getValue()s[0], grid.getReportParams(), false, grid.getPrintParam());
-  }
-
-  private void onPositionSaveResult(BaseEvent event)
-  {
-    grid.refresh();
-  }
-
-  private void insertRecord(Object data)
-  {
-
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "onInsertRecord", data["data"]);
-       onInsertRecordResul()
-  }
-
-  private void onInsertRecordResult(ResultEvent event)
-  {
-    Object data = event.result;
-    if(!ROUiEventService.isResultOK(this, data))
-    {
-      grid.revertMode(1);
-      return;
-    }
-
-    grid.getDBManager().setItemSaved(grid.getDBManager().currentIndex, data);
-    gridgetMode() = 0;
-  }
-
-  private void gridBeginSave(BaseEvent event)
-  {
-    if (gridgetMode() == 1)
-      grid.getDBManager().setValue("IS_VALID", 1, grid.getDBManager().currentIndex);
-  }
-
-  private void loadResult(BaseEvent event)
-  {
-    ifgetMode()AfterLoad > 0)
-    {
-      gridgetMode() =getMode()AfterLoad;
-                  getMode()AfterLoad = 0;
-    }
-
-    setComponentVisible();
-  }
-
-  private void.getDBManager().hangeMode(BaseEvent event)
-  {
-    setComponentVisible();
-  }
-
-  protected void setComponentVisible()
-  {
-    if(grid.getDBManager()getMode() != GridModes.VIEW || grid.getDBManager().getRecordCount() < 1)
-      grPosition.visible = false;
-    else if(grid.getDBManager().getRecordCount() > 0 && !grPosition.visible)
-      grPosition.visible = true;
-  }
-
-                  @Override
-  public void menuItemClick(MenuEvent event)
-  {
-    uint id;
-    XMLList findNode = event.item.@id;
-    if (findNode.length()() == 0)
-      return super.menuItemClick(event);
-
-    String code = findNode[0].toString();
-
-                  frm*;
-    Boolean findItem = true;
-    switch (code)
-    {
-      case "ORDER_TYPE":
-        frm = new FrmOrderType();
-        frm.openInContent(UiUtils.getContent(this));
-        break;
-      case "TASK_LIST":
-        showTaskList();
-        break;
-      case "REMOVE_PHYSICALL":
-        removePhysicall();
-        break;
-      case "MASS_REMOVE_PHYSICALL":
-        massRemove(true);
-        break;
-      case "REMOVE":
-        gridDeleteFunction(null);
-        break;
-      case "MASS_REMOVE":
-        massRemove(false);
-        break;
-      case "SHOW_VALID":
-        setRage("IsValid = 1");
-        break;
-      case "SHOW_INVALID":
-        setRage("IsValid = 0");
-        break;
-      case "SHOW_ALL":
-        setRage("");
-        break;
-      case "SEND_SMS_NOTIFICATION":
-        sendPlanSMSNotification(true);
-        break;
-      case "SEND_SMS_NOTIFICATION_AGAIN":
-        sendPlanSMSNotification(false);
-        break;
-      case "CREATE_ORDER_FOR_OBJECTS":
-        createOrderForObjects();
-        break;
-      case "COPY_ORDER":
-        copyOrder();
-        break;
-      case "MOVE_ORDER":
-        moveOrder();
-        break;
-      case "COPY_ORDER_BY_TEMPLATE":
-        copyOrderByTemplate();
-        break;
-      case "ORDER_CALENDAR":
-        showOrderCalendar();
-        break;
-      default:
-        findItem = false;
-    }
-
-    if (findItem)
-      return;
-
-    super.menuItemClick(event);
-  }
-
-  private void setRage(String rangeWhere)
-  {
-    grid.getDBManager().SQLQuery.sqlWhereAdditional = rangeWhere;
-    grid.refresh();
-  }
-
-  private void showOrderCalendar()
-  {
-    ArrayList list = new ArrayList();
-    list.addItem(grid.getValue("ID"));
-
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "getOrderStructByOrderIdList", {ORDER_ID_LIST : list});
-       onGetOrderStructResul()
-  }
-
-  private void onGetOrderStructResult(ResultEvent event)
-  {
-    Object data = event.result;
-    if (!ROUiEventService.isResultOK(this, data))
-      return;
-
-    FrmTaskGantCalendar frm = new FrmTaskGantCalendar();
-    ArrayCollection list = data.ORDER_STRUCT;
-    Date startCalendar = new Date();
-    Date endCalendar = new Date();
-    CalendarUtils cu = new CalendarUtils();
-
-    frm.taskXML = cu.getXMLFromStruct(startCalendar, endCalendar, list);
-    frm.startCalendar = startCalendar;
-    frm.endCalendar = endCalendar;
-    frm.openInContent(UiUtils.getContent(this));
-  }
-
-                  @Override
-  public void close()
-  {
-    dataExchange["CURRENT_ID"] = grid.getValue("ID");
-    super.close();
+    setTaskWhere();
   }
 
   private void gridDeleteFunction(Object data)
   {
-    if(grid.getDBManager().getRecordCount() == 0)
+    if(gridTask.getDBManager().getRecordCount() == 0)
     {
-      UiMessageBox.show(this, "Brak zleceń do usunięcia", "Komunikat");
+      UiMessageBox.show(this, "Brak zadań do usunięcia", "Komunikat");
       return;
     }
 
-    UiMessageBox.showYESNO(this, "Czy usunąć zlecenie?", "Komunikat", setInValidMessageClose);
+    UiMessageBox.showYESNO(this, "Czy usunąć zadanie?", "Komunikat", setInValidessageClose);
   }
 
-  private void setInValidMessageClose(Object o)
+  private void setInValidessageClose(Object o)
   {
     if (o["DialogResult"] != "YES")
       return;
 
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "setInvalid", {ID : grid.getValue("ID")});
-       onResul()
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Task", "setInvalid", {ID : gridTask.getValue("ID")});
+       onSetInvalidResul()
   }
 
-  private void onResult(ResultEvent event)
+  private void onSetInvalidResult(ResultEvent event)
   {
     Object data = event.result;
-    if (!ROUiEventService.isResultOK(this, data))
+    if (!ROUiEventService.isResultOk(this, data))
       return;
 
-    grid.refresh();
+    gridTask.refresh();
   }
 
-      /**
-  * WYsyłanie powiadomień sms o prowadzeniu planu
-  * @param onlyNotSended -  wyślij wiadomość tylko dla pozycji, dla których taka wiadomość nie została wysłana (false - wyślij do wszystkich)
-  * */
-  protected void sendPlanSMSNotification(Boolean onlyNotSended)
+  public void set.getDBManager().DBManager value)
   {
-                  orderId* = grid.getValue("ID");
+    getDbManager() = value;
+    if (getDbManager())
+    {
+      setTaskWhere();
+      getDbManager().addEventListener(DBEvent.CHANGE_CURRENT_INDEX, event ->.getDBManager().hangeCurrentIndex(event));
+      getDbManager().addEventListener(DBEvent.MODE_CHANGED, event ->.getDBManager().hangeMode(event));
+      getDbManager().addEventListener(ResultEvent.RESULT, event ->.getDBManager().oadResult(event));
+    }
+  }
+
+  private Boolean taskInsertFunction()
+  {
+    if (!getDbManager())
+      return false;
+
+                  orderId* = getDbManager().getCurrentValue("ID");
+
+    if (orderId == null)
+    {
+      UiMessageBox.show(this, "Brak id zlecenia", "Komunikat");
+      return false;
+    }
+
+    String sqlQuery = "Select Count(1), Max(StartDate), Max(EndDate) From GIS_Task Where OrderId = ?";
+    Array params = [];
+    params.push(orderId);
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.db.DatabaseManager", "getValueTable", sqlQuery, params);
+       onGetTaskDateDat()
+    return false;
+  }
+
+  private void onGetTaskDateData(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOk(this, data))
+      return;
+
+                  orderId* = getDbManager().getCurrentValue("ID");
+
+    Array values = data["VALUE"];
+
+    FrmTask frm = new FrmTask();
+    frm.setStyle("skinClass", UiDictionaryComponentSkin);
+    frm.getMode()AfterLoad = 1;
+    frm.closeAfterSave = true;
+    frm.dataExchange["dbQuery.sqlWhere"] = "1=0";
+    frm.dataExchange["dbfOrder.enabledInEditMode"] = false;
+    frm.dataExchange["dbfOrder.enabledInNewMode"] = false;
+    frm.dataExchange["dbfOrder.defaultValue"] = orderId;
+    frm.dataExchange["chbIsPlan.defaultValue"] = isPlan;
+    frm.dataExchange["chbIsPlan.visible"] = false;
+    frm.dataExchange["chbIsPlan.includeInLayout"] = false;
+    frm.dataExchange["formName"] = "Zadanie do zlecenia o id " + orderId + (isPlan == 1 ? " (plan)" : " (realizacja)");
+
+    if (values[0] < 1)
+      frm.dataExchange["dfStartDate.defaultValue"] = getDbManager().getCurrentValue("START_DATE");
+    else
+      frm.dataExchange["dfStartDate.defaultValue"] = values[2];
+
+    frm.openInContent(UiUtils.getContent(this), onResult);
+  }
+
+  private Boolean taskModifyFunction()
+  {
+    if (!getDbManager())
+      return false;
+
+    int taskId = gridTask.getValue("ID");
+
+    FrmTask frm = new FrmTask();
+    frm.setStyle("skinClass", UiDictionaryComponentSkin);
+    frm.dataExchange["dbQuery.sqlWhere"] = "Id = " + taskId
+    frm.dataExchange["dbfOrder.enabledInEditMode"] = false;
+    frm.dataExchange["dbfOrder.enabledInNewMode"] = false;
+    frm.dataExchange["chbIsPlan.visible"] = false;
+    frm.dataExchange["chbIsPlan.includeInLayout"] = false;
+    frm.dataExchange["formName"] = "Zadanie o id " + taskId + (isPlan == 1 ? " (plan)" : " (realizacja)");
+    frm.getMode()AfterLoad = 2;
+    frm.closeAfterSave = true;
+    frm.openInContent(UiUtils.getContent(this), onResult);
+
+    return false;
+  }
+
+  private void onResult(Object o)
+  {
+    if (o["DialogResult"] != "OK")
+      return;
+
+    if(o["CURRENT_ID"] != null)
+    {
+      gridTask.getDBManager().addEventListener(ResultEvent.RESULT, event -> function loadResult(event:ResultEvent(event)):void
+      {
+        gridTask.getDBManager().removeEventListener(ResultEvent.RESULT, loadResult);
+
+        Array fields = new Array();
+        fields.push({FIELD: "ID", VALUE: o["CURRENT_ID"]});
+        gridTask.getDBManager().find2(fields);
+        gridTask.getDBManager().addEventListener(DBEvent.FIND,function findDataResult(event:DBEvent(event)):void
+        {
+          gridTask.getDBManager().getCurrentIndex() = event.getRecordCount();
+        });
+
+        gridTask.getDBManager().addEventListener(DBEvent.FAULT, event -> function findDataFault(event:Event(event)):void { }(event));
+
+      });
+    }
+
+    gridTask.refresh();
+    dispatchEvent(new Event("saveResult"));
+  }
+
+  private void gridTaskDoubleClick(BaseEvent event)
+  {
+    if (!getDbManager())
+      return;
+
+                  taskId* = gridTask.getValue("ID");
+    if(taskId == null)
+      return;
+
+    FrmTask frm = new FrmTask();
+    frm.setStyle("skinClass", UiDictionaryComponentSkin);
+    frm.dataExchange["dbfOrder.enabledInEditMode"] = false;
+    frm.dataExchange["dbfOrder.enabledInNewMode"] = false;
+    frm.dataExchange["dbQuery.sqlWhere"] = "Id = " + taskId;
+    frm.dataExchange["chbIsPlan.visible"] = false;
+    frm.dataExchange["chbIsPlan.includeInLayout"] = false;
+    frm.dataExchange["formName"] = "Zadanie o id " + taskId + (isPlan == 1 ? " (plan)" : " (realizacja)");
+    frm.openInContent(UiUtils.getContent(this));
+  }
+
+  private void.getDBManager().hangeCurrentIndex(BaseEvent event)
+  {
+    setTaskWhere();
+  }
+
+  private void.getDBManager().hangeMode(BaseEvent event)
+  {
+    setTaskGrid();
+  }
+
+  private void.getDBManager().oadResult(BaseEvent event)
+  {
+    setTaskGrid();
+  }
+
+  private void setTaskWhere()
+  {
+    if (!getDbManager() || !gridTask || !gridTask.columnCreated)
+      return;
+
+    String sqlWhere = "1=0";
+                  orderId* = getDbManager().getCurrentValue("ID");
+
+    if(getDbManager().getRecordCount() > 0 && orderId != null && getDbManager().getMode() != 1)
+      sqlWhere = "OrderId = " + orderId;
+
+    if(sqlWhere == gridTask.getDBManager().SQLQuery.sqlWhere)
+      return;
+
+    gridTask.getDBManager().SQLQuery.sqlWhere = sqlWhere;
+    if(gridTask.getMode() != 0)
+      gridTask.cancelSave();
+
+    gridTask.refresh();
+  }
+
+  private void setTaskGrid()
+  {
+    if(getDbManager().getMode() == GridModes.ADD || getDbManager().getRecordCount() < 1)
+    {
+      gtbTask.readOnly = true;
+
+      if(gridTask.getMode() != GridModes.VIEW)
+        gridTask.cancelSave();
+    }
+    else if(getDbManager().getRecordCount() > 0 && gtbTask.readOnly)
+      gtbTask.readOnly = false;
+  }
+
+  protected void btnFromPlanClickHandler(MouseEvent event)
+  {
+                  orderId* = getDbManager().getCurrentValue("ID");
     if(orderId == null)
     {
       UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
       return;
     }
 
-    ro.call("logica.uiservice.gis.Order", "sendPlanSMSNotification",
-      {
-        ORDER_ID : orderId,
-        PRIORITY:smsPriority,
-        FROM : smsFrom,
-        ONLY_NOT_SEND : onlyNotSended
-      });
+    FrmOrderPosition frm = new FrmOrderPosition();
+    frm.dataExchange["formName"] = "Plan zlecenia o id " + orderId;
+    frm.isPlan = 1
+    frm.openInContent(UiUtils.getContent(this), frmGetPlanResult);
+    frm.tOrderPosition.additionalSqlWhere = "NOT EXISTS (select 1 From Gis_Task t Where t.IsValid = 1 And t.PlanTaskId = GIS_Task.Id)";
+    frm.getDBManager().= getDbManager();
+    frm.setInsertSelectedMode();
   }
 
-  private void onSendSMSResult(ResultEvent event)
-  {
-    Object data = event.result;
-    if(!ROUiEventService.isResultOK(this, data))
-      return;
-
-    if(!StringUtils.IsNullOrEmpty(data["MSG"]))
-      UiMessageBox.show(this, data["MSG"], "Komunikat");
-  }
-
-  protected void showTaskList()
-  {
-                  orderId* = grid.getValue("ID");
-    if (orderId == null)
-    {
-      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
-      return;
-    }
-
-    FrmTask frm = new FrmTask();
-    frm.dataExchange["dbQuery.sqlWhere"] = "OrderId = " + orderId;
-    frm.dataExchange["dbfOrder.enabledInEditMode"] = false;
-    frm.dataExchange["dbfOrder.enabledInNewMode"] = false;
-    frm.dataExchange["dbfOrder.defaultValue"] = orderId;
-    frm.dataExchange["formName"] = "Zadania do zlecenia o id " + orderId;
-    frm.openInContent(UiUtils.getContent(this));
-  }
-
-  private void removePhysicall()
-  {
-                  orderId* = grid.getValue("ID");
-    if (orderId == null)
-    {
-      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
-      return;
-    }
-
-    UiMessageBox.showYESNO(this, "Czy usunąć fizycznie zlecenie?", "Komunikat", removePhysicallMessageClose, {ID : orderId});
-  }
-
-  private void removePhysicallMessageClose(Object o)
-  {
-    if (o["DialogResult"] != "YES")
-      return;
-
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "removeOrder", {ID : o["ID"]});
-       onResul()
-  }
-
-  private void massRemove(Boolean physicall)
-  {
-    Object query = grid.getSelectedQueryObject(true);
-    if (query == null)
-    {
-      UiMessageBox.show(this, "Brak wybranych zleceń", "Komunikat");
-      return;
-    }
-
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.db.DatabaseManager", "getIdListByQuery", {QUERY : query});
-       physicall ? onGetSelectedIdListForRemovePhysicall : onGetSelectedIdListForRemov()
-  }
-
-  private void onGetSelectedIdListForRemovePhysicall(ResultEvent event)
-  {
-    Object data = event.result;
-    if (!ROUiEventService.isResultOK(this, data))
-      return;
-
-    Array idList = data["ID_LIST"];
-    int count = idList.length();
-    if (count == 0)
-      return;
-
-    UiMessageBox.showYESNO(this, "Usuwasz fizycznie zlecenia w liczbie: " + count + ".\nCzy chcesz kontynuować?", "Komunikat", onMassRemovePhysicallMessageClose, {ID_LIST : idList});
-  }
-
-  private void onMassRemovePhysicallMessageClose(Object o)
-  {
-    if (o["DialogResult"] != "YES")
-      return;
-
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "massRemoveOrder", {ID_LIST : o["ID_LIST"]});
-       onMassRemoveOrderResul()
-  }
-
-  private void onGetSelectedIdListForRemove(ResultEvent event)
-  {
-    Object data = event.result;
-    if (!ROUiEventService.isResultOK(this, data))
-      return;
-
-    Array idList = data["ID_LIST"];
-    int count = idList.length();
-    if (count == 0)
-      return;
-
-    UiMessageBox.showYESNO(this, "Usuwasz zlecenia w liczbie: " + count + ".\nCzy chcesz kontynuować?", "Komunikat", onMassRemoveMessageClose, {ID_LIST : idList});
-  }
-
-  private void onMassRemoveMessageClose(Object o)
-  {
-    if (o["DialogResult"] != "YES")
-      return;
-
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "massSetInvalid", {ID_LIST : o["ID_LIST"]});
-       onMassRemoveOrderResul()
-  }
-
-  private void onMassRemoveOrderResult(ResultEvent event)
-  {
-    Object data = event.result;
-    if (!ROUiEventService.isResultOK(this, data))
-      return;
-
-    grid.clearSelected();
-    grid.refresh();
-  }
-
-  private void createOrderForObjects()
-  {
-    FrmCreateOrderForObjects frm = new FrmCreateOrderForObjects();
-    frm.openInContent(UiUtils.getContent(this), refreshAfterClose);
-  }
-
-  private void copyOrder()
-  {
-                  orderId* = grid.getValue("ID");
-    if (orderId == null)
-    {
-      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
-      return;
-    }
-
-    if (grid.getValue("IS_VALID") != 1)
-    {
-      UiMessageBox.show(this, "Zlecenie jest nieaktywne", "Komunikat");
-      return;
-    }
-
-    FrmCopyOrder frm = new FrmCopyOrder();
-    frm.orderId = orderId;
-    frm.openInContent(UiUtils.getContent(this), refreshAfterClose);
-  }
-
-  private void refreshAfterClose(Object o)
-  {
-    if (o["DialogResult"] != "OK")
-      return;
-
-    grid.refresh();
-  }
-
-  private void moveOrder()
-  {
-                  orderId* = grid.getValue("ID");
-    if (orderId == null)
-    {
-      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
-      return;
-    }
-
-    if (grid.getValue("IS_VALID") != 1)
-    {
-      UiMessageBox.show(this, "Zlecenie jest nieaktywne", "Komunikat");
-      return;
-    }
-
-    SwfObject frm = new SwfObject(stage,"eMediaUiCommon.frm","pl.logicsynergy.ui.dialog.FrmDatePicker");
-    frm.invoke("openInContent", UiUtils.getContent(this), frmChoiceMoveDateResult,
-      {
-        "formName":"Wybór daty rozpoczęcia",
-        "dfDate.label":"Data rozpoczęcia",
-        "dfDate.getValue()" : grid.getValue("START_DATE"),
-        "returnData" : {ORDER_ID : orderId},
-        "allowNull" : false});
-
-  }
-
-  protected void frmChoiceMoveDateResult(Object o)
+  private void frmGetPlanResult(Object o)
   {
     if(o["DialogResult"] != "OK")
       return;
 
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "moveOrder", {ORDER_ID : o["RETURN_DATA"]["ORDER_ID"], START_DATE : o["DATE"]});
-       onResul()
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "moveFromPlan", {ORDER_ID : _dbManager.getCurrentValue("ID"), TASK_PLAN_ID_LIST : o["SELECTED_ID_LIST"]});
+       onMoveResul()
   }
 
-  private void copyOrderByTemplate()
-  {
-                  orderId* = grid.getValue("ID");
-    if (orderId == null)
-    {
-      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
-      return;
-    }
-
-    if (grid.getValue("IS_VALID") != 1)
-    {
-      UiMessageBox.show(this, "Zlecenie jest nieaktywne", "Komunikat");
-      return;
-    }
-
-                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "prepareCopyOrderByTemplate", {ORDER_ID : orderId});
-       onPrepareCopyOrderByTemplateResul()
-  }
-
-  private void onPrepareCopyOrderByTemplateResult(ResultEvent event)
+  private void onMoveResult(ResultEvent event)
   {
     Object data = event.result;
-    if (!ROUiEventService.isResultOK(this, data))
+    if(!ROUiEventService.isResultOk(this, data))
       return;
 
-    Object orderData = data["ORDER_DATA"];
-
-    ArrayCollection templateList = orderData["TASK_TEMPLATE_LIST"];
-
-    Object templateSelectedObj = {};
-
-    for (Object obj : templateList)
-    {
-      int objectCode = obj["OBJECT_CODE"];
-      int objectTypeId = obj["OBJECT_TYPE_ID"];
-      int taskTemplateId = obj["TASK_TEMPLATE_ID"];
-      Boolean dedicated = obj["DEDICATED"];
-
-      if (templateSelectedObj[objectTypeId] == null)
-        templateSelectedObj[objectTypeId] = {TEMPLATE_LIST : {}, OBJECTS : {}};
-
-      if (dedicated)
-      {
-        Object tObjectList = templateSelectedObj[objectTypeId]["OBJECTS"][objectCode];
-        if (tObjectList == null)
-          templateSelectedObj[objectTypeId]["OBJECTS"][objectCode] = {};
-
-        templateSelectedObj[objectTypeId]["OBJECTS"][objectCode][taskTemplateId] = {};
-      }
-      else
-      {
-        Object tList = templateSelectedObj[objectTypeId]["TEMPLATE_LIST"];
-        if (tList == null)
-          tList = {};
-
-        tList[taskTemplateId] = {};
-      }
-    }
-
-    FrmCreateOrderForObjects frm = new FrmCreateOrderForObjects();
-
-    frm.dataExchange["dfStartDate.getValue()"] = orderData["START_DATE"];
-    frm.dataExchange["txtName.getValue()"] = orderData["NAME"];
-    frm.dataExchange["cbOrderType.getValue()"] = orderData["ORDER_TYPE_ID"];
-    frm.dataExchange["txtCostAccount.getValue()"] = orderData["COST_ACCOUNT"];
-    frm.dataExchange["chbIsPlan.getValue()"] = 1;
-
-    frm.templateSelectedObj = templateSelectedObj;
-    frm.openInContent(UiUtils.getContent(this), refreshAfterClose);
-    frm.objectList.addAll(orderData["OBJECT_LIST"]);
+    gridTask.refresh();
   }
 
+  private void gridRightClick(BaseEvent event)
+  {
+    if (gridTask.getDBManager().getRecordCount() < 1)
+      return;
+
+    XML myMenu =
+      <menu>
+        <menu id="SHOW_ACTION" labelName="Czynności"/>
+        <menu id="SHOW_USER_TEAM" labelName="Zespoły"/>
+        <menu id="SHOW_USER" labelName="Osoby"/>
+        <menu id="SHOW_EQUIPMENT" labelName="Sprzęt/pojazdy"/>
+        <menu id="SHOW_MATERIAL" labelName="Materiał"/>
+        <menu id="SHOW_OTHER" labelName="Inne/dodatkowe"/>
+        <menu id="SHOW_DOCUMENT_TYPE" labelName="Wymagane dokumenty"/>
+        <menu id="SHOW_ATTACHMENT" labelName="Załączniki"/>
+      </menu>;
+
+    Menu menu = Menu.createMenu(null, myMenu, false);
+    menu.labelField="@labelName";
+
+    menu.addEventListener(MenuEvent.ITEM_CLICK, event -> rightMenuItemClick(event));
+    Point p = this.localToGlobal(new Point(event.mouseEvent.localX, event.mouseEvent.localY));
+    menu.x = event.mouseEvent.stageX;
+    menu.y = event.mouseEvent.stageY;
+    if (menu.y > stage.height / 2)
+      menu.y = event.mouseEvent.stageY - menu.height;
+
+    MenuUtils.show(menu);
+
+    DisplayObject sbRoot = systemManager.topLevelSystemManager.getSandboxRoot();
+    sbRoot.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,
+      void mouseDownOutside(MouseEvent event)
+      {
+        menu.hide()
+        sbRoot.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, mouseDownOutside);
+      },
+      false, 0, true);
+
+    event.stopPropagation();
+  }
+
+  public void rightMenuItemClick(BaseEvent event)
+  {
+    XML xml = event.item as XML;
+    if (xml == null)
+      return;
+
+    switch (xml.@id.toString())
+    {
+      case "SHOW_ACTION":
+        showTaskRelation(new TaskToAction(), "czynności");
+        break;
+      case "SHOW_USER_TEAM":
+        showTaskResource(TaskResourceType.USER_TEAM, "zespoły");
+        break;
+      case "SHOW_USER":
+        showTaskResource(TaskResourceType.USER, "osoby");
+        break;
+      case "SHOW_EQUIPMENT":
+        showTaskResource(TaskResourceType.EQUIPMENT, "sprzęt/pojazdy");
+        break;
+      case "SHOW_MATERIAL":
+        showTaskRelation(new TaskToMaterial(), "materiały");
+        break;
+      case "SHOW_OTHER":
+        showTaskRelation(new TaskToOther(), "inne/dodatkowe");
+        break;
+      case "SHOW_DOCUMENT_TYPE":
+        showTaskRelation(new TaskToDocumentType(), "wymagane typu dokumentów");
+        break;
+      case "SHOW_ATTACHMENT":
+        showTaskRelation(new TaskToAttachment(), "załączniki");
+        break;
+    }
+  }
+
+  private void showTaskResource(int resourceType, String  name)
+  {
+                  taskId* = gridTask.getValue("ID");
+    if (taskId == null)
+    {
+      UiMessageBox.show(this, "Brak wybranego zadania", "Komunikat");
+      return;
+    }
+
+    FrmTaskResource frm = new FrmTaskResource();
+    frm.taskId = taskId;
+    frm.resourceType = resourceType;
+    frm.dataExchange["formName"] = "Zadanie o id " + taskId + " - " + name;
+    frm.openInContent(UiUtils.getContent(this));
+  }
+
+  private void showTaskRelation(TaskRelation taskRelation, String  name)
+  {
+                  taskId* = gridTask.getValue("ID");
+    if (taskId == null)
+    {
+      UiMessageBox.show(this, "Brak wybranego zadania", "Komunikat");
+      return;
+    }
+
+    FrmTaskRelation frm = new FrmTaskRelation();
+    frm.taskId = taskId;
+    frm.taskRelation = taskRelation;
+    frm.dataExchange["formName"] = "Zadanie o id " + taskId + " - " + name;
+    frm.openInContent(UiUtils.getContent(this));
+  }
                   ]]>
 
                   <fx:Declarations>
 
-                  <db:DBQuery id="dbQuery" sqlFrom="GIS_Order"
-            sqlField="{dbField/**
+                  <db:DBQuery id="dbTaskQuery" sqlFrom="GIS_Task"
+            sqlField="{dbTaskField/**
  * Zwrócenie obiektu DBQuery dla tabeli XXXXXX
  * 
  * @return From XXXXXX
  */
- public DBQuery dbQuery()
+ public DBQuery dbTaskQuery()
  {
     DBQuery result = new DBQuery();
-    result.sqlFrom="GIS_Order";
-    result.sqlField="{dbField}";
-    result.sqlOrderBy="Id";
-    result.sqlIdentityColumn="Id";
-    return result;
- }
-
-/**
- * Zwrócenie obiektu DBQuery dla tabeli XXXXXX
- * 
- * @return From XXXXXX
- */
- public DBQuery dbOrderTypeQuery()
- {
-    DBQuery result = new DBQuery();
-    result.sqlFieldString="Id, Symbol, Name";
-    result.sqlFrom="GIS_OrderType";
+    result.sqlFrom="GIS_Task";
+    result.sqlField="{dbTaskField}";
     result.sqlOrderBy="Id";
     result.sqlIdentityColumn="Id";
     return result;
@@ -621,94 +465,35 @@ public class YOURCLASSNAME extends null
 	 */
 	 private Element null()
 	 {
-		return XMLUtils.getXMLElement("        <field name="Id" dataField="ID" width="80" bindable="false"/>        <field name="OrderNo" dataField="ORDER_NO" displayText="Nr zlecenia" width="150"/>        <field name="OrderDate" dataField="ORDER_DATE" displayText="Data zlecenia" width="100" type="date"/>        <field name="Name" dataField="NAME" displayText="Nazwa" width="200"/>        <field name="StartDate" dataField="START_DATE" displayText="Data rozpoczęcia" width="130" type="date" dateTimePattern="yyyy-MM-dd HH:mm"/>        <field name="EndDate" dataField="END_DATE" displayText="Data zakończenia" width="130" type="date" dateTimePattern="yyyy-MM-dd HH:mm"/>        <field name="OrderTypeId" dataField="ORDER_TYPE_ID" displayText="Id rodzaju" width="100"/>        <field name="CostAccount" dataField="COST_ACCOUNT" displayText="Konto kosztowe" width="100"/>        <field name="Description" dataField="DESCRIPTION" displayText="Opis" width="200"/>        <field name="IsValid" dataField="IS_VALID" description="Czy ważne" width="-1"/>      </fields>); }
+		return XMLUtils.getXMLElement("        <field name="Id" dataField="ID" displayText="Id" width="100"/>
+        <field name="Name" dataField="NAME" displayText="Nazwa" width="150"/>
+        <field name="StartDate" dataField="START_DATE" displayText="Data rozpoczęcia" width="130" type="date" dateTimePattern="yyyy-MM-dd HH:mm"/>
+        <field name="EndDate" dataField="END_DATE" displayText="Data zakończenia" width="130" type="date" dateTimePattern="yyyy-MM-dd HH:mm"/>
+        <field name="(Select Sum(ExecutionTime) From (select executionTime From GIS_TaskToUserTeam where TaskId = GIS_Task.Id union all Select ExecutionTime From GIS_TaskToUser Where TaskId = GIS_Task.Id union all Select ExecutionTime From GIS_TaskToEquipment Where TaskId = GIS_Task.Id) TSK)" dataField="EXECUTION_TIME" displayText="Czas realizacji (h;min)" width="120" type="timeCount" bindable="false"/>
+        <field name="ObjectCode" dataField="OBJECT_CODE" displayText="Kod obiektu" width="100"/>
+        <field name="OrderId" dataField="ORDER_ID" displayText="Id zlecenia" width="-1"/>
+
+        <field name="Description" dataField="DESCRIPTION" displayText="Opis" width="250"/>
+      </fields>
+); }
 
 
   }
 
 AddMethods
-                  <fx:XML id="menuEx" xmlns="">
-  <menu xmlNodePosition="-1">
-    <menuitem id="OPTIONS" labelName="Opcje" xmlNodePosition="-1" enabledInWriteMode='false'>
-      <menuitem id="PLAN_SMS_NOTIFICATION"  labelName="Powiadomienia SMS o wprowadzeniu planu">
-        <menuitem id="SEND_SMS_NOTIFICATION" labelName="Wyślij"/>
-        <menuitem id="SEND_SMS_NOTIFICATION_AGAIN" labelName="Wyślij ponownie"/>
-      </menuitem>
-      <manuitem id="TASK_LIST" labelName="Lista zadań"/>
-      <menuitem id="CREATE_ORDER_FOR_OBJECTS" labelName="Utwórz zlecenie dla obiektów"/>
-      <menuitem id="COPY_ORDER" labelName="Kopiuj zlecenie"/>
-      <menuitem id="COPY_ORDER_BY_TEMPLATE" labelName="Kopiuj zlecenie (na podstawie szablonu)"/>
-      <menuitem id="MOVE_ORDER" labelName="Przesuń zlecenie"/>
-      <manuitem type="separator"/>
-      <menuitem id="REMOVE" labelName="Usuń zlecenie (ustaw jako nieważne)"/>
-      <menuitem id="MASS_REMOVE" labelName="Usuń wybrane zlecenia (ustaw jako nieważne)"/>
-      <manuitem type="separator"/>
-      <menuitem id="REMOVE_PHYSICALL" labelName="Usuń fizycznie zlecenie" enabledRole="ADMIN;R_ORDER_REMOVE_PHYSICALL"/>
-      <menuitem id="MASS_REMOVE_PHYSICALL" labelName="Usuń fizycznie wybrane zlecenia" enabledRole="ADMIN;R_ORDER_REMOVE_PHYSICALL"/>
-      <manuitem type="separator"/>
-      <menuitem id="ORDER_CALENDAR" labelName="Kalendarz dla zlecenia"/>
-    </menuitem>
-    <menuitem id="DICTIONARY" labelName="Słowniki" xmlNodePosition="-1">
-      <menuitem id="ORDER_TYPE" labelName="Typy zleceń"/>
-    </menuitem>
-    <menuitem xmlNode="RANGE" xmlNodePosition="-1" id="SHOW_VALID" labelName="Ważne" type="radio" groupName="validType" toggled="true"/>
-    <menuitem xmlNode="RANGE" xmlNodePosition="-1" id="SHOW_INVALID" labelName="Nieważne" type="radio" groupName="validType"/>
-    <menuitem xmlNode="RANGE" xmlNodePosition="-1" id="SHOW_ALL" labelName="Wszystkie" type="radio" groupName="validType"/>
-    <menuitem xmlNode="RANGE" xmlNodePosition="-1" type="separator"/>
-  </menu>
-                  </fx:XML>
-
-                  <fx:XML xmlns="" id="gridColorProperty">
-  <fields>
-    <field dataField="IS_VALID" value="0" color="#a4a3a3" range="row" />
-  </fields>
-                  </fx:XML>
 
                   </fx:Declarations>
-
-                  <c:Scroller id="mainScroller" left="0" right="0" top="0" bottom="25" minWidth="450" width="600">
-                  <c:VGroup id="grMain" width="100%" height="100%">
-  <c:HGroup width="100%">
-    <c:TextInput id="txtOrderNo" width="150" label="Nr zlecenia" columnName="OrderNo"
-                  dataField="ORDER_NO" dbProvider="{getDbManager}" enabledInEditMode="false"
-                  enabledInNewMode="false"/>
-    <c:TextInput id="txtName" width="100%" label="Nazwa"
-                  columnName="Name" dataField="NAME" dbProvider="{getDbManager}"/>
-  </c:HGroup>
-  <c:HGroup width="100%">
-    <c:DateField id="dfOrderDate" label="Data zlecenia" width="100%" minWidth="125"
-                  columnName="OrderDate" dataField="ORDER_DATE"
-                  defaultValue="{new Date()}"
-                  dbProvider="{getDbManager}"/>
-    <c:DateField id="dfStartDate" label="Data rozpoczęcia" width="100%" minWidth="125"
-                  columnName="StartDate" dataField="START_DATE" dbProvider="{getDbManager}"
-                  shortTime="true"/>
-    <c:DateField id="dfEndDate" label="Data zakończenia" width="100%" minWidth="125"
-                  columnName="EndDate" dataField="END_DATE" dbProvider="{getDbManager}"
-                  shortTime="true"/>
-  </c:HGroup>
-  <c:HGroup width="100%">
-    <c:ComboBox id="cbOrderType" width="50%" label="Typ zlecenia"
-                columnName="OrderTypeId" dataField="ORDER_TYPE_ID" dbProvider="{getDbManager}"
-                dbQuery="{dbOrderTypeQuery}" descField="[Symbol] | [Name]"/>
-    <c:TextInput id="txtCostAccount" label="Konto kosztowe" width="150"
-                  columnName="CostAccount" dataField="COST_ACCOUNT" dbProvider="{getDbManager}"/>
-  </c:HGroup>
-  <c:TextArea id="txtaDescription" width="100%" height="60" label="Opis" columnName="Description"
-              dataField="DESCRIPTION" dbProvider="{getDbManager}"/>
-  <c:VGroup id="grPosition" width="100%" height="100%">
-    <c:ButtonBar id="tbMain" width="100%" height="25" dataProvider="{vcTab}" />
-    </c:ViewStack id="vcTab" width="100%" height="100%" creationPolicy="all">
-      <c:NavigatorContent id="ncPlan" width="100%" height="100%" label="Plan">
-        <orderComponents:OrderPosition id="tOrderPlanPosition" width="100%" height="100%" dbManager="{getDbManager}" isPlan="1"/>
-      </c:NavigatorContent>
-      <c:NavigatorContent id="ncExecution" width="100%" height="100%" label="Realizacja">
-        <orderComponents:OrderPosition id="tOrderExecutionPosition" width="100%" height="100%" dbManager="{getDbManager}" isPlan="0" showButtonMove="true"/>
-      </c:NavigatorContent>
-    </c:ViewStack>
-  </c:VGroup>
+                  <c:VGroup width="100%" height="100%">
+                  <c:Label id="lbl" text="Lista zadań"/>
+                  <c:HGroup width="100%" verticalAlign="middle">
+  <grid:GridToolBar id="gtbTask" width="100%"
+                  grid="{gridTask}" />
+  <c:Button id="btnFromPlan" label="Dodaj z planu" fontWeight="bold" visible="false" includeInLayout="false"
+            click="btnFromPlanClickHandler(event)"/>
+                  </c:HGroup>
+                  <grid:Grid id="gridTask" width="100%" height="100%" showErrorMessage="false"
+                  
+                  SQLQuery="{dbTaskQuery}"/>
                   </c:VGroup>
-                  </c:Scroller>
-
-</ui:UiDictionary>
+</c:Group>
 }

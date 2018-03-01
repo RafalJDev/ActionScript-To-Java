@@ -244,6 +244,7 @@ public class Parser {
                 line = line.substring(0, lastIndexOfColon);
                 line = line.replace(" function ", " " + returnTypeWithoutSpace + " ");
 
+                //TODO ucina ostatnią literę, gdy są nawiasy, a to nie jest funkcja
                 if (!line.matches(".*\\(\\).*")) {
                     String bracketsWithArguments = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")"));
                     line = line.replaceAll("\\(.*\\)", "()");
@@ -284,11 +285,13 @@ public class Parser {
             line = line.replace("protected void load", "public void load");
         }
         if (line.contains("addEventListener(")) {
-            methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.indexOf(")")).trim());
-            line = line.replace(")", "(event))");
-            line = line.replace(", ", ", event -> ");
-            line = line.replaceAll("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
-            line = line.replaceAll("\"indexChanged\"", "BaseEvent.VALUE_CHANGED");
+            if (line.contains(")")) {
+                methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.indexOf(")")).trim());
+                line = line.replace(")", "(event))");
+                line = line.replace(", ", ", event -> ");
+                line = line.replaceAll("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
+                line = line.replaceAll("\"indexChanged\"", "BaseEvent.VALUE_CHANGED");
+            }
         }
         for (String method : methodsForEventListeners) {
             if (line.contains(method) && line.contains(" void ")) {
@@ -430,11 +433,11 @@ public class Parser {
     }
 
     public static void initializeReplaceMap() {
-        replaceMap2.put("_dbManager", "getDbManager()");
+        replaceMap2.put("._dbManager", ".getDbManager()");
         replaceMap2.put(".dbManager.", ".getDBManager().");
         replaceMap2.put(".recordCount", ".getRecordCount()");
-        replaceMap2.put("length", "length()");
-        replaceMap2.put(".mode", "getMode()");
+        replaceMap2.put(".length", ".length()");
+        replaceMap2.put(".mode", ".getMode()");
         replaceMap2.put(".value ", ".getValue() ");
         replaceMap2.put("super.load\\(event\\);", "super.load();");
         replaceMap2.put(".getNavigatorContent", ".getContent");
@@ -443,6 +446,11 @@ public class Parser {
         replaceMap2.put("SWF", "FRM");
         replaceMap2.put("ROManager", "ROUiEventService");
         replaceMap2.put("for each", "for");
+        replaceMap2.put(".currentIndex", ".getCurrentIndex()");
+        replaceMap2.put(".isResultOK", ".isResultOk");
+        replaceMap2.put("StringUtils.IsNullOrEmpty", "StringUtils.isNullOrEmpty");
+        //TODO * na Object, przy var, ale jeszcze nie zamienia miejscami
+        replaceMap2.put("*", "Object");
 
         replaceMap4.put("grid.dbManager", "getDbManager");
         replaceMap4.put("_dbManager", "getDbManager");
