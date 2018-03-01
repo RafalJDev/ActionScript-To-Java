@@ -1,4 +1,4 @@
-package parser;
+package oldasf.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,15 +17,15 @@ public class Parser {
     private static Pattern pattern = null;
     private static Matcher matcher = null;
 
-    //Stage search:1, use:2
+    //BoundariesOfStages search:1, use:2
     private static Map<String, String> classMap = new HashMap<>();
 
-    //Stage 2
+    //BoundariesOfStages 2
     private static Map<String, String> replaceMap2 = new HashMap<>();
-    //Stage 4
+    //BoundariesOfStages 4
     private static Map<String, String> replaceMap4 = new HashMap<>();
 
-    //Stage 2
+    //BoundariesOfStages 2
     private static boolean importIsAlreadyDone = false;
     private static boolean firstImportStatementOccured = false;
     private static boolean thereIsRoCall = false;
@@ -36,10 +36,10 @@ public class Parser {
     private static Map<String, String> componentsThatNeedField = new HashMap<>();
     private static List<String> dbMethods = new ArrayList<>();
 
-    //Stage 3
+    //BoundariesOfStages 3
     private static List<String> dbQueryAtributes = new ArrayList<>();
 
-    //Stage 4
+    //BoundariesOfStages 4
     private static int countDbQuery = 0;
 
     private static boolean justOnce = true;

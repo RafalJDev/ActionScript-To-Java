@@ -1,6 +1,6 @@
-package rj.parse.actionscrypt.to.java.main;
+package oldasf.rj.parse.actionscrypt.to.java.main;
 
-import reader.FileReader;
+import oldasf.reader.FileReader;
 
 import java.io.IOException;
 
@@ -11,7 +11,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-//        FileReader.readTextFileWithActionScript();
+//        FileReader.openFileAndGetBufferedReader();
         FileReader.readTextFileWithActionScript();
         FileReader.saveFile();
 

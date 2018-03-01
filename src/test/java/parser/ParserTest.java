@@ -1,5 +1,6 @@
 package parser;
 
+import oldasf.parser.Parser;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
