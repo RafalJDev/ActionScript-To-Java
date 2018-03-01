@@ -461,6 +461,8 @@ public class Parser {
         replaceMap4.put("<mx:", "</c:");
         replaceMap4.put("</mx:", "</c:");
         replaceMap4.put("skinClass=\".*\"", "");
+        //TODO <c:DateField id="dfReplacementBatteryDate" width="185" label="Data wymiany baterii" columnName="ReplacementBatteryDate"
+        //TODO          dataField="REPLACEMENT_BATTERY_DATE" dbProvider="{getDbManager}" expandRatio="1" />
     }
 
     public static void simpleReplaceAllOnMap() {
