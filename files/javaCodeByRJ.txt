@@ -6,7 +6,20 @@ import pl.logicsynergy.creator.UiCreator;
 import pl.logicsynergy.database.DBQuery;
 
 
-@UiDesign(formName = "null", guid = "null")
+  import pl.logicsynergy.common.GridModes;
+  import pl.logicsynergy.common.SwfObject;
+  import pl.logicsynergy.components.ui.UiMessageBox;
+  import pl.logicsynergy.events.DBEvent;
+  import pl.logicsynergy.ro.ROManager;
+  import pl.logicsynergy.ro.ROUiEventService;
+  import pl.logicsynergy.ui.gis.CalendarUtils;
+  import pl.logicsynergy.ui.gis.FrmTaskGantCalendar;
+  import pl.logicsynergy.ui.gis.task.FrmTask;
+  import pl.logicsynergy.utils.StringUtils;
+  import pl.logicsynergy.utils.UiUtils;
+
+      /** Ustawienie trybu po załadowania danych*/
+@UiDesign(formName = "Zlecenia", guid = "formName=Zlecenia")
 public class YOURCLASSNAME extends null 
 {
   /** Konstruktor */
@@ -15,132 +28,687 @@ public class YOURCLASSNAME extends null
 	UiCreator.getInstance(self).executeXML();
   }
 
-  public ComboBox cbWorkTimeCountType;
+  public VGroup grPosition;
+
+  public  tOrderPlanPosition;
 
 
+  public Boolean closeAfterSave = false;
+
+  public int smsPriority = 0;
+  public String smsFrom = null;
+
+                  @Override
+  protected void  load(FlexEvent event)
   {
+    grid.selectionEnabled = true;
     super.load();
 
-    cbWorkTimeCountType.addItem(0, "Rosnąco");
-    cbWorkTimeCountType.addItem(1, "Malejąco");
-  /**
- * Zwrócenie obiektu DBQuery dla tabeli XXXXXX
- * 
- * @return From XXXXXX
- */
- public DBQuery dbDescMeterKind()
- {
-    DBQuery result = new DBQuery();
-    result.sqlFrom="Network_MeterKind";
-    result.sqlFieldString="Id, Symbol, Name";
-    result.sqlOrderBy="Symbol";
-    result.sqlIdentityColumn="Id";
-    return result;
- }
+    grid.getDBManager().addEventListener(ResultEvent.RESULT, event -> loadResult(event));
+    grid.getDBManager().addEventListener(DBEvent.MODE_CHANGED, event ->.getDBManager().hangeMode(event));
+    grid.getDBManager().addEventListener(DBEvent.BEGIN_SAVE, event -> gridBeginSave(event));
+    grid.deleteFunction = gridDeleteFunction;
 
-/**
- * Zwrócenie obiektu DBQuery dla tabeli XXXXXX
- * 
- * @return From XXXXXX
- */
- public DBQuery dbDescMeterInstall()
- {
-    DBQuery result = new DBQuery();
-    result.sqlFrom="Network_MeterInstall";
-    result.sqlFieldString="Id, Symbol, Name";
-    result.sqlOrderBy="Symbol";
-    result.sqlIdentityColumn="Id";
-    return result;
- }
+    grid.getDBManager().insertFunction = insertRecord;
 
-/**
+    gridToolBar.deleteIcon.toolTip = "Usuń zlecenie (ustaw jako nieważne)";
+
+    grid.getDBManager().addEventListener(DBEvent.SAVE_RESULT, event -> function.getDBManager().aveResult(event:DBEvent(event)):void
+    {
+      dataExchange["DialogResult"] = "OK";
+      if (closeAfterSave)
+        close();
+    });
+
+        //odświeżenie grida po zmianie pozycji planu
+    if (tOrderPlanPosition)
+      tOrderPlanPosition.addEventListener("saveResult", event -> onPositionSaveResult(event));
+
+    grid.printFunction = printFunction;
+  }
+
+  private void printFunction()
+  {
+                  typeId* = grid.getValue("ORDER_TYPE_ID");
+    if (typeId == null)
+    {
+      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
+      return;
+    }
+
+    String sqlQuery = "Select Name From System_PrintManager Where Id = (Select PrintManagerId From GIS_OrderType Where Id = ?)";
+
+    Array params = [];
+    params.push(typeId);
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.db.DatabaseManager", "getValueTable", sqlQuery, params);
+       onGetPrintReportNam()
+  }
+
+  private void onGetPrintReportName(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOK(this, data))
+      return;
+
+    Array.getValue()s = data["VALUE"];
+    if .getValue()s == null || StringUtils.IsNullOrEmpty.getValue()s[0]))
+    {
+      UiMessageBox.show(this, "Brak zdefiniowanego szablonu wydruku", "Komunikat");
+      return;
+    }
+
+    printReport.getValue()s[0], grid.getReportParams(), false, grid.getPrintParam());
+  }
+
+  private void onPositionSaveResult(BaseEvent event)
+  {
+    grid.refresh();
+  }
+
+  private void insertRecord(Object data)
+  {
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "onInsertRecord", data["data"]);
+       onInsertRecordResul()
+  }
+
+  private void onInsertRecordResult(ResultEvent event)
+  {
+    Object data = event.result;
+    if(!ROUiEventService.isResultOK(this, data))
+    {
+      grid.revertMode(1);
+      return;
+    }
+
+    grid.getDBManager().setItemSaved(grid.getDBManager().currentIndex, data);
+    gridgetMode() = 0;
+  }
+
+  private void gridBeginSave(BaseEvent event)
+  {
+    if (gridgetMode() == 1)
+      grid.getDBManager().setValue("IS_VALID", 1, grid.getDBManager().currentIndex);
+  }
+
+  private void loadResult(BaseEvent event)
+  {
+    ifgetMode()AfterLoad > 0)
+    {
+      gridgetMode() =getMode()AfterLoad;
+                  getMode()AfterLoad = 0;
+    }
+
+    setComponentVisible();
+  }
+
+  private void.getDBManager().hangeMode(BaseEvent event)
+  {
+    setComponentVisible();
+  }
+
+  protected void setComponentVisible()
+  {
+    if(grid.getDBManager()getMode() != GridModes.VIEW || grid.getDBManager().getRecordCount() < 1)
+      grPosition.visible = false;
+    else if(grid.getDBManager().getRecordCount() > 0 && !grPosition.visible)
+      grPosition.visible = true;
+  }
+
+                  @Override
+  public void menuItemClick(MenuEvent event)
+  {
+    uint id;
+    XMLList findNode = event.item.@id;
+    if (findNode.length()() == 0)
+      return super.menuItemClick(event);
+
+    String code = findNode[0].toString();
+
+                  frm*;
+    Boolean findItem = true;
+    switch (code)
+    {
+      case "ORDER_TYPE":
+        frm = new FrmOrderType();
+        frm.openInContent(UiUtils.getContent(this));
+        break;
+      case "TASK_LIST":
+        showTaskList();
+        break;
+      case "REMOVE_PHYSICALL":
+        removePhysicall();
+        break;
+      case "MASS_REMOVE_PHYSICALL":
+        massRemove(true);
+        break;
+      case "REMOVE":
+        gridDeleteFunction(null);
+        break;
+      case "MASS_REMOVE":
+        massRemove(false);
+        break;
+      case "SHOW_VALID":
+        setRage("IsValid = 1");
+        break;
+      case "SHOW_INVALID":
+        setRage("IsValid = 0");
+        break;
+      case "SHOW_ALL":
+        setRage("");
+        break;
+      case "SEND_SMS_NOTIFICATION":
+        sendPlanSMSNotification(true);
+        break;
+      case "SEND_SMS_NOTIFICATION_AGAIN":
+        sendPlanSMSNotification(false);
+        break;
+      case "CREATE_ORDER_FOR_OBJECTS":
+        createOrderForObjects();
+        break;
+      case "COPY_ORDER":
+        copyOrder();
+        break;
+      case "MOVE_ORDER":
+        moveOrder();
+        break;
+      case "COPY_ORDER_BY_TEMPLATE":
+        copyOrderByTemplate();
+        break;
+      case "ORDER_CALENDAR":
+        showOrderCalendar();
+        break;
+      default:
+        findItem = false;
+    }
+
+    if (findItem)
+      return;
+
+    super.menuItemClick(event);
+  }
+
+  private void setRage(String rangeWhere)
+  {
+    grid.getDBManager().SQLQuery.sqlWhereAdditional = rangeWhere;
+    grid.refresh();
+  }
+
+  private void showOrderCalendar()
+  {
+    ArrayList list = new ArrayList();
+    list.addItem(grid.getValue("ID"));
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "getOrderStructByOrderIdList", {ORDER_ID_LIST : list});
+       onGetOrderStructResul()
+  }
+
+  private void onGetOrderStructResult(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOK(this, data))
+      return;
+
+    FrmTaskGantCalendar frm = new FrmTaskGantCalendar();
+    ArrayCollection list = data.ORDER_STRUCT;
+    Date startCalendar = new Date();
+    Date endCalendar = new Date();
+    CalendarUtils cu = new CalendarUtils();
+
+    frm.taskXML = cu.getXMLFromStruct(startCalendar, endCalendar, list);
+    frm.startCalendar = startCalendar;
+    frm.endCalendar = endCalendar;
+    frm.openInContent(UiUtils.getContent(this));
+  }
+
+                  @Override
+  public void close()
+  {
+    dataExchange["CURRENT_ID"] = grid.getValue("ID");
+    super.close();
+  }
+
+  private void gridDeleteFunction(Object data)
+  {
+    if(grid.getDBManager().getRecordCount() == 0)
+    {
+      UiMessageBox.show(this, "Brak zleceń do usunięcia", "Komunikat");
+      return;
+    }
+
+    UiMessageBox.showYESNO(this, "Czy usunąć zlecenie?", "Komunikat", setInValidMessageClose);
+  }
+
+  private void setInValidMessageClose(Object o)
+  {
+    if (o["DialogResult"] != "YES")
+      return;
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "setInvalid", {ID : grid.getValue("ID")});
+       onResul()
+  }
+
+  private void onResult(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOK(this, data))
+      return;
+
+    grid.refresh();
+  }
+
+      /**
+  * WYsyłanie powiadomień sms o prowadzeniu planu
+  * @param onlyNotSended -  wyślij wiadomość tylko dla pozycji, dla których taka wiadomość nie została wysłana (false - wyślij do wszystkich)
+  * */
+  protected void sendPlanSMSNotification(Boolean onlyNotSended)
+  {
+                  orderId* = grid.getValue("ID");
+    if(orderId == null)
+    {
+      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
+      return;
+    }
+
+    ro.call("logica.uiservice.gis.Order", "sendPlanSMSNotification",
+      {
+        ORDER_ID : orderId,
+        PRIORITY:smsPriority,
+        FROM : smsFrom,
+        ONLY_NOT_SEND : onlyNotSended
+      });
+  }
+
+  private void onSendSMSResult(ResultEvent event)
+  {
+    Object data = event.result;
+    if(!ROUiEventService.isResultOK(this, data))
+      return;
+
+    if(!StringUtils.IsNullOrEmpty(data["MSG"]))
+      UiMessageBox.show(this, data["MSG"], "Komunikat");
+  }
+
+  protected void showTaskList()
+  {
+                  orderId* = grid.getValue("ID");
+    if (orderId == null)
+    {
+      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
+      return;
+    }
+
+    FrmTask frm = new FrmTask();
+    frm.dataExchange["dbQuery.sqlWhere"] = "OrderId = " + orderId;
+    frm.dataExchange["dbfOrder.enabledInEditMode"] = false;
+    frm.dataExchange["dbfOrder.enabledInNewMode"] = false;
+    frm.dataExchange["dbfOrder.defaultValue"] = orderId;
+    frm.dataExchange["formName"] = "Zadania do zlecenia o id " + orderId;
+    frm.openInContent(UiUtils.getContent(this));
+  }
+
+  private void removePhysicall()
+  {
+                  orderId* = grid.getValue("ID");
+    if (orderId == null)
+    {
+      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
+      return;
+    }
+
+    UiMessageBox.showYESNO(this, "Czy usunąć fizycznie zlecenie?", "Komunikat", removePhysicallMessageClose, {ID : orderId});
+  }
+
+  private void removePhysicallMessageClose(Object o)
+  {
+    if (o["DialogResult"] != "YES")
+      return;
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "removeOrder", {ID : o["ID"]});
+       onResul()
+  }
+
+  private void massRemove(Boolean physicall)
+  {
+    Object query = grid.getSelectedQueryObject(true);
+    if (query == null)
+    {
+      UiMessageBox.show(this, "Brak wybranych zleceń", "Komunikat");
+      return;
+    }
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.db.DatabaseManager", "getIdListByQuery", {QUERY : query});
+       physicall ? onGetSelectedIdListForRemovePhysicall : onGetSelectedIdListForRemov()
+  }
+
+  private void onGetSelectedIdListForRemovePhysicall(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOK(this, data))
+      return;
+
+    Array idList = data["ID_LIST"];
+    int count = idList.length();
+    if (count == 0)
+      return;
+
+    UiMessageBox.showYESNO(this, "Usuwasz fizycznie zlecenia w liczbie: " + count + ".\nCzy chcesz kontynuować?", "Komunikat", onMassRemovePhysicallMessageClose, {ID_LIST : idList});
+  }
+
+  private void onMassRemovePhysicallMessageClose(Object o)
+  {
+    if (o["DialogResult"] != "YES")
+      return;
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "massRemoveOrder", {ID_LIST : o["ID_LIST"]});
+       onMassRemoveOrderResul()
+  }
+
+  private void onGetSelectedIdListForRemove(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOK(this, data))
+      return;
+
+    Array idList = data["ID_LIST"];
+    int count = idList.length();
+    if (count == 0)
+      return;
+
+    UiMessageBox.showYESNO(this, "Usuwasz zlecenia w liczbie: " + count + ".\nCzy chcesz kontynuować?", "Komunikat", onMassRemoveMessageClose, {ID_LIST : idList});
+  }
+
+  private void onMassRemoveMessageClose(Object o)
+  {
+    if (o["DialogResult"] != "YES")
+      return;
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "massSetInvalid", {ID_LIST : o["ID_LIST"]});
+       onMassRemoveOrderResul()
+  }
+
+  private void onMassRemoveOrderResult(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOK(this, data))
+      return;
+
+    grid.clearSelected();
+    grid.refresh();
+  }
+
+  private void createOrderForObjects()
+  {
+    FrmCreateOrderForObjects frm = new FrmCreateOrderForObjects();
+    frm.openInContent(UiUtils.getContent(this), refreshAfterClose);
+  }
+
+  private void copyOrder()
+  {
+                  orderId* = grid.getValue("ID");
+    if (orderId == null)
+    {
+      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
+      return;
+    }
+
+    if (grid.getValue("IS_VALID") != 1)
+    {
+      UiMessageBox.show(this, "Zlecenie jest nieaktywne", "Komunikat");
+      return;
+    }
+
+    FrmCopyOrder frm = new FrmCopyOrder();
+    frm.orderId = orderId;
+    frm.openInContent(UiUtils.getContent(this), refreshAfterClose);
+  }
+
+  private void refreshAfterClose(Object o)
+  {
+    if (o["DialogResult"] != "OK")
+      return;
+
+    grid.refresh();
+  }
+
+  private void moveOrder()
+  {
+                  orderId* = grid.getValue("ID");
+    if (orderId == null)
+    {
+      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
+      return;
+    }
+
+    if (grid.getValue("IS_VALID") != 1)
+    {
+      UiMessageBox.show(this, "Zlecenie jest nieaktywne", "Komunikat");
+      return;
+    }
+
+    SwfObject frm = new SwfObject(stage,"eMediaUiCommon.frm","pl.logicsynergy.ui.dialog.FrmDatePicker");
+    frm.invoke("openInContent", UiUtils.getContent(this), frmChoiceMoveDateResult,
+      {
+        "formName":"Wybór daty rozpoczęcia",
+        "dfDate.label":"Data rozpoczęcia",
+        "dfDate.getValue()" : grid.getValue("START_DATE"),
+        "returnData" : {ORDER_ID : orderId},
+        "allowNull" : false});
+
+  }
+
+  protected void frmChoiceMoveDateResult(Object o)
+  {
+    if(o["DialogResult"] != "OK")
+      return;
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "moveOrder", {ORDER_ID : o["RETURN_DATA"]["ORDER_ID"], START_DATE : o["DATE"]});
+       onResul()
+  }
+
+  private void copyOrderByTemplate()
+  {
+                  orderId* = grid.getValue("ID");
+    if (orderId == null)
+    {
+      UiMessageBox.show(this, "Nie zostało wybrane zlecenie", "Komunikat");
+      return;
+    }
+
+    if (grid.getValue("IS_VALID") != 1)
+    {
+      UiMessageBox.show(this, "Zlecenie jest nieaktywne", "Komunikat");
+      return;
+    }
+
+                  DataMap dataMap = ROUiEventService.call("logica.uiservice.gis.Order", "prepareCopyOrderByTemplate", {ORDER_ID : orderId});
+       onPrepareCopyOrderByTemplateResul()
+  }
+
+  private void onPrepareCopyOrderByTemplateResult(ResultEvent event)
+  {
+    Object data = event.result;
+    if (!ROUiEventService.isResultOK(this, data))
+      return;
+
+    Object orderData = data["ORDER_DATA"];
+
+    ArrayCollection templateList = orderData["TASK_TEMPLATE_LIST"];
+
+    Object templateSelectedObj = {};
+
+    for (Object obj : templateList)
+    {
+      int objectCode = obj["OBJECT_CODE"];
+      int objectTypeId = obj["OBJECT_TYPE_ID"];
+      int taskTemplateId = obj["TASK_TEMPLATE_ID"];
+      Boolean dedicated = obj["DEDICATED"];
+
+      if (templateSelectedObj[objectTypeId] == null)
+        templateSelectedObj[objectTypeId] = {TEMPLATE_LIST : {}, OBJECTS : {}};
+
+      if (dedicated)
+      {
+        Object tObjectList = templateSelectedObj[objectTypeId]["OBJECTS"][objectCode];
+        if (tObjectList == null)
+          templateSelectedObj[objectTypeId]["OBJECTS"][objectCode] = {};
+
+        templateSelectedObj[objectTypeId]["OBJECTS"][objectCode][taskTemplateId] = {};
+      }
+      else
+      {
+        Object tList = templateSelectedObj[objectTypeId]["TEMPLATE_LIST"];
+        if (tList == null)
+          tList = {};
+
+        tList[taskTemplateId] = {};
+      }
+    }
+
+    FrmCreateOrderForObjects frm = new FrmCreateOrderForObjects();
+
+    frm.dataExchange["dfStartDate.getValue()"] = orderData["START_DATE"];
+    frm.dataExchange["txtName.getValue()"] = orderData["NAME"];
+    frm.dataExchange["cbOrderType.getValue()"] = orderData["ORDER_TYPE_ID"];
+    frm.dataExchange["txtCostAccount.getValue()"] = orderData["COST_ACCOUNT"];
+    frm.dataExchange["chbIsPlan.getValue()"] = 1;
+
+    frm.templateSelectedObj = templateSelectedObj;
+    frm.openInContent(UiUtils.getContent(this), refreshAfterClose);
+    frm.objectList.addAll(orderData["OBJECT_LIST"]);
+  }
+
+                  ]]>
+
+                  <fx:Declarations>
+
+                  <db:DBQuery id="dbQuery" sqlFrom="GIS_Order"
+            sqlField="{dbField/**
  * Zwrócenie obiektu DBQuery dla tabeli XXXXXX
  * 
  * @return From XXXXXX
  */
- public DBQuery dbUnitQuery()
+ public DBQuery dbQuery()
  {
     DBQuery result = new DBQuery();
-    result.sqlFieldString="Id, Name";
-    result.sqlFrom="Common_Unit";
+    result.sqlFrom="GIS_Order";
+    result.sqlField="{dbField}";
     result.sqlOrderBy="Id";
     result.sqlIdentityColumn="Id";
     return result;
  }
 
+/**
+ * Zwrócenie obiektu DBQuery dla tabeli XXXXXX
+ * 
+ * @return From XXXXXX
+ */
+ public DBQuery dbOrderTypeQuery()
+ {
+    DBQuery result = new DBQuery();
+    result.sqlFieldString="Id, Symbol, Name";
+    result.sqlFrom="GIS_OrderType";
+    result.sqlOrderBy="Id";
+    result.sqlIdentityColumn="Id";
+    return result;
+ }
+
+/*
+	 * Metoda wyciągająca nazwy pól z XMLa
+	 * 
+	 * @return obiekt Element zawierający nazwy pól
+	 */
+	 private Element null()
+	 {
+		return XMLUtils.getXMLElement("        <field name="Id" dataField="ID" width="80" bindable="false"/>        <field name="OrderNo" dataField="ORDER_NO" displayText="Nr zlecenia" width="150"/>        <field name="OrderDate" dataField="ORDER_DATE" displayText="Data zlecenia" width="100" type="date"/>        <field name="Name" dataField="NAME" displayText="Nazwa" width="200"/>        <field name="StartDate" dataField="START_DATE" displayText="Data rozpoczęcia" width="130" type="date" dateTimePattern="yyyy-MM-dd HH:mm"/>        <field name="EndDate" dataField="END_DATE" displayText="Data zakończenia" width="130" type="date" dateTimePattern="yyyy-MM-dd HH:mm"/>        <field name="OrderTypeId" dataField="ORDER_TYPE_ID" displayText="Id rodzaju" width="100"/>        <field name="CostAccount" dataField="COST_ACCOUNT" displayText="Konto kosztowe" width="100"/>        <field name="Description" dataField="DESCRIPTION" displayText="Opis" width="200"/>        <field name="IsValid" dataField="IS_VALID" description="Czy ważne" width="-1"/>      </fields>); }
+
 
   }
 
 AddMethods
-                  <c:Scroller left="0" right="0" top="0" bottom="0">
+                  <fx:XML id="menuEx" xmlns="">
+  <menu xmlNodePosition="-1">
+    <menuitem id="OPTIONS" labelName="Opcje" xmlNodePosition="-1" enabledInWriteMode='false'>
+      <menuitem id="PLAN_SMS_NOTIFICATION"  labelName="Powiadomienia SMS o wprowadzeniu planu">
+        <menuitem id="SEND_SMS_NOTIFICATION" labelName="Wyślij"/>
+        <menuitem id="SEND_SMS_NOTIFICATION_AGAIN" labelName="Wyślij ponownie"/>
+      </menuitem>
+      <manuitem id="TASK_LIST" labelName="Lista zadań"/>
+      <menuitem id="CREATE_ORDER_FOR_OBJECTS" labelName="Utwórz zlecenie dla obiektów"/>
+      <menuitem id="COPY_ORDER" labelName="Kopiuj zlecenie"/>
+      <menuitem id="COPY_ORDER_BY_TEMPLATE" labelName="Kopiuj zlecenie (na podstawie szablonu)"/>
+      <menuitem id="MOVE_ORDER" labelName="Przesuń zlecenie"/>
+      <manuitem type="separator"/>
+      <menuitem id="REMOVE" labelName="Usuń zlecenie (ustaw jako nieważne)"/>
+      <menuitem id="MASS_REMOVE" labelName="Usuń wybrane zlecenia (ustaw jako nieważne)"/>
+      <manuitem type="separator"/>
+      <menuitem id="REMOVE_PHYSICALL" labelName="Usuń fizycznie zlecenie" enabledRole="ADMIN;R_ORDER_REMOVE_PHYSICALL"/>
+      <menuitem id="MASS_REMOVE_PHYSICALL" labelName="Usuń fizycznie wybrane zlecenia" enabledRole="ADMIN;R_ORDER_REMOVE_PHYSICALL"/>
+      <manuitem type="separator"/>
+      <menuitem id="ORDER_CALENDAR" labelName="Kalendarz dla zlecenia"/>
+    </menuitem>
+    <menuitem id="DICTIONARY" labelName="Słowniki" xmlNodePosition="-1">
+      <menuitem id="ORDER_TYPE" labelName="Typy zleceń"/>
+    </menuitem>
+    <menuitem xmlNode="RANGE" xmlNodePosition="-1" id="SHOW_VALID" labelName="Ważne" type="radio" groupName="validType" toggled="true"/>
+    <menuitem xmlNode="RANGE" xmlNodePosition="-1" id="SHOW_INVALID" labelName="Nieważne" type="radio" groupName="validType"/>
+    <menuitem xmlNode="RANGE" xmlNodePosition="-1" id="SHOW_ALL" labelName="Wszystkie" type="radio" groupName="validType"/>
+    <menuitem xmlNode="RANGE" xmlNodePosition="-1" type="separator"/>
+  </menu>
+                  </fx:XML>
+
+                  <fx:XML xmlns="" id="gridColorProperty">
+  <fields>
+    <field dataField="IS_VALID" value="0" color="#a4a3a3" range="row" />
+  </fields>
+                  </fx:XML>
+
+                  </fx:Declarations>
+
+                  <c:Scroller id="mainScroller" left="0" right="0" top="0" bottom="25" minWidth="450" width="600">
                   <c:VGroup id="grMain" width="100%" height="100%">
   <c:HGroup width="100%">
+    <c:TextInput id="txtOrderNo" width="150" label="Nr zlecenia" columnName="OrderNo"
+                  dataField="ORDER_NO" dbProvider="{getDbManager}" enabledInEditMode="false"
+                  enabledInNewMode="false"/>
+    <c:TextInput id="txtName" width="100%" label="Nazwa"
+                  columnName="Name" dataField="NAME" dbProvider="{getDbManager}"/>
   </c:HGroup>
   <c:HGroup width="100%">
-    <c:TextInput id="txtFlowMin" width="190" label="Przepływ minimalny Q1 (m3/h)" columnName="FlowMin"
-                  dataField="FLOW_MIN" dbProvider="{getDbManager}"
-                  toolTip="Najmniejszy strumień objętości, przy którym wskazania licznika spełniają wymagania dotyczące błędów granicznych dopuszczalnych"
-                  />
-    <c:TextInput id="txtFlowMid" width="190" label="Przepływ średni Q2 (m3/h)" columnName="FlowMid"
-                  dataField="FLOW_MID" dbProvider="{getDbManager}"
-                  toolTip="Pośredni strumień objętości stanowiący wartość objętości występującą pomiędzy ciągłym a minimalnym strumieniem objętości, przy którym zakres obciążeń pomiarowych podzielony jest na dwa przedziały górny i dolny"
-                  />
-    <c:TextInput id="txtFlowNominal" width="190" label="Przepływ nominalny Q3 (m3/h)"
-                  toolTip="Ciągły strumień objętości stanowiący największy strumień, przy którym licznik działa w sposób prawidłowy w normalnych warunkach użytkowania"
-                  columnName="FlowNominal" dataField="FLOW_NOMINAL" dbProvider="{getDbManager}"
-                  />
-    <c:TextInput id="txtFlowMax" width="190" label="Przepływ maksymalny Q4 (m3/h)" columnName="FlowMax"
-                  dataField="FLOW_MAX" dbProvider="{getDbManager}"
-                  toolTip="Przeciążeniowy strumień objętości – jest największym strumieniem, przy którym licznik działa w sposób prawidłowy w krótkim okresie czasu, bez uszkodzenia"
-                  />
+    <c:DateField id="dfOrderDate" label="Data zlecenia" width="100%" minWidth="125"
+                  columnName="OrderDate" dataField="ORDER_DATE"
+                  defaultValue="{new Date()}"
+                  dbProvider="{getDbManager}"/>
+    <c:DateField id="dfStartDate" label="Data rozpoczęcia" width="100%" minWidth="125"
+                  columnName="StartDate" dataField="START_DATE" dbProvider="{getDbManager}"
+                  shortTime="true"/>
+    <c:DateField id="dfEndDate" label="Data zakończenia" width="100%" minWidth="125"
+                  columnName="EndDate" dataField="END_DATE" dbProvider="{getDbManager}"
+                  shortTime="true"/>
   </c:HGroup>
   <c:HGroup width="100%">
-    <c:TextInput id="txtDailyLoadMin" width="190" label="Min obc. dzienne (m3/dzień)" columnName="DailyLoadMin"
-                  dataField="DAILY_LOAD_MIN" dbProvider="{getDbManager}"
-                  />
-    <c:TextInput id="txtDailyLoadMax" width="190" label="Max obc. dzienne (m3/dzień)" columnName="DailyLoadMax"
-                  dataField="DAILY_LOAD_MAX" dbProvider="{getDbManager}"
-                  />
+    <c:ComboBox id="cbOrderType" width="50%" label="Typ zlecenia"
+                columnName="OrderTypeId" dataField="ORDER_TYPE_ID" dbProvider="{getDbManager}"
+                dbQuery="{dbOrderTypeQuery}" descField="[Symbol] | [Name]"/>
+    <c:TextInput id="txtCostAccount" label="Konto kosztowe" width="150"
+                  columnName="CostAccount" dataField="COST_ACCOUNT" dbProvider="{getDbManager}"/>
   </c:HGroup>
-  <c:HGroup width="100%">
-    <c:DatabaseField id="dbfMeterKind" width="100%" label="Rodzaj" columnName="MeterKindId" dataField="METER_KIND_ID" dbProvider="{getDbManager}"
-                  idField="Id" sqlTable="Network_MeterKind" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterKind}"
-                  frmClassName="pl.logicsynergy.ui.common.FrmDictionary"
-                  dataExchange="{{'dbQuery.sqlTable':'Network_MeterKind', 'dbQuery.sqlFrom':'Network_MeterKind', formName:'Rodzaj licznika', type: 1 }}"/>
-    <c:DatabaseField id="dbfMeterInstall" width="100%" label="Miejsce instalacji" columnName="MeterInstallId" dataField="METER_INSTALL_ID" dbProvider="{getDbManager}"
-                  idField="Id" sqlTable="Network_MeterInstall" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterInstall}"
-                  frmClassName="pl.logicsynergy.ui.common.FrmDictionary"
-                  dataExchange="{{'dbQuery.sqlTable':'Network_MeterInstall', 'dbQuery.sqlFrom':'Network_MeterInstall', formName:'Miejsce instalacji', type: 1 }}"/>
-  </c:HGroup>
-  <c:HGroup width="100%">
-    <c:TextInput id="TempMax" width="190" label="Maksymalna temperatura pracy (C°)"
-                  columnName="TempMax" dataField="TEMP_MAX" dbProvider="{getDbManager}"
-                  />
-    <c:TextInput id="txtPressureMax" width="190" label="Max ciśnienie pracy (MPa)" columnName="PressureMax"
-                  dataField="PRESSURE_MAX" dbProvider="{getDbManager}"
-                  />
-    <c:ComboBox id="cbWorkTimeCountType" width="190" label="Sposób liczenia czasu pracy"
-                columnName="WorkTimeCountType" dataField="WORK_TIME_COUNT_TYPE"
-                dbProvider="{getDbManager}"/>
-  </c:HGroup>
-  <c:HGroup width="100%">
-    <c:TextInput id="txtDiameterNominal" width="190" label="Średnica nominalna (mm)"
-                  columnName="DiameterNominal" dataField="DIAMETER_NOMINAL"
-                  dbProvider="{getDbManager}"
-                  />
-    <c:TextInput id="txtDiameterMin" width="190" label="Średnica przyłączeniowa od (mm)"
-                  columnName="DiameterMin" dataField="DIAMETER_MIN" dbProvider="{getDbManager}"
-                  />
-    <c:TextInput id="txtDiameterMax" width="190" label="Średnica przyłączeniowa do (mm)"
-                  columnName="DiameterMax" dataField="DIAMETER_MAX" dbProvider="{getDbManager}"
-                  />
-  </c:HGroup>
-  <c:HGroup width="100%">
-    <c:ComboBox id="cbUnit" width="190" label="Jednostka" columnName="UnitId" dataField="UNIT_ID"
-                dbProvider="{getDbManager}" dbQuery="{dbUnitQuery}"/>
-
-  </c:HGroup>
+  <c:TextArea id="txtaDescription" width="100%" height="60" label="Opis" columnName="Description"
+              dataField="DESCRIPTION" dbProvider="{getDbManager}"/>
+  <c:VGroup id="grPosition" width="100%" height="100%">
+    <c:ButtonBar id="tbMain" width="100%" height="25" dataProvider="{vcTab}" />
+    </c:ViewStack id="vcTab" width="100%" height="100%" creationPolicy="all">
+      <c:NavigatorContent id="ncPlan" width="100%" height="100%" label="Plan">
+        <orderComponents:OrderPosition id="tOrderPlanPosition" width="100%" height="100%" dbManager="{getDbManager}" isPlan="1"/>
+      </c:NavigatorContent>
+      <c:NavigatorContent id="ncExecution" width="100%" height="100%" label="Realizacja">
+        <orderComponents:OrderPosition id="tOrderExecutionPosition" width="100%" height="100%" dbManager="{getDbManager}" isPlan="0" showButtonMove="true"/>
+      </c:NavigatorContent>
+    </c:ViewStack>
+  </c:VGroup>
                   </c:VGroup>
                   </c:Scroller>
-</mdi:View>
+
+</ui:UiDictionary>
 }

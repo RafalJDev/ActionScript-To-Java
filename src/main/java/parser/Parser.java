@@ -62,7 +62,7 @@ public class Parser {
         } else if (parsedPart == 2) {
             convertActionScriptToJava();
         } else if (parsedPart == 3) {
-            if (line.contains("<fx:XML") ) {
+            if (line.contains("<fx:XML")) {
                 parsedPart = 4;
                 line = getSpacingAndCutHalf() + line.trim();
                 return line;
@@ -238,27 +238,30 @@ public class Parser {
             }
         }
         if (line.contains(" function ")) {
-            int lastIndexOfColon = line.lastIndexOf(":");
-            String returnTypeWithoutSpace = line.substring(lastIndexOfColon + 1, line.length()).trim();
-            line = line.substring(0, lastIndexOfColon);
-            line = line.replace(" function ", " " + returnTypeWithoutSpace + " ");
+            if (!line.contains(", function ")) {
+                int lastIndexOfColon = line.lastIndexOf(":");
+                String returnTypeWithoutSpace = line.substring(lastIndexOfColon + 1, line.length()).trim();
+                line = line.substring(0, lastIndexOfColon);
+                line = line.replace(" function ", " " + returnTypeWithoutSpace + " ");
 
-            if (!line.matches(".*\\(\\).*")) {
-                String bracketsWithArguments = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")"));
-                line = line.replaceAll("\\(.*\\)", "()");
-                String[] argumentsWithTypes = bracketsWithArguments.split(",");
+                if (!line.matches(".*\\(\\).*")) {
+                    String bracketsWithArguments = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")"));
+                    line = line.replaceAll("\\(.*\\)", "()");
+                    System.out.println(line);
+                    String[] argumentsWithTypes = bracketsWithArguments.split(",");
 
-                boolean firstArgument = true;
-                for (String oneArgument : argumentsWithTypes) {
-                    String[] split = oneArgument.split(":");
-                    String addArgument = split[1] + " " + split[0];
+                    boolean firstArgument = true;
+                    for (String oneArgument : argumentsWithTypes) {
+                        String[] split = oneArgument.split(":");
+                        String addArgument = split[1] + " " + split[0];
 
-                    if (firstArgument) {
-                        line = line.replace("(", "(" + addArgument);
-                        firstArgument = false;
-                        continue;
+                        if (firstArgument) {
+                            line = line.replace("(", "(" + addArgument);
+                            firstArgument = false;
+                            continue;
+                        }
+                        line = line.replace(")", ", " + addArgument + ")");
                     }
-                    line = line.replace(")", ", " + addArgument + ")");
                 }
             }
         }
@@ -312,7 +315,7 @@ public class Parser {
             countDbQuery++;
         }
         if (countDbQuery >= 1) {
-            pattern = Pattern.compile("\\w+=\"[a-zA-Z0-9_, ]+\"");
+            pattern = Pattern.compile("\\w+=\"[a-zA-Z0-9_, {}]+\"");
             matcher = pattern.matcher(line);
 
             while (matcher.find()) {
@@ -349,12 +352,12 @@ public class Parser {
         if (line.contains("</fields>")) {
             if (!XmlField.xmlFieldLines.isEmpty()) {
                 createMethodForFields();
-                iHaveDoneIt=false;
+                iHaveDoneIt = false;
             }
         }
     }
 
-    private static void createMethodForDbQuery() {
+    public static void createMethodForDbQuery() {
 
         String firstString = dbQueryAtributes.get(0);
         String methodName = firstString.substring(firstString.indexOf("\"") + 1, firstString.lastIndexOf("\""));
@@ -387,7 +390,7 @@ public class Parser {
                 "\t\treturn XMLUtils.getXMLElement(\"";
 
         for (String line : XmlField.getXmlFieldLines()) {
-            methodString += line;
+            methodString += line +"\n";
         }
 
         methodString += "); }\n\n";
@@ -432,12 +435,14 @@ public class Parser {
         replaceMap2.put(".recordCount", ".getRecordCount()");
         replaceMap2.put("length", "length()");
         replaceMap2.put(".mode", "getMode()");
-        replaceMap2.put(".value", ".getValue()");
+        replaceMap2.put(".value ", ".getValue() ");
         replaceMap2.put("super.load\\(event\\);", "super.load();");
         replaceMap2.put(".getNavigatorContent", ".getContent");
         replaceMap2.put("parseInt\\(", "Integer.valueOf(");
         replaceMap2.put("swf", "frm");
         replaceMap2.put("SWF", "FRM");
+        replaceMap2.put("ROManager", "ROUiEventService");
+        replaceMap2.put("for each", "for");
 
         replaceMap4.put("grid.dbManager", "getDbManager");
         replaceMap4.put("_dbManager", "getDbManager");
@@ -653,4 +658,5 @@ class XmlField {
     public static void setXmlFieldLines(List<String> xmlFieldLines) {
         XmlField.xmlFieldLines = xmlFieldLines;
     }
+
 }
