@@ -18,15 +18,24 @@ public class Controller {
 
     LineEntity lineEntity = LineEntity.getInstance();
 
-    UiDesignStage uiDesignStage = UiDesignStage.getInstance();
+    UiDesignStage uiDesignStage;
     ImportStage importStage = ImportStage.getInstance();
-    ActionScriptStage actionScriptStage = ActionScriptStage.getInstance();
-    FxDeclarationStage fxDeclarationStage = FxDeclarationStage.getInstance();
-    ComponentsStage componentsStage = ComponentsStage.getInstance();
+    ActionScriptStage actionScriptStage;
+    FxDeclarationStage fxDeclarationStage;
+    ComponentsStage componentsStage;
+
+    public Controller() {
+        uiDesignStage = UiDesignStage.getInstance();
+        importStage = ImportStage.getInstance();
+        actionScriptStage = ActionScriptStage.getInstance();
+        fxDeclarationStage = FxDeclarationStage.getInstance();
+        componentsStage = ComponentsStage.getInstance();
+
+        reader = new Reader();
+    }
 
     public void launchIt() {
 
-        reader = new Reader();
         reader.openFileAndGetBufferedReader();
 
         stagesFinder = new StagesFinder();

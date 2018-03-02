@@ -57,7 +57,10 @@ public class StagesFinder {
                         }
                         break;
                     case ASCODE:
-                        actionScriptStage.firstLine = lineCount;
+                        if (componentStageFirstLineOccured) {
+                            actionScriptStage.firstLine = lineCount;
+                            componentStageFirstLineOccured = false;
+                        }
                         if (line.contains("]]>")) {
                             actionScriptStage.lastLine = lineCount;
                             allStages = AllStages.DBFIELDS;

@@ -11,7 +11,7 @@ import java.io.*;
 @Log
 public class Reader {
 
-    private final String fileToReadFrom = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\flashCodeJustActionScript.txt";
+    private final String fileToReadFrom = System.getProperty("user.dir") + /*"\\ActionScript-To-Java"+*/"\\files\\flashCodeJustActionScript.txt";
 
     private IOEntity ioEntity = IOEntity.getInstance();
 
@@ -48,5 +48,24 @@ public class Reader {
         } else {
             throw new NullPointerException("BufferedReader is null");
         }
+
+//        listFilesAndFilesSubDirectories(System.getProperty("user.dir"));
     }
+
+    public void listFilesAndFilesSubDirectories(String directoryName) {
+        File directory = new File(directoryName);
+        //get all the files from a directory
+        File[] fList = directory.listFiles();
+        for (File file : fList) {
+            if (file.isFile()) {
+                if (file.getAbsolutePath().contains("flashCodeJustActionScript")) {
+                    System.out.println(file.getAbsolutePath());
+                }
+                System.out.println();
+            } else if (file.isDirectory()) {
+                listFilesAndFilesSubDirectories(file.getAbsolutePath());
+            }
+        }
+    }
+
 }
