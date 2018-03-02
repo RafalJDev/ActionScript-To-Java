@@ -7,6 +7,7 @@ import newash.actionscript.stage.Stage;
  */
 public class ActionScriptStage extends Stage {
 
+
     private static ActionScriptStage ourInstance = new ActionScriptStage();
 
     public static ActionScriptStage getInstance() {
@@ -14,5 +15,6 @@ public class ActionScriptStage extends Stage {
     }
 
     private ActionScriptStage() {
+        name = "ActionScriptStage";
     }
 }

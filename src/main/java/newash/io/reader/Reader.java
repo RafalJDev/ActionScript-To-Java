@@ -1,5 +1,6 @@
 package newash.io.reader;
 
+import lombok.extern.java.Log;
 import newash.io.code.IOEntity;
 
 import java.io.*;
@@ -7,6 +8,7 @@ import java.io.*;
 /**
  * Created by Jaszczynski.Rafal on 01.03.2018.
  */
+@Log
 public class Reader {
 
     private final String fileToReadFrom = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\flashCodeJustActionScript.txt";
@@ -22,6 +24,7 @@ public class Reader {
 
     public void openFileAndGetBufferedReader() {
 
+        log.info("In openFileAndGetBufferedReader");
         // Open the file
         FileInputStream fstream = null;
         try {
@@ -33,6 +36,8 @@ public class Reader {
     }
     
     public void closeBufferedReader() {
+
+        log.info("In closeBufferedReader");
         BufferedReader br = ioEntity.getInputCode();
         if (br != null) {
             try {

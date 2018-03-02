@@ -5,7 +5,17 @@ package newash.actionscript.stage;
  */
 public class Stage {
 
-    int firstLine;
-    int lastLine;
-    StringBuilder code;
+    public String name;
+    public int firstLine;
+    public int lastLine;
+    public StringBuilder code;
+
+    @Override
+    public String toString() {
+        return "Stage{" +
+                "name='" + name + '\'' +
+                ", firstLine=" + firstLine +
+                ", lastLine=" + lastLine +
+                '}';
+    }
 }

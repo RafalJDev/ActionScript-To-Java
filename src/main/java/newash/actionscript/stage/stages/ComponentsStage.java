@@ -14,5 +14,6 @@ public class ComponentsStage extends Stage {
     }
 
     private ComponentsStage() {
+        name = "ComponentsStage";
     }
 }

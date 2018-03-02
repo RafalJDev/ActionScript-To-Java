@@ -14,5 +14,6 @@ public class ImportStage extends Stage {
     }
 
     private ImportStage() {
+        name = "ImportStage";
     }
 }

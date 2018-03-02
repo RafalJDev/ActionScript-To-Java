@@ -14,5 +14,6 @@ public class UiDesignStage extends Stage {
     }
 
     private UiDesignStage() {
+        name = "UiDesignStage";
     }
 }
