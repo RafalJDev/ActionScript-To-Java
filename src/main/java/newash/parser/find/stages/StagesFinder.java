@@ -7,6 +7,8 @@ import newash.io.code.IOEntity;
 import newash.io.reader.current.LineEntity;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Jaszczynski.Rafal on 02.03.2018.
@@ -24,6 +26,9 @@ public class StagesFinder {
     FxDeclarationStage fxDeclarationStage = FxDeclarationStage.getInstance();
     ComponentsStage componentsStage = ComponentsStage.getInstance();
 
+    String classThatWillBeExtended = "";
+    String line;
+
     boolean componentStageFirstLineOccured = false;
 
     public void findStages() {
@@ -31,7 +36,6 @@ public class StagesFinder {
         log.info("In FindStages");
 
         AllStages allStages = AllStages.UIDESIGN;
-        String line;
         int lineCount = 0;
         try {
             while ((line = globalReader.getInputCode().readLine()) != null) {
@@ -40,9 +44,12 @@ public class StagesFinder {
                     case UIDESIGN:
                         if (line.contains("<?xml")) {
                             uiDesignStage.firstLine = lineCount;
+                        } else if (!line.isEmpty() && line.contains("<") && classThatWillBeExtended.isEmpty()) {
+                            classThatWillBeExtended = doRegexOnLine(":(\\w+)\\s", 1);
                         } else if (line.contains("<fx:Script>")) {
                             uiDesignStage.lastLine = lineCount;
                             allStages = AllStages.IMPORTS;
+
                         }
                         break;
                     case IMPORTS:
@@ -78,7 +85,9 @@ public class StagesFinder {
                         }
                         break;
                     case COMPONENTS:
-                        if (line.contains("</s:Group>")) {
+                        if (classThatWillBeExtended.isEmpty()) {
+                            throw new NullPointerException("Regex for the class that will be extended doesn't work");
+                        } else if (line.contains(classThatWillBeExtended)) {
                             componentsStage.lastLine = lineCount;
                         } else if (line.contains("<fx:Declarations>")) {
                             throw new IllegalStateException("Its components stage and there is <fx:Declarations>, Line: " + line);
@@ -92,5 +101,23 @@ public class StagesFinder {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String doRegexOnLine(String regex, int groupNumber) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(line);
+        if (matcher.find()) {
+            return matcher.group(groupNumber);
+        }
+        return "";
+    }
+
+    public String doRegexOnLine(String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(line);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return "";
     }
 }

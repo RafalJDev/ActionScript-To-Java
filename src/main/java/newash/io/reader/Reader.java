@@ -11,7 +11,9 @@ import java.io.*;
 @Log
 public class Reader {
 
-    private final String fileToReadFrom = System.getProperty("user.dir") + /*"\\ActionScript-To-Java"+*/"\\files\\flashCodeJustActionScript.txt";
+    private final String fileName = "TabEstateOwner.txt";
+
+    private  String filePathToReadFrom; //= System.getProperty("user.dir") + /*"\\ActionScript-To-Java"+*/"\\files\\" + fileName;
 
     private IOEntity ioEntity = IOEntity.getInstance();
 
@@ -26,15 +28,16 @@ public class Reader {
 
         log.info("In openFileAndGetBufferedReader");
         // Open the file
+        listFilesAndFilesSubDirectories(System.getProperty("user.dir"));
         FileInputStream fstream = null;
         try {
-            fstream = new FileInputStream(fileToReadFrom);
+            fstream = new FileInputStream(filePathToReadFrom);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         ioEntity.setInputCode(new BufferedReader(new InputStreamReader(fstream)));
     }
-    
+
     public void closeBufferedReader() {
 
         log.info("In closeBufferedReader");
@@ -48,8 +51,6 @@ public class Reader {
         } else {
             throw new NullPointerException("BufferedReader is null");
         }
-
-//        listFilesAndFilesSubDirectories(System.getProperty("user.dir"));
     }
 
     public void listFilesAndFilesSubDirectories(String directoryName) {
@@ -58,14 +59,12 @@ public class Reader {
         File[] fList = directory.listFiles();
         for (File file : fList) {
             if (file.isFile()) {
-                if (file.getAbsolutePath().contains("flashCodeJustActionScript")) {
-                    System.out.println(file.getAbsolutePath());
+                if (file.getAbsolutePath().contains(fileName)) {
+                    filePathToReadFrom = file.getAbsolutePath().trim();
                 }
-                System.out.println();
             } else if (file.isDirectory()) {
                 listFilesAndFilesSubDirectories(file.getAbsolutePath());
             }
         }
     }
-
 }
