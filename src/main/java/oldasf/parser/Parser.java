@@ -58,7 +58,7 @@ public class Parser {
             }
             line = "";
         } else if (parsedPart == 1) {
-            searchFirstStage();
+//            parseThisStage();
         } else if (parsedPart == 2) {
             convertActionScriptToJava();
         } else if (parsedPart == 3) {
@@ -140,176 +140,176 @@ public class Parser {
         return spaces;
     }
 
-    public static void searchFirstStage() {
-        pattern = Pattern.compile("ui:\\s+\\w");
-        matcher = pattern.matcher(line);
-
-        if (matcher.find()) {
-            classMap.put("extends", matcher.group().trim());
-        }
-        pattern = Pattern.compile("formName=\".*\"");
-        matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            classMap.put("formName", matcher.group()
-                    .trim()
-                    .replace("formName=\"", "")
-                    .replace("\"", ""));
-        }
-        pattern = Pattern.compile("formName=\".*\"");
-        matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            classMap.put("GUID", matcher.group()
-                    .trim()
-                    .replace("GUID=\"", "")
-                    .replace("\"", ""));
-        }
-        line = "";
-    }
+//    public static void parseThisStage() {
+//        pattern = Pattern.compile("ui:\\s+\\w");
+//        matcher = pattern.matcher(line);
+//
+//        if (matcher.find()) {
+//            classMap.put("extends", matcher.group().trim());
+//        }
+//        pattern = Pattern.compile("formName=\".*\"");
+//        matcher = pattern.matcher(line);
+//        if (matcher.find()) {
+//            classMap.put("formName", matcher.group()
+//                    .trim()
+//                    .replace("formName=\"", "")
+//                    .replace("\"", ""));
+//        }
+//        pattern = Pattern.compile("formName=\".*\"");
+//        matcher = pattern.matcher(line);
+//        if (matcher.find()) {
+//            classMap.put("GUID", matcher.group()
+//                    .trim()
+//                    .replace("GUID=\"", "")
+//                    .replace("\"", ""));
+//        }
+//        line = "";
+//    }
 
     public static void convertActionScriptToJava() {
-        if (line.contains("CDATA")) {
-            line = "";
-            return;
-        }
-        if (!importIsAlreadyDone) {
-            if (line.contains("import ")) {
-                firstImportStatementOccured = true;
-                if (line.contains(" mx")) {
-                    line = "";
-                    return;
-                }
-                return;
-            } else if (line.matches(".*\\w+.*") && !line.isEmpty() && firstImportStatementOccured) {
-                importIsAlreadyDone = true;
-
-                String classAndConstructor = "@UiDesign(formName = \"" + classMap.get("formName") + "\", guid = \"" + classMap.get("GUID") + "\")\n" +
-                        "public class YOURCLASSNAME extends " + classMap.get("extends") + " \n" +
-                        "{\n" +
-                        "  /** Konstruktor */\n" +
-                        "  public YOURCLASSNAME()\n" +
-                        "  {\n" +
-                        "\tUiCreator.getInstance(self).executeXML();\n" +
-                        "  }\n" +
-                        "HANYS\n";
-
-                line = classAndConstructor;
-                return;
-            }
-        }
-        if (thereIsRoCall && line.contains("ro.call")) {
-
-            String spaces = line.substring(0, line.indexOf("r") - 1);
-            pattern = Pattern.compile("\\(.*\\)");
-            matcher = pattern.matcher(line);
-            String callArguments = "";
-            if (matcher.find()) {
-                callArguments = matcher.group().substring(1, matcher.group().length() - 1);
-
-                line = spaces + "DataMap dataMap = ROUiEventService.call(" + callArguments + ");";
-                if (!methodToCallAfterRo.isEmpty()) {
-                    line += "\n" + spaces + methodToCallAfterRo + "()";
-                }
-            }
-            thereIsRoCall = false;
-            return;
-        }
-        if (line.trim().startsWith("for") && line.contains(" in ")) {
-            line = line.replace(" in ", " : ");
-
-        }
-        pattern = Pattern.compile("\\w* = [{]");
-        matcher = pattern.matcher(line);
-        if (line.contains(" = {")) {
-            letsCreateDataMap = true;
-        }
-        if (letsCreateDataMap) {
-
-        }
-
-        if (line.contains("ROUiEventService") && !line.contains(" import ")) {
-            thereIsRoCall = true;
-            pattern = Pattern.compile("\\(.*\\)");
-            matcher = pattern.matcher(line);
-
-            if (matcher.find()) {
-                methodToCallAfterRo = matcher.group().substring(1, matcher.group().length() - 2);
-                line = "";
-                return;
-            }
-        }
-        if (line.contains(" function ")) {
-            if (!line.contains(", function ")) {
-                int lastIndexOfColon = line.lastIndexOf(":");
-                String returnTypeWithoutSpace = line.substring(lastIndexOfColon + 1, line.length()).trim();
-                line = line.substring(0, lastIndexOfColon);
-                line = line.replace(" function ", " " + returnTypeWithoutSpace + " ");
-
-                //TODO ucina ostatnią literę, gdy są nawiasy, a to nie jest funkcja
-                if (!line.matches(".*\\(\\).*")) {
-                    String bracketsWithArguments = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")"));
-                    line = line.replaceAll("\\(.*\\)", "()");
-                    System.out.println(line);
-                    String[] argumentsWithTypes = bracketsWithArguments.split(",");
-
-                    boolean firstArgument = true;
-                    for (String oneArgument : argumentsWithTypes) {
-                        String[] split = oneArgument.split(":");
-                        String addArgument = split[1] + " " + split[0];
-
-                        if (firstArgument) {
-                            line = line.replace("(", "(" + addArgument);
-                            firstArgument = false;
-                            continue;
-                        }
-                        line = line.replace(")", ", " + addArgument + ")");
-                    }
-                }
-            }
-        }
-        if (line.contains("override")) {
-            line = "  @Override\n  " + line.replace("override ", "").trim();
-        }
-        if (line.contains("var")) {
-            int firstColon = line.indexOf(":");
-            pattern = Pattern.compile(":[a-zA-Z0-9]*\\s{0}");
-            matcher = pattern.matcher(line);
-
-            if (matcher.find()) {
-                line = line.replace("var", matcher.group().replace(":", ""));
-                line = line.replace(matcher.group(), "");
-            }
-        }
-
-        if (line.contains("protected void load")) {
-            line = "  /** Nadpisana metoda load z klasy bazowej */\n" + line;
-            line = line.replace("protected void load", "public void load");
-        }
-        if (line.contains("addEventListener(")) {
-            if (line.contains(")")) {
-                methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.indexOf(")")).trim());
-                line = line.replace(")", "(event))");
-                line = line.replace(", ", ", event -> ");
-                line = line.replaceAll("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
-                line = line.replaceAll("\"indexChanged\"", "BaseEvent.VALUE_CHANGED");
-            }
-        }
-        for (String method : methodsForEventListeners) {
-            if (line.contains(method) && line.contains(" void ")) {
-                String oldArgument = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
-                String newArgument = "BaseEvent event";
-                line = line.replace(oldArgument, newArgument);
-                break;
-            }
-        }
-
-        pattern = Pattern.compile("\\s{3}\\w+.");
-        matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            candidatesForComponents.add(matcher.group().trim().replace(".", ""));
-        }
-
-        simpleReplaceAllOnMap();
-
+//        if (line.contains("CDATA")) {
+//            line = "";
+//            return;
+//        }
+//        if (!importIsAlreadyDone) {
+//            if (line.contains("import ")) {
+//                firstImportStatementOccured = true;
+//                if (line.contains(" mx")) {
+//                    line = "";
+//                    return;
+//                }
+//                return;
+//            } else if (line.matches(".*\\w+.*") && !line.isEmpty() && firstImportStatementOccured) {
+//                importIsAlreadyDone = true;
+//
+//                String classAndConstructor = "@UiDesign(formName = \"" + classMap.get("formName") + "\", guid = \"" + classMap.get("GUID") + "\")\n" +
+//                        "public class YOURCLASSNAME extends " + classMap.get("extends") + " \n" +
+//                        "{\n" +
+//                        "  /** Konstruktor */\n" +
+//                        "  public YOURCLASSNAME()\n" +
+//                        "  {\n" +
+//                        "\tUiCreator.getInstance(self).executeXML();\n" +
+//                        "  }\n" +
+//                        "HANYS\n";
+//
+//                line = classAndConstructor;
+//                return;
+//            }
+//        }
+//        if (thereIsRoCall && line.contains("ro.call")) {
+//
+//            String spaces = line.substring(0, line.indexOf("r") - 1);
+//            pattern = Pattern.compile("\\(.*\\)");
+//            matcher = pattern.matcher(line);
+//            String callArguments = "";
+//            if (matcher.find()) {
+//                callArguments = matcher.group().substring(1, matcher.group().length() - 1);
+//
+//                line = spaces + "DataMap dataMap = ROUiEventService.call(" + callArguments + ");";
+//                if (!methodToCallAfterRo.isEmpty()) {
+//                    line += "\n" + spaces + methodToCallAfterRo + "()";
+//                }
+//            }
+//            thereIsRoCall = false;
+//            return;
+//        }
+//        if (line.trim().startsWith("for") && line.contains(" in ")) {
+//            line = line.replace(" in ", " : ");
+//
+//        }
+//        pattern = Pattern.compile("\\w* = [{]");
+//        matcher = pattern.matcher(line);
+//        if (line.contains(" = {")) {
+//            letsCreateDataMap = true;
+//        }
+//        if (letsCreateDataMap) {
+//
+//        }
+//
+//        if (line.contains("ROUiEventService") && !line.contains(" import ")) {
+//            thereIsRoCall = true;
+//            pattern = Pattern.compile("\\(.*\\)");
+//            matcher = pattern.matcher(line);
+//
+//            if (matcher.find()) {
+//                methodToCallAfterRo = matcher.group().substring(1, matcher.group().length() - 2);
+//                line = "";
+//                return;
+//            }
+//        }
+//        if (line.contains(" function ")) {
+//            if (!line.contains(", function ")) {
+//                int lastIndexOfColon = line.lastIndexOf(":");
+//                String returnTypeWithoutSpace = line.substring(lastIndexOfColon + 1, line.length()).trim();
+//                line = line.substring(0, lastIndexOfColon);
+//                line = line.replace(" function ", " " + returnTypeWithoutSpace + " ");
+//
+//                //TODO ucina ostatnią literę, gdy są nawiasy, a to nie jest funkcja
+//                if (!line.matches(".*\\(\\).*")) {
+//                    String bracketsWithArguments = line.substring(line.indexOf("(") + 1, line.lastIndexOf(")"));
+//                    line = line.replaceAll("\\(.*\\)", "()");
+//                    System.out.println(line);
+//                    String[] argumentsWithTypes = bracketsWithArguments.split(",");
+//
+//                    boolean firstArgument = true;
+//                    for (String oneArgument : argumentsWithTypes) {
+//                        String[] split = oneArgument.split(":");
+//                        String addArgument = split[1] + " " + split[0];
+//
+//                        if (firstArgument) {
+//                            line = line.replace("(", "(" + addArgument);
+//                            firstArgument = false;
+//                            continue;
+//                        }
+//                        line = line.replace(")", ", " + addArgument + ")");
+//                    }
+//                }
+//            }
+//        }
+//        if (line.contains("override")) {
+//            line = "  @Override\n  " + line.replace("override ", "").trim();
+//        }
+//        if (line.contains("var")) {
+//            int firstColon = line.indexOf(":");
+//            pattern = Pattern.compile(":[a-zA-Z0-9]*\\s{0}");
+//            matcher = pattern.matcher(line);
+//
+//            if (matcher.find()) {
+//                line = line.replace("var", matcher.group().replace(":", ""));
+//                line = line.replace(matcher.group(), "");
+//            }
+//        }
+//
+//        if (line.contains("protected void load")) {
+//            line = "  /** Nadpisana metoda load z klasy bazowej */\n" + line;
+//            line = line.replace("protected void load", "public void load");
+//        }
+//        if (line.contains("addEventListener(")) {
+//            if (line.contains(")")) {
+//                methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.indexOf(")")).trim());
+//                line = line.replace(")", "(event))");
+//                line = line.replace(", ", ", event -> ");
+//                line = line.replaceAll("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
+//                line = line.replaceAll("\"indexChanged\"", "BaseEvent.VALUE_CHANGED");
+//            }
+//        }
+//        for (String method : methodsForEventListeners) {
+//            if (line.contains(method) && line.contains(" void ")) {
+//                String oldArgument = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
+//                String newArgument = "BaseEvent event";
+//                line = line.replace(oldArgument, newArgument);
+//                break;
+//            }
+//        }
+//
+//        pattern = Pattern.compile("\\s{3}\\w+.");
+//        matcher = pattern.matcher(line);
+//        if (matcher.find()) {
+//            candidatesForComponents.add(matcher.group().trim().replace(".", ""));
+//        }
+//
+//        simpleReplaceAllOnMap();
+//
     }
 
     public static void parseDbQuery() {
@@ -329,7 +329,7 @@ public class Parser {
             }
             if (line.contains("/>")) {
                 if (!dbQueryAtributes.isEmpty()) {
-                    createMethodForDbQuery();
+//                    createMethodForDbQuery();
                 }
             }
         }
@@ -354,7 +354,7 @@ public class Parser {
 
         if (line.contains("</fields>")) {
             if (!XmlField.xmlFieldLines.isEmpty()) {
-                createMethodForFields();
+//                createMethodForFields();
                 iHaveDoneIt = false;
             }
         }
@@ -381,26 +381,26 @@ public class Parser {
         dbQueryAtributes.clear();
     }
 
-    public static void createMethodForFields() {
-
-        String methodString = "/*\n" +
-                "\t * Metoda wyciągająca nazwy pól z XMLa\n" +
-                "\t * \n" +
-                "\t * @return obiekt Element zawierający nazwy pól\n" +
-                "\t */\n" +
-                "\t private Element " + XmlField.getId() + "()\n" +
-                "\t {\n" +
-                "\t\treturn XMLUtils.getXMLElement(\"";
-
-        for (String line : XmlField.getXmlFieldLines()) {
-            methodString += line +"\n";
-        }
-
-        methodString += "); }\n\n";
-        dbMethods.add(methodString);
-        XmlField.setId("");
-        XmlField.getXmlFieldLines().clear();
-    }
+//    public static void createMethodForFields() {
+//
+//        String methodString = "/*\n" +
+//                "\t * Metoda wyciągająca nazwy pól z XMLa\n" +
+//                "\t * \n" +
+//                "\t * @return obiekt Element zawierający nazwy pól\n" +
+//                "\t */\n" +
+//                "\t private Element " + XmlField.getId() + "()\n" +
+//                "\t {\n" +
+//                "\t\treturn XMLUtils.getXMLElement(\"";
+//
+//        for (String line : XmlField.getXmlFieldLines()) {
+//            methodString += line +"\n";
+//        }
+//
+//        methodString += "); }\n\n";
+//        dbMethods.add(methodString);
+//        XmlField.setId("");
+//        XmlField.getXmlFieldLines().clear();
+//    }
 
     //stage 5
     public static void parseXmlComponents() {
@@ -452,6 +452,7 @@ public class Parser {
         //TODO * na Object, przy var, ale jeszcze nie zamienia miejscami
         replaceMap2.put("*", "Object");
 
+        //TODO STAGE 4
         replaceMap4.put("grid.dbManager", "getDbManager");
         replaceMap4.put("_dbManager", "getDbManager");
         replaceMap4.put("frmFile=\"\\w+.frm\"", ""); //TODO something with sorting hashMap

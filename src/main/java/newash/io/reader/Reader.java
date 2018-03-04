@@ -12,30 +12,28 @@ import java.io.*;
 public class Reader {
 
     private final String fileName = "TabEstateOwner.txt";
-
-    private  String filePathToReadFrom; //= System.getProperty("user.dir") + /*"\\ActionScript-To-Java"+*/"\\files\\" + fileName;
+    private  String filePathToReadFrom;
 
     private IOEntity ioEntity = IOEntity.getInstance();
-
-    private StringBuilder stringBuilder = new StringBuilder(/*"import logica.data.DataMap;\n" +
-            "import pl.logicsynergy.annotations.UiDesign;\n" +
-            "import pl.logicsynergy.components.ComboBox;\n" +
-            "import pl.logicsynergy.components.mdi.View;\n" +
-            "import pl.logicsynergy.creator.UiCreator;\n" +
-            "import pl.logicsynergy.database.DBQuery;\n\n"*/);
 
     public void openFileAndGetBufferedReader() {
 
         log.info("In openFileAndGetBufferedReader");
         // Open the file
-        listFilesAndFilesSubDirectories(System.getProperty("user.dir"));
+        findPathForParsedFileByName(System.getProperty("user.dir"));
         FileInputStream fstream = null;
         try {
             fstream = new FileInputStream(filePathToReadFrom);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
         ioEntity.setInputCode(new BufferedReader(new InputStreamReader(fstream)));
+        ioEntity.setFileName(fileName.replaceAll("\\.\\w+",""));
+        ioEntity.setFilePackage(filePathToReadFrom
+                .replace(System.getProperty("user.dir"),"")
+                .replace(fileName, "")
+                .replace("\\","."));
     }
 
     public void closeBufferedReader() {
@@ -53,7 +51,7 @@ public class Reader {
         }
     }
 
-    public void listFilesAndFilesSubDirectories(String directoryName) {
+    public void findPathForParsedFileByName(String directoryName) {
         File directory = new File(directoryName);
         //get all the files from a directory
         File[] fList = directory.listFiles();
@@ -63,7 +61,7 @@ public class Reader {
                     filePathToReadFrom = file.getAbsolutePath().trim();
                 }
             } else if (file.isDirectory()) {
-                listFilesAndFilesSubDirectories(file.getAbsolutePath());
+                findPathForParsedFileByName(file.getAbsolutePath());
             }
         }
     }

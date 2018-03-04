@@ -15,5 +15,6 @@ public class FxDeclarationStage extends Stage {
 
     private FxDeclarationStage() {
         name = "FxDeclarationStage";
+        code = new StringBuilder();
     }
 }

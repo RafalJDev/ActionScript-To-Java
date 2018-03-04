@@ -15,5 +15,6 @@ public class ImportStage extends Stage {
 
     private ImportStage() {
         name = "ImportStage";
+        code = new StringBuilder();
     }
 }

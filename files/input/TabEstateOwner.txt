@@ -1,0 +1,116 @@
+flashcode TabEstateOwner
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<mdi:UiMDITab xmlns:fx="http://ns.adobe.com/mxml/2009" 
+              xmlns:s="library://ns.adobe.com/flex/spark" 
+              xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:mdi="pl.logicsynergy.components.mdi.*" 
+              xmlns:db="pl.logicsynergy.database.*"
+              xmlns:c="pl.logicsynergy.components.*"
+              width="100%" height="100%"
+              formName="Właściciel"
+              GUID="54BCD12D">
+  <fx:Script>
+    <![CDATA[
+      import mx.events.FlexEvent;
+      import sd.events.FlexEvent;
+
+      import sdsd.events.FlexEvent;
+
+
+      import qwdqwd.events.FlexEvent;
+      import mx.events.FlexEvent;
+      import mx.events.FlexEvent;
+      
+      override protected function load(event:FlexEvent):void
+      {
+        super.load(event);
+        ldbCoOwnerList.grid.uiModifyFrm = FrmEstateToCoOwner;
+      }         
+      
+      
+    ]]>
+  </fx:Script>
+  <fx:Declarations>
+    
+    <db:DBQuery id="dbEstateOwnerType" sqlFrom="Common_EstateOwnerType" 
+                sqlFieldString="id as inputCode, name" sqlOrderBy="Id"
+                sqlTable="Common_EstateOwnerType" sqlIdentityColumn="Id"/>
+    
+    <db:DBQuery id="dbEstateToCoOwner" sqlFrom="Common_EstateToCoOwner"
+                sqlField="{dbEstateCoOwnerField}" sqlIdentityColumn="Id"
+                sqlOrderBy="Id" sqlTable="Common_EstateToCoOwner" sqlWhere="EstateId=?"/>
+    
+    <fx:XML xmlns="" id="dbEstateCoOwnerField">
+      <fields>
+        <field name="Id" dataField="ID" width="-1" bindable="false"/>
+        <field name="EstateId" dataField="ESTATE_ID" width="-1"/>
+        <field name="CustomerName" dataField="CUSTOMER_NAME" displayText="Nazwa współwłaściciela" width="200"/>
+        <field name="CustomerFatherName" dataField="CUSTOMER_FATHER_NAME" displayText="Imię ojca" width="-1"/>
+        <field name="CustomerMotherName" dataField="CUSTOMER_MOTHER_NAME" displayText="Imię matki" width="-1"/>
+        <field name="Street" dataField="STREET" displayText="Nazwa ulicy" width="80"/>  
+        <field name="StreetCode" dataField="STREET_CODE" displayText="Kod ulicy" width="-1"/>  
+        <field name="City" dataField="CITY" displayText="Miasto" width="-1"/> 
+        <field name="HouseNo" dataField="HOUSE_NO" displayText="Nr domu" width="80"/>
+        <field name="LocalNo" dataField="LOCAL_NO" displayText="Nr lokalu" width="80"/>
+        <field name="PostCode" dataField="POST_CODE" displayText="Kod pocztowy" width="-1"/> 
+        <field name="PostCity" dataField="POST_CITY" displayText="Poczta" width="-1"/> 
+        <field name="Commune" dataField="COMMUNE" displayText="Gmina" width="-1"/> 
+        <field name="County" dataField="COUNTY" displayText="Powiat" width="-1"/> 
+        <field name="Country" dataField="COUNTRY" displayText="Kraj" width="-1"/> 
+        <field name="Region" dataField="REGION" displayText="Województwo" width="-1"/> 
+        
+        <field name="Nip" dataField="NIP" displayText="NIP" width="100"/>
+        <field name="Regon" dataField="REGON" displayText="REGON" width="80" />
+        <field name="Pesel" dataField="PESEL" displayText="PESEL" width="80" />
+        
+        <field name="CorrespondenceStreetCode" dataField="CORRESPONDENCE_STREET_CODE" displayText="Korespondencja - Kod ulicy" width="-1" />
+        <field name="CorrespondenceStreet" dataField="CORRESPONDENCE_STREET" displayText="Korespondencja - Nazwa ulicy" width="80" />
+        <field name="CorrespondenceHouseNo" dataField="CORRESPONDENCE_HOUSE_NO" displayText="Korespondencja - nr domu" width="80" />
+        <field name="CorrespondenceLocalNo" dataField="CORRESPONDENCE_LOCAL_NO" displayText="Korespondencja - nr lokalu" width="80" />
+        <field name="CorrespondenceCity" dataField="C_CITY" displayText="Miasto" width="-1"/> 
+        <field name="CorrespondencePostCode" dataField="C_POST_CODE" displayText="Kod pocztowy" width="-1"/> 
+        <field name="CorrespondencePostCity" dataField="C_POST_CITY" displayText="Poczta" width="-1"/> 
+        <field name="CorrespondenceCommune" dataField="C_COMMUNE" displayText="Gmina" width="-1"/> 
+        <field name="CorrespondenceCounty" dataField="C_COUNTY" displayText="Powiat" width="-1"/> 
+        <field name="CorrespondenceCountry" dataField="C_COUNTRY" displayText="Kraj" width="-1"/> 
+        <field name="CorrespondenceRegion" dataField="C_REGION" displayText="Województwo" width="-1"/> 
+        
+        <field name="TelephoneNo" dataField="TELEPHONE_NO" displayText="Telefon" width="80" />
+        <field name="Email" dataField="EMAIL" displayText="Email" width="80" />
+        <field name="Part" dataField="PART" displayText="Udział w nieruchomości" width="100"/>
+      </fields>
+    </fx:XML>
+    
+  </fx:Declarations>
+  
+  <s:Scroller left="5" right="5" top="5" bottom="5">
+    <s:VGroup id="groupMain" left="5" right="5" top="5" bottom="5">
+      <s:HGroup width="100%">
+        <c:DatabaseField id="dbfCustomer" width="100%" label="Właściciel"
+                         columnName="CustomerCode" dataField="CUSTOMER_CODE" dbProvider="{_dbManager}"
+                         descField="Name" history="true" idField="Code" sqlTable="Common_Customer"
+                         swfClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
+                         swfFile="eMediaUiCommon.swf"/>
+        <c:ComboBox id="cbEstateOwnerType" width="300" label="Rodzaj właściciela"
+                    columnName="EstateOwnerTypeId" dataField="ESTATE_OWNER_TYPE_ID"
+                    dbProvider="{_dbManager}" dbQuery="{dbEstateOwnerType}"/>
+      </s:HGroup>
+      <c:DatabaseField id="dbfRecipient" width="100%" label="Adresat"
+                       dataField="RECIPIENT_CODE" dbProvider="{_dbManager}" descField="Name"
+                       history="true" idField="Code" columnName="RecipientCode"
+                       sqlTable="Common_Customer" swfClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
+                       swfFile="eMediaUiCommon.swf"/>
+      <c:DatabaseField id="dbfPayer" width="100%" label="Płatnik"
+                       dataField="PAYER_CODE" dbProvider="{_dbManager}" descField="Name"
+                       history="true" idField="Code" columnName="PayerCode"
+                       sqlTable="Common_Customer" swfClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
+                       swfFile="eMediaUiCommon.swf"/>
+      <c:ListDatabase id="ldbCoOwnerList" width="100%" height="100%" label="Lista współwłaścicieli"
+                      dbQuery="{dbEstateToCoOwner}" dbProvider="{_dbManager}" dataField="ID" 
+                      relationFieldName="EstateId" isBindable="false"
+                      skinClass="pl.logicsynergy.skins.ListDatabaseSkin">
+      </c:ListDatabase>
+    </s:VGroup>
+  </s:Scroller>
+</mdi:UiMDITab>

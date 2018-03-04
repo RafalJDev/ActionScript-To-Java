@@ -15,5 +15,6 @@ public class ComponentsStage extends Stage {
 
     private ComponentsStage() {
         name = "ComponentsStage";
+        code = new StringBuilder();
     }
 }

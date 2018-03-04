@@ -9,8 +9,9 @@ public class IOEntity {
     private static IOEntity ourInstance = new IOEntity();
 
     private BufferedReader inputCode;
-
     private StringBuilder outputCode;
+    private String fileName;
+    private String filePackage;
 
     public static IOEntity getInstance() {
         return ourInstance;
@@ -36,5 +37,19 @@ public class IOEntity {
         this.outputCode = outputCode;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
 
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFilePackage() {
+        return filePackage;
+    }
+
+    public void setFilePackage(String filePackage) {
+        this.filePackage = filePackage;
+    }
 }
