@@ -34,6 +34,7 @@ public class Reader {
        .replace(System.getProperty("user.dir"), "")
        .replace(fileName, "")
        .replace("\\", "."));
+    System.out.println(ioEntity.getFilePackage());
   }
 
   public void closeBufferedReader() {

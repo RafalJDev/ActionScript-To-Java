@@ -51,4 +51,12 @@ public class Regex {
     pattern = null;
     matcher = null;
   }
+
+  public String getLine() {
+    return line;
+  }
+
+  public void setLine(String line) {
+    this.line = line;
+  }
 }

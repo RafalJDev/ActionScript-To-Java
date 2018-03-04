@@ -34,9 +34,8 @@ public class StagesController {
   ImportParser importParser = new ImportParser();
   ActionScriptParser actionScriptParser = new ActionScriptParser();
   FxDeclarationParser fxDeclarationParser = new FxDeclarationParser();
-  ComponentsParser componentsParser;
+  ComponentsParser componentsParser = new ComponentsParser();
 
-  String classThatWillBeExtended = "";
   String currentLine;
 
   public void parseAllStages() {
@@ -67,7 +66,6 @@ public class StagesController {
           componentsParser.parseThisStage();
           actionScriptParser.secondParsingForAddingComponents();
         }
-
       }
     } catch (IOException e) {
       e.printStackTrace();

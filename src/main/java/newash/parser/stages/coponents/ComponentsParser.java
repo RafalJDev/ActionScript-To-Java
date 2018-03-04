@@ -46,15 +46,11 @@ public class ComponentsParser extends Parser {
   }
 
   public void findComponents() {
-
     if (isFoundRegex("id=\"[^\"]*\"")) {
-
       String id = found.substring(4, found.length() - 1);
-
       String componentClass = "";
-      if (isFoundRegex("(<c:){1}(\\w+)")) {
-        componentClass = found.trim()
-           .substring(3, found.length());
+      if (isFoundRegex("<\\w:(\\w+) \\w",1)) {
+        componentClass = found.trim();
       }
 
       for (String candidateForComponent : actionScriptStage.getCandidatesForComponents()) {
