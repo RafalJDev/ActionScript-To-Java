@@ -6,9 +6,9 @@ import newash.regex.Regex;
 /**
  * Created by Jaszczynski.Rafal on 03.03.2018.
  */
-public abstract class Parser extends Regex{
+public abstract class Parser extends Regex {
 
-    protected LineEntity lineEntity;
+  protected LineEntity lineEntity;
 
-    public abstract void parseThisStage();
+  public abstract void parseThisStage();
 }

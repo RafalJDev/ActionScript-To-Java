@@ -7,14 +7,14 @@ import newash.actionscript.stage.Stage;
  */
 public class ComponentsStage extends Stage {
 
-    private static ComponentsStage ourInstance = new ComponentsStage();
+  private static ComponentsStage ourInstance = new ComponentsStage();
 
-    public static ComponentsStage getInstance() {
-        return ourInstance;
-    }
+  public static ComponentsStage getInstance() {
+    return ourInstance;
+  }
 
-    private ComponentsStage() {
-        name = "ComponentsStage";
-        code = new StringBuilder();
-    }
+  private ComponentsStage() {
+    name = "ComponentsStage";
+    code = new StringBuilder();
+  }
 }

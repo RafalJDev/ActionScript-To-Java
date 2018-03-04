@@ -12,67 +12,67 @@ import newash.parser.finder.StagesFinder;
  */
 public class Controller {
 
-    private Reader reader;
-    private Writer writer;
+  private Reader reader;
+  private Writer writer;
 
-    private StagesFinder stagesFinder;
+  private StagesFinder stagesFinder;
 
-    LineEntity lineEntity = LineEntity.getInstance();
+  LineEntity lineEntity = LineEntity.getInstance();
 
-    UiDesignStage uiDesignStage;
-    ImportStage importStage = ImportStage.getInstance();
-    ActionScriptStage actionScriptStage;
-    FxDeclarationStage fxDeclarationStage;
-    ComponentsStage componentsStage;
+  UiDesignStage uiDesignStage;
+  ImportStage importStage = ImportStage.getInstance();
+  ActionScriptStage actionScriptStage;
+  FxDeclarationStage fxDeclarationStage;
+  ComponentsStage componentsStage;
 
-    StagesController stagesController;
+  StagesController stagesController;
 
-    public Controller() {
-        uiDesignStage = UiDesignStage.getInstance();
-        importStage = ImportStage.getInstance();
-        actionScriptStage = ActionScriptStage.getInstance();
-        fxDeclarationStage = FxDeclarationStage.getInstance();
-        componentsStage = ComponentsStage.getInstance();
+  public Controller() {
+    uiDesignStage = UiDesignStage.getInstance();
+    importStage = ImportStage.getInstance();
+    actionScriptStage = ActionScriptStage.getInstance();
+    fxDeclarationStage = FxDeclarationStage.getInstance();
+    componentsStage = ComponentsStage.getInstance();
 
-        reader = new Reader();
-        writer = new Writer();
+    reader = new Reader();
+    writer = new Writer();
 
-        stagesFinder = new StagesFinder();
-        stagesController = new StagesController();
-    }
+    stagesFinder = new StagesFinder();
+    stagesController = new StagesController();
+  }
 
-    public void launchIt() {
+  public void launchIt() {
 
-        reader.openFileAndGetBufferedReader();
-        stagesFinder.findStages();
-        reader.closeBufferedReader();
+    reader.openFileAndGetBufferedReader();
+    stagesFinder.findStages();
+    reader.closeBufferedReader();
 
-        reader.openFileAndGetBufferedReader();
-        stagesController.parseAllStages();
-        reader.closeBufferedReader();
+    reader.openFileAndGetBufferedReader();
+    stagesController.parseAllStages();
+    reader.closeBufferedReader();
 
-        saveOutputCode();
+    saveOutputCode();
 
-        printData();
+    printData();
 
 //        writer = new Writer();
 //        writer.saveFile();
-    }
+  }
 
-    public void saveOutputCode() {
-        writer.saveFile();
-    }
+  public void saveOutputCode() {
+    writer.saveFile();
+  }
 
-    public void printData() {
-        System.out.println(lineEntity.toString());
+  public void printData() {
+    System.out.println(lineEntity.toString());
 
-        System.out.println(uiDesignStage.toString());
-        System.out.println();
+    System.out.println(uiDesignStage.toString());
+    System.out.println();
 
-        System.out.println(importStage.toString());
-        System.out.println(actionScriptStage.toString());
-        System.out.println(fxDeclarationStage.toString());
-        System.out.println(componentsStage.toString());
+    System.out.println(importStage.toString());
+    System.out.println(actionScriptStage.toString());
+    System.out.println(fxDeclarationStage.toString());
+    System.out.println(componentsStage.toString());
 
-    }
+  }
 }

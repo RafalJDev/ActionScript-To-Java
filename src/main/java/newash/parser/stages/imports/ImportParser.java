@@ -12,41 +12,41 @@ import newash.regex.Regex;
  */
 public class ImportParser extends Parser {
 
-    ImportStage importStage;
-    IOEntity ioEntity;
+  ImportStage importStage;
+  IOEntity ioEntity;
 
-    private boolean isPackageAdded = false;
+  private boolean isPackageAdded = false;
 
-    private String packageName;
+  private String packageName;
 
-    private String stringBuilder = "import logica.data.Dat  aMap;\n" +
-            "import pl.logicsynergy.annotations.UiDesign;\n" +
-            "import pl.logicsynergy.components.ComboBox;\n" +
-            "import pl.logicsynergy.components.mdi.View;\n" +
-            "import pl.logicsynergy.creator.UiCreator;\n" +
-            "import pl.logicsynergy.database.DBQuery;\n\n";
+  private String stringBuilder = "import logica.data.Dat  aMap;\n" +
+     "import pl.logicsynergy.annotations.UiDesign;\n" +
+     "import pl.logicsynergy.components.ComboBox;\n" +
+     "import pl.logicsynergy.components.mdi.View;\n" +
+     "import pl.logicsynergy.creator.UiCreator;\n" +
+     "import pl.logicsynergy.database.DBQuery;\n\n";
 
-    public ImportParser() {
-        importStage = ImportStage.getInstance();
-        ioEntity = IOEntity.getInstance();
-        lineEntity = LineEntity.getInstance();
+  public ImportParser() {
+    importStage = ImportStage.getInstance();
+    ioEntity = IOEntity.getInstance();
+    lineEntity = LineEntity.getInstance();
 
-        packageName = "package " + ioEntity.getFilePackage() + ";\n";
+    packageName = "package " + ioEntity.getFilePackage() + ";\n";
+  }
+
+  @Override
+  public void parseThisStage() {
+
+    line = lineEntity.getLine();
+
+    if (isPackageAdded) {
+      line = packageName + line;
     }
 
-    @Override
-    public void parseThisStage() {
-
-        line = lineEntity.getLine();
-
-        if (isPackageAdded) {
-            line = packageName + line;
-        }
-
-        if (line.contains(" mx")) {
-            return;
-        } else {
-            importStage.getCode().append(line + "\n");
-        }
+    if (line.contains(" mx")) {
+      return;
+    } else {
+      importStage.getCode().append(line + "\n");
     }
+  }
 }

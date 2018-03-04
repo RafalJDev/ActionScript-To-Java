@@ -19,68 +19,69 @@ import java.io.IOException;
 @Log
 public class StagesController {
 
-    IOEntity ioEntity = IOEntity.getInstance();
+  IOEntity ioEntity = IOEntity.getInstance();
 
-    LineEntity lineEntity = LineEntity.getInstance();
+  LineEntity lineEntity = LineEntity.getInstance();
 
-    //TODO create class for common fields
-    UiDesignStage uiDesignStage = UiDesignStage.getInstance();
-    ImportStage importStage = ImportStage.getInstance();
-    ActionScriptStage actionScriptStage = ActionScriptStage.getInstance();
-    FxDeclarationStage fxDeclarationStage = FxDeclarationStage.getInstance();
-    ComponentsStage componentsStage = ComponentsStage.getInstance();
+  //TODO create class for common fields
+  UiDesignStage uiDesignStage = UiDesignStage.getInstance();
+  ImportStage importStage = ImportStage.getInstance();
+  ActionScriptStage actionScriptStage = ActionScriptStage.getInstance();
+  FxDeclarationStage fxDeclarationStage = FxDeclarationStage.getInstance();
+  ComponentsStage componentsStage = ComponentsStage.getInstance();
 
-    UiDesignParser uiDesignParser = new UiDesignParser();
-    ImportParser importParser = new ImportParser();
-    ActionScriptParser actionScriptParser = new ActionScriptParser();
-    FxDeclarationParser fxDeclarationParser = new FxDeclarationParser();
-    ComponentsParser componentsParser;
+  UiDesignParser uiDesignParser = new UiDesignParser();
+  ImportParser importParser = new ImportParser();
+  ActionScriptParser actionScriptParser = new ActionScriptParser();
+  FxDeclarationParser fxDeclarationParser = new FxDeclarationParser();
+  ComponentsParser componentsParser;
 
-    String classThatWillBeExtended = "";
-    String currentLine;
+  String classThatWillBeExtended = "";
+  String currentLine;
 
-    public void parseAllStages() {
+  public void parseAllStages() {
 
-        log.info("In parseAllStages");
-        int lineCount = 0;
+    log.info("In parseAllStages");
+    int lineCount = 0;
 
-        try {
-            while ((currentLine = ioEntity.getInputCode().readLine()) != null) {
-                lineCount++;
-                lineEntity.setLine(currentLine);
-                if (uiDesignStage.getFirstLine() <= lineCount && uiDesignStage.getLastLine() >= lineCount) {
-                    uiDesignParser.parseThisStage();
-                } else if (importStage.getFirstLine() <= lineCount && importStage.getLastLine() >= lineCount) {
-                    importParser.parseThisStage();
-                } else if (actionScriptStage.getFirstLine() <= lineCount && actionScriptStage.getLastLine() > lineCount) {
-                    actionScriptParser.parseThisStage();
-                } else if (actionScriptStage.getLastLine() == lineCount) {
-                    actionScriptParser.appendEndClassBraces();
-                } else if (fxDeclarationStage.getFirstLine() <= lineCount && fxDeclarationStage.getLastLine() >= lineCount) {
-                    fxDeclarationParser.parseThisStage();
-                } else if (componentsStage.getFirstLine() <= lineCount && componentsStage.getLastLine() >= lineCount) {
-                    if (componentsParser == null) {
-                        componentsParser = new ComponentsParser();
-                    }
-                    componentsParser.parseThisStage();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info("OCCURED ON LINE :" + lineCount);
+    try {
+      while ((currentLine = ioEntity.getInputCode().readLine()) != null) {
+        lineCount++;
+        lineEntity.setLine(currentLine);
+        if (uiDesignStage.getFirstLine() <= lineCount && uiDesignStage.getLastLine() >= lineCount) {
+          uiDesignParser.parseThisStage();
+        } else if (importStage.getFirstLine() <= lineCount && importStage.getLastLine() >= lineCount) {
+          importParser.parseThisStage();
+        } else if (actionScriptStage.getFirstLine() <= lineCount && actionScriptStage.getLastLine() > lineCount) {
+          actionScriptParser.parseThisStage();
+        } else if (actionScriptStage.getLastLine() == lineCount) {
+          actionScriptParser.appendEndClassBraces();
+        } else if (fxDeclarationStage.getFirstLine() <= lineCount && fxDeclarationStage.getLastLine() >= lineCount) {
+          fxDeclarationParser .parseThisStage();
+        } else if (componentsStage.getFirstLine() <= lineCount && componentsStage.getLastLine() >= lineCount) {
+          if (componentsParser == null) {
+            componentsParser = new ComponentsParser();
+            componentsParser.setCandidatesForComponents(actionScriptParser.getCandidatesForComponents());
+          }
+          componentsParser.parseThisStage();
         }
-
-        addOutputCode();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+      log.info("OCCURED ON LINE :" + lineCount);
     }
 
-    public void addOutputCode() {
-        StringBuilder outputCode = new StringBuilder();
-        outputCode.append(importStage.getCode());
-        outputCode.append(actionScriptStage.getCode());
-        outputCode.append(fxDeclarationStage.getCode());
-        outputCode.append(componentsStage.getCode());
-        ioEntity.setOutputCode(outputCode);
-    }
+    addOutputCode();
+  }
+
+  public void addOutputCode() {
+    StringBuilder outputCode = new StringBuilder();
+    outputCode.append(importStage.getCode());
+    outputCode.append(actionScriptStage.getCode());
+    outputCode.append(fxDeclarationStage.getCode());
+    outputCode.append(componentsStage.getCode());
+    ioEntity.setOutputCode(outputCode);
+  }
 }

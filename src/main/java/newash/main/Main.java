@@ -7,10 +7,10 @@ import newash.controller.Controller;
  */
 public class Main {
 
-    public static void main(String[] args) {
+  public static void main(String[] args) {
 
-        Controller controller = new Controller();
+    Controller controller = new Controller();
 
-        controller.launchIt();
-    }
+    controller.launchIt();
+  }
 }

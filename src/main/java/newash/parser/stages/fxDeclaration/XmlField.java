@@ -8,22 +8,22 @@ import java.util.List;
  */
 public class XmlField {
 
-    static String id;
-    static List<String> xmlFieldLines = new ArrayList<>();
+  static String id;
+  static List<String> xmlFieldLines = new ArrayList<>();
 
-    public static String getId() {
-        return id;
-    }
+  public static String getId() {
+    return id;
+  }
 
-    public static void setId(String id) {
-        XmlField.id = id;
-    }
+  public static void setId(String id) {
+    XmlField.id = id;
+  }
 
-    public static List<String> getXmlFieldLines() {
-        return xmlFieldLines;
-    }
+  public static List<String> getXmlFieldLines() {
+    return xmlFieldLines;
+  }
 
-    public static void setXmlFieldLines(List<String> xmlFieldLines) {
-        XmlField.xmlFieldLines = xmlFieldLines;
-    }
+  public static void setXmlFieldLines(List<String> xmlFieldLines) {
+    XmlField.xmlFieldLines = xmlFieldLines;
+  }
 }

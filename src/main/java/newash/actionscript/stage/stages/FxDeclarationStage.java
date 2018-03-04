@@ -7,14 +7,14 @@ import newash.actionscript.stage.Stage;
  */
 public class FxDeclarationStage extends Stage {
 
-    private static FxDeclarationStage ourInstance = new FxDeclarationStage();
+  private static FxDeclarationStage ourInstance = new FxDeclarationStage();
 
-    public static FxDeclarationStage getInstance() {
-        return ourInstance;
-    }
+  public static FxDeclarationStage getInstance() {
+    return ourInstance;
+  }
 
-    private FxDeclarationStage() {
-        name = "FxDeclarationStage";
-        code = new StringBuilder();
-    }
+  private FxDeclarationStage() {
+    name = "FxDeclarationStage";
+    code = new StringBuilder();
+  }
 }

@@ -15,59 +15,59 @@ import java.util.regex.Pattern;
  */
 public class FxDeclarationParser extends Parser {
 
-    private boolean iHaveDoneIt = false;
-    private List<String> dbMethods = new ArrayList<>();
+  private boolean iHaveDoneIt = false;
+  private List<String> dbMethods = new ArrayList<>();
 
-    FxDeclarationStage fxDeclarationStage;
+  FxDeclarationStage fxDeclarationStage;
 
-    public FxDeclarationParser() {
-        lineEntity = LineEntity.getInstance();
-        fxDeclarationStage = FxDeclarationStage.getInstance();
+  public FxDeclarationParser() {
+    lineEntity = LineEntity.getInstance();
+    fxDeclarationStage = FxDeclarationStage.getInstance();
+  }
+
+  @Override
+  public void parseThisStage() {
+    line = lineEntity.getLine();
+    parseXmlFields();
+    fxDeclarationStage.getCode().append(line + "\n");
+  }
+
+  public void parseXmlFields() {
+
+    if (!iHaveDoneIt) {
+      iHaveDoneIt = true;
+
+      if (isFoundRegex("\\w+=\"\\w+\"")) {
+        String idRegex = found;
+        XmlField.setId(idRegex.substring(idRegex.indexOf("\""), idRegex.length() - 1));
+      }
+    } else {
+      XmlField.getXmlFieldLines().add(line);
     }
+  }
 
-    @Override
-    public void parseThisStage() {
-        line = lineEntity.getLine();
-        parseXmlFields();
-        fxDeclarationStage.getCode().append(line + "\n");
+  public void createMethodForFields() {
+
+    if (!XmlField.xmlFieldLines.isEmpty()) {
+      String methodString = "/*\n" +
+         "\t * Metoda wyciągająca nazwy pól z XMLa\n" +
+         "\t * \n" +
+         "\t * @return obiekt Element zawierający nazwy pól\n" +
+         "\t */\n" +
+         "\t private Element " + XmlField.getId() + "()\n" +
+         "\t {\n" +
+         "\t\treturn XMLUtils.getXMLElement(\"";
+
+      for (String line : XmlField.getXmlFieldLines()) {
+        methodString += line + "\n";
+      }
+
+      methodString += "\");\n }\n\n";
+      dbMethods.add(methodString);
+      XmlField.setId("");
+      XmlField.getXmlFieldLines().clear();
+      iHaveDoneIt = false;
     }
-
-    public void parseXmlFields() {
-
-        if (!iHaveDoneIt) {
-            iHaveDoneIt = true;
-
-            if (isFoundRegex("\\w+=\"\\w+\"")) {
-                String idRegex = found;
-                XmlField.setId(idRegex.substring(idRegex.indexOf("\""), idRegex.length() - 1));
-            }
-        } else {
-            XmlField.getXmlFieldLines().add(line);
-        }
-    }
-
-    public void createMethodForFields() {
-
-        if (!XmlField.xmlFieldLines.isEmpty()) {
-        String methodString = "/*\n" +
-                "\t * Metoda wyciągająca nazwy pól z XMLa\n" +
-                "\t * \n" +
-                "\t * @return obiekt Element zawierający nazwy pól\n" +
-                "\t */\n" +
-                "\t private Element " + XmlField.getId() + "()\n" +
-                "\t {\n" +
-                "\t\treturn XMLUtils.getXMLElement(\"";
-
-        for (String line : XmlField.getXmlFieldLines()) {
-            methodString += line + "\n";
-        }
-
-        methodString += "\");\n }\n\n";
-        dbMethods.add(methodString);
-        XmlField.setId("");
-        XmlField.getXmlFieldLines().clear();
-        iHaveDoneIt = false;
-    }
-    }
+  }
 
 }

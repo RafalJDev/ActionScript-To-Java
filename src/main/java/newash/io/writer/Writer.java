@@ -15,45 +15,45 @@ import java.io.IOException;
 @Log
 public class Writer {
 
-    private final String outputDirectory = "output";
-    private String outputDirectoryPath;
-    private IOEntity ioEntity = IOEntity.getInstance();
+  private final String outputDirectory = "output";
+  private String outputDirectoryPath;
+  private IOEntity ioEntity = IOEntity.getInstance();
 
-    public void saveFile() {
+  public void saveFile() {
 
-        findPathForOutputDirectory(System.getProperty("user.dir"));
-        outputDirectoryPath += "\\" + ioEntity.getFileName() + "Flash.txt";
-        log.info("In Writer");
+    findPathForOutputDirectory(System.getProperty("user.dir"));
+    outputDirectoryPath += "\\" + ioEntity.getFileName() + "Flash.txt";
+    log.info("In Writer");
 
-        BufferedWriter writer = null;
+    BufferedWriter writer = null;
+    try {
+      writer = new BufferedWriter(new FileWriter(outputDirectoryPath));
+      writer.write(ioEntity.getOutputCode().toString());
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (writer != null) {
         try {
-            writer = new BufferedWriter(new FileWriter(outputDirectoryPath));
-            writer.write(ioEntity.getOutputCode().toString());
+          writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+          e.printStackTrace();
         }
+      }
     }
+  }
 
-    public void findPathForOutputDirectory(String directoryName) {
-        File directory = new File(directoryName);
-        //get all the files from a directory
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isDirectory()) {
-                if (file.getAbsolutePath().contains(outputDirectory)) {
-                    outputDirectoryPath = file.getAbsolutePath().trim();
-                } else {
-                    findPathForOutputDirectory(file.getAbsolutePath());
-                }
-            }
+  public void findPathForOutputDirectory(String directoryName) {
+    File directory = new File(directoryName);
+    //get all the files from a directory
+    File[] fList = directory.listFiles();
+    for (File file : fList) {
+      if (file.isDirectory()) {
+        if (file.getAbsolutePath().contains(outputDirectory)) {
+          outputDirectoryPath = file.getAbsolutePath().trim();
+        } else {
+          findPathForOutputDirectory(file.getAbsolutePath());
         }
+      }
     }
+  }
 }

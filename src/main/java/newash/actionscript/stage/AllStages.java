@@ -1,11 +1,11 @@
 package newash.actionscript.stage;
 
 public enum AllStages {
-    UIDESIGN,
-    IMPORTS,
-    ASCODE,
-    DBFIELDS,
-    COMPONENTS;
+  UIDESIGN,
+  IMPORTS,
+  ASCODE,
+  DBFIELDS,
+  COMPONENTS;
 
 //    private int stageNumber;
 //
