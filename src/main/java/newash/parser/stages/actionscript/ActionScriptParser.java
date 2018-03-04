@@ -47,12 +47,14 @@ public class ActionScriptParser extends Parser {
       simpleReplaceAll();
     }
 
+    replaceAsToCast();
+
     if (thereIsRoCall && line.contains("ro.call")) {
 
       String spaces = line.substring(0, line.indexOf("r") - 1);
       String callArguments = "";
       if (isFoundRegex("\\(.*\\)")) {
-        callArguments = found.substring(1, found.length() - 1);
+        callArguments = found.substring(1);
 
         line = spaces + "DataMap dataMap = ROUiEventService.call(" + callArguments + ");";
         if (!methodToCallAfterRo.isEmpty()) {
@@ -135,7 +137,7 @@ public class ActionScriptParser extends Parser {
     if (line.contains(" function ")) {
       if (!line.contains(", function ")) {//TODO the fuck, I did there, dobule check ?
         int lastIndexOfColon = line.lastIndexOf(":");
-        String returnTypeWithoutSpace = line.substring(lastIndexOfColon + 1, line.length())
+        String returnTypeWithoutSpace = line.substring(lastIndexOfColon + 1)
            .trim();
         line = line.substring(0, lastIndexOfColon);
         line = line.replace(" function ", " " + returnTypeWithoutSpace + " ");
@@ -192,15 +194,30 @@ public class ActionScriptParser extends Parser {
     }
   }
 
-  public StringBuilder secondParsingForAddingComponents(StringBuilder sb, String oldValue) {
+  public void replaceAsToCast() {
+    if (line.contains(" = ") && line.contains(" as ")) {
+      int indexOfEquals = line.indexOf("=");
+      if (isFoundRegex(" as \\w+")) {
+        line = line.replaceAll(found, "");
+        line = line.replaceAll("= ", "= (" + found.substring(4) + ") ");
+      }
+    }
+  }
 
+  public StringBuilder secondParsingForAddingComponents() {
+
+    String oldValue = "APPEND_HERE_FIELDS";
     String componentFields = "\n";
     for (Map.Entry<String, String> entry : actionScriptStage.getComponentsThatNeedField().entrySet()) {
       componentFields += "  public " + entry.getValue() + " " + entry.getKey() + ";\n\n";
     }
-    int hanysIndex = sb.indexOf(oldValue);
+    int hanysIndex = actionScriptStage.getCode().indexOf(oldValue);
 
-    return sb.replace(hanysIndex, hanysIndex + oldValue.length(), componentFields);
+    return actionScriptStage.getCode().replace(hanysIndex, hanysIndex + oldValue.length(), componentFields);
+  }
+
+  public void changeToSet() {
+
   }
 
   public void appendEndClassBraces() {
@@ -227,6 +244,7 @@ public class ActionScriptParser extends Parser {
     replaceMap.put("\\.getNavigatorContent", ".getContent");
     replaceMap.put("parseInt\\(", "Integer.valueOf(");
     replaceMap.put("swf", "frm");
+    replaceMap.put("Swf", "Frm");
     replaceMap.put("SWF", "FRM");
     replaceMap.put("ROManager", "ROUiEventService");
     replaceMap.put("for each", "for");

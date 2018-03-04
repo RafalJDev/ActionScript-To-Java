@@ -57,14 +57,17 @@ public class StagesController {
         } else if (actionScriptStage.getLastLine() == lineCount) {
           actionScriptParser.appendEndClassBraces();
         } else if (fxDeclarationStage.getFirstLine() <= lineCount && fxDeclarationStage.getLastLine() >= lineCount) {
-          fxDeclarationParser .parseThisStage();
-        } else if (componentsStage.getFirstLine() <= lineCount && componentsStage.getLastLine() >= lineCount) {
-          if (componentsParser == null) {
-            componentsParser = new ComponentsParser();
-            componentsParser.setCandidatesForComponents(actionScriptParser.getCandidatesForComponents());
-          }
+          fxDeclarationParser.parseThisStage();
+        } else if (componentsStage.getFirstLine() == lineCount) {
+          componentsParser = new ComponentsParser();
           componentsParser.parseThisStage();
+        } else if (componentsStage.getFirstLine() < lineCount && componentsStage.getLastLine() > lineCount) {
+          componentsParser.parseThisStage();
+        } else if (componentsStage.getLastLine() == lineCount) {
+          componentsParser.parseThisStage();
+          actionScriptParser.secondParsingForAddingComponents();
         }
+
       }
     } catch (IOException e) {
       e.printStackTrace();

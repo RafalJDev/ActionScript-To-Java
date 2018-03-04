@@ -39,6 +39,7 @@ public class ComponentsParser extends Parser {
   public void parseThisStage() {
     line = lineEntity.getLine();
 
+    findComponents();
     simpleReplaceAll();
 
     componentsStage.getCode().append(line + "\n");
