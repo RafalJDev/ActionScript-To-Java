@@ -1,301 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ui:UiDictionary  xmlns:fx="http://ns.adobe.com/mxml/2009"
+                  xmlns:s="library://ns.adobe.com/flex/spark"
                   xmlns:mx="library://ns.adobe.com/flex/mx"
                   xmlns:ui="pl.logicsynergy.components.ui.*"
                   xmlns:c="pl.logicsynergy.components.*"
                   xmlns:db="pl.logicsynergy.database.*"
-                  width="1024" height="550"  minWidth="800" minHeight="500"
-                  formName="Liczniki"
+                  width="1300" height="800"  minWidth="800" minHeight="500"
+                  formName="Typy liczników"
                   skinClass="pl.logicsynergy.skins.ui.UiDictionaryHSkin"
-                  GUID="54CB61D0" xmlns:s="library://ns.adobe.com/flex/spark">
+                  GUID="5524CA75">
   <fx:Script>
     <![CDATA[
-      import mx.collections.ArrayCollection;
-      import mx.core.IVisualElement;
-      import mx.core.IVisualElementContainer;
-      import mx.core.UIComponent;
       import mx.events.FlexEvent;
+      import mx.events.MenuEvent;
       import mx.rpc.Responder;
       import mx.rpc.events.FaultEvent;
-      import mx.rpc.events.ResultEvent;
 
       import pl.logicsynergy.common.SwfObject;
-      import pl.logicsynergy.components.BaseComponent;
-      import pl.logicsynergy.components.UserComponent;
       import pl.logicsynergy.components.mdi.View;
       import pl.logicsynergy.components.ui.UiCommon;
-      import pl.logicsynergy.components.ui.UiCreator;
       import pl.logicsynergy.components.ui.UiMessageBox;
-      import pl.logicsynergy.events.DBEvent;
-      import pl.logicsynergy.ro.ROManager;
-      import pl.logicsynergy.ro.ROUiEventService;
+      import pl.logicsynergy.skins.TextInputDecimalSkin;
       import pl.logicsynergy.utils.StringUtils;
+      import pl.logicsynergy.utils.UiUtils;
 
-      /** Kod licznika */
-      public var meterCode:int = 0;
+      ViewTypeIntegrator;
+      ViewTypeCounter;
+      ViewTypeHeatCounter;
+      ViewTypeWaterCounter;
+      ViewTypePairTemperatureSensor;
+      ViewTypeFlowCounter;
 
-      private var m_viewList:Object = new Object();
-
-      private var m_defaultValueList:Object = new Object();
-
+      private var m_viewList:Object =
+        {
+          I:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeIntegrator"},
+          L:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeCounter"},
+          C:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeHeatCounter"},
+          W:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeWaterCounter"},
+          T:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypePairTemperatureSensor"},
+          P:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeFlowCounter"}
+        };
       /** Aktualnie załądowany widok*/
       private var m_currentView:View = null;
-      /** Aktualny identyfikator typu licznika, dla którego został załadowany formularz */
-      private var m_currentMeterViewClassId:int = 0;
-
 
       protected override function  load(event:FlexEvent):void
       {
-        grid.dbManager.history = true;
-        getViewClassData();
-        if (meterCode > 0)
-          grid.dbManager.SQLQuery.sqlWhere = "Active=1 AND Code=" + meterCode;
-
         super.load(event);
 
-        grid.dbManager.insertFunction = insertRecord;
-        grid.dbManager.modifyFunction = modifyRecord;
+        cbMeterKind.addItem("I", "I - Integrator");
+        cbMeterKind.addItem("L", "L - Licznik");
+        cbMeterKind.addItem("C", "C - Ciepłomierz");
+        cbMeterKind.addItem("W", "W - Wodomierz");
+        cbMeterKind.addItem("T", "T - Para czujników temperatur");
+        cbMeterKind.addItem("P", "P - Przepływomierz");
 
-        dbfMeterViewClass.addEventListener("valueChanged", dbfMeterViewClassChanged);
+
+        cbMeterKind.addEventListener("valueChanged", cbMeterKindChanged);
+
+        txtMeter1No.addEventListener("valueChanged", txtMeter1NoChanged);
+        txtMeter1MinNo.addEventListener("valueChanged", txtMeter1NoChanged);
+
+        txtMeter2No.addEventListener("valueChanged", txtMeter2NoChanged);
+        txtMeter2MinNo.addEventListener("valueChanged", txtMeter2NoChanged);
       }
 
-      private function insertRecord(data:Object):void
+      private function txtMeter1NoChanged(event:Event):void
       {
-        var ro:ROUiEventService = new ROUiEventService(onResult);
-        ro.call("logica.uiservice.emedia.network.Meter", "onInsertRecord", data["data"]);
+        lblMeter1Digit.text = getDigitLabel(txtMeter1No.value, txtMeter1MinNo.value);
       }
 
-      private function onResult(event:ResultEvent):void
+      private function txtMeter2NoChanged(event:Event):void
       {
-        var data:Object = event.result;
-        if(!ROManager.isResultOK(this, data, false))
-        {
-          var item:Object = grid.dbManager.getItemAt(grid.dbManager.currentIndex);
-          grid.revertMode(item["_mode_"]);
-
-          if(data["ERROR_CODE"] == -2209)
-          {
-            UiMessageBox.show(this, data["ERROR_DETAILS"], "Komunikat");
-            return;
-          }
-          ROManager.isResultOK(this, data);
-          return;
-        }
-
-        grid.dbManager.setItemSaved(grid.dbManager.currentIndex, data);
-        grid.mode = 0;
+        lblMeter2Digit.text = getDigitLabel(txtMeter2No.value, txtMeter2MinNo.value);
       }
 
-      private function modifyRecord(data:Object):void
+      private function getDigitLabel(meterNo:String, precisionNo:String):String
       {
-        var ro:ROUiEventService = new ROUiEventService(onResult);
-        ro.call("logica.uiservice.emedia.network.Meter", "onModifyRecord", data["data"]);
+        var no:Number = parseInt(meterNo);
+        if (isNaN(no))
+          no = 0;
+
+        var precision:Number = parseInt(precisionNo);
+        if (isNaN(precision))
+          precision = 0;
+
+        var digit:String = "";
+        while (no-- > 0)
+          digit += "0";
+
+        if (precision > 0)
+          digit += ",";
+
+        while (precision-- > 0)
+          digit += "0";
+
+        return digit;
       }
 
-      private function getViewClassData():void
+      private function cbMeterKindChanged(event:Event):void
       {
-        var data:Object = new Object();
-        data["From"] = "Network_MeterViewClass";
-        data["Select"] = "Id as ID, ViewSwfName as SWF_NAME, ViewClassName as CLASS_NAME";
-
-        var ro:ROUiEventService = new ROUiEventService(getDataResult);
-        ro.call("logica.uiservice.db.DatabaseManager", "getData", data);
-      }
-
-      private function getDefaultValues(meterTypeId:*):void
-      {
-        if(meterTypeId == null)
-          return;
-
-        if(m_defaultValueList.hasOwnProperty(meterTypeId))
-        {
-          setDefaultValue(m_defaultValueList[meterTypeId]);
-          return;
-        }
-
-        var data:Object = new Object();
-        data["From"] = "Network_MeterDefaultValue";
-        data["Select"] = "ColumnName as COLUMN_NAME, Value as VALUE";
-        data["Where"] = "MeterTypeId =" + meterTypeId;
-
-        var ro:ROUiEventService = new ROUiEventService(getDefaultValuesResult);
-        ro.call("logica.uiservice.db.DatabaseManager", "getData", data);
-      }
-
-      private function getDefaultValuesResult(event:ResultEvent):void
-      {
-        var data:Object = event.result;
-        if(!ROManager.isResultOK(this, data))
-          return;
-
-        var meterTypeId:int = (data["Query"] as String).split("=")[1];
-
-        var arr:ArrayCollection = data["DataTable"];
-
-        m_defaultValueList[meterTypeId] = arr;
-        setDefaultValue(arr);
-      }
-
-      private function setDefaultValue(arr:ArrayCollection):void
-      {
-        for each(var o:Object in arr)
-        {
-          var columnName:String = o["COLUMN_NAME"];
-          var v:* = o["VALUE"];
-
-          var c:* = getContainer(columnName, grMain);
-          if(c != null)
-            c.value = v;
-        }
-      }
-
-      private function getContainer(columnName:String, container:UIComponent):UIComponent
-      {
-        if (container == null)
-          return null;
-
-        if (container.hasOwnProperty("columnName") && container["columnName"].toUpperCase() == columnName)
-          return container;
-
-        var i:int;
-        var count:int = 0;;
-
-        var vparent:IVisualElementContainer = container as IVisualElementContainer;
-        if (vparent == null)
-          return null;
-
-        count = vparent.numElements;
-        for (i = 0; i < count; i++)
-        {
-          var el:UIComponent = vparent.getElementAt(i) as UIComponent;
-          if (el == null)
-            continue;
-
-          var cont:* = getContainer(columnName, el);
-          if (cont != null)
-            return cont;
-        }
-
-        return null;
-      }
-
-      private function getDataResult(event:ResultEvent):void
-      {
-        var data:Object = event.result;
-        if(!ROManager.isResultOK(this, data))
-          return;
-
-        var arr:ArrayCollection = data["DataTable"];
-        if(arr.length < 1)
-          return;
-
-        for each(var o:Object in arr)
-          addToViewList(o["ID"], o["SWF_NAME"], o["CLASS_NAME"]);
-
-        grid.dbManager.addEventListener(DBEvent.CHANGE_CURRENT_INDEX, changeCurrentIndex);
-        changeCurrentIndex(null);
-      }
-
-      private function changeCurrentIndex(event:DBEvent):void
-      {
-        setView(grid.getValue("METER_VIEW_CLASS_ID"));
-      }
-
-      private function dbfMeterViewClassChanged(event:Event):void
-      {
-        if(grid.dbManager.mode == 0)
-          return;
-
-        setView(dbfMeterViewClass.value);
-      }
-
-      /** Ustawienie widoku na grupie*/
-      public function setView(meterViewClassId:*):void
-      {
-        if(meterViewClassId == null)
-        {
-          m_currentMeterViewClassId = 0;
-          if (m_currentView)
-          {
-            ncData.removeElement(m_currentView);
-
-            m_currentView = null;
-          }
-          return;
-        }
-        if (m_currentMeterViewClassId == meterViewClassId)
-          return;
-
-        m_currentMeterViewClassId = meterViewClassId;
-
         var oldView:View = m_currentView;
-        m_currentView =  getView(meterViewClassId);
+        m_currentView =  getView(cbMeterKind.value);
         if(m_currentView == null) //załadowanie
         {
           if (oldView)
             ncData.removeElement(oldView);
-          loadView(meterViewClassId);
+
+          loadView(cbMeterKind.value);
         }
         else if (oldView && oldView.className != m_currentView.className)
         {
           ncData.removeElement(oldView);
-          addViewToGroup(m_currentView);
+          ncData.addElement(m_currentView);
         }
         else if (!oldView)
-          addViewToGroup(m_currentView);
-
+          ncData.addElement(m_currentView);
       }
 
-      private function addViewToGroup(view:View):void
+      private function getView(meterKind:String):*
       {
-        ncData.addElement(view);
-
-        if(grid.mode == 1)
-          getDefaultValues(dbfMeterType.value);
-      }
-
-      /** Dodanie konfiguracji*/
-      private function addToViewList(meterTypeId:int, swf:String, func:String):void
-      {
-        var o:Object = new Object();
-        o["SWF"] = swf;
-        o["FUNC"] = func;
-        o["VIEW"] = null;
-
-        m_viewList[meterTypeId] = o;
-      }
-
-      private function getView(meterTypeId:int):*
-      {
-        var o:Object = m_viewList[meterTypeId];
+        var o:Object = m_viewList[meterKind];
         if(o == null)
           return null;
 
         return o["VIEW"];
       }
 
-      private function loadView(meterViewClassId:int):void
+      private function loadView(meterKind:String):void
       {
-        var o:Object = m_viewList[meterViewClassId];
+        var o:Object = m_viewList[meterKind];
         if(o == null)
           return;
 
         var swf:String = o["SWF"];
         var func:String = o["FUNC"];
 
-        if(StringUtils.IsNullOrEmpty(swf) || StringUtils.IsNullOrEmpty(func))
-          return;
-
-        if(func.indexOf("?") > -1)
-          func+= "&meterViewClassId=" + meterViewClassId;
-        else
-          func+= "?meterViewClassId=" + meterViewClassId;
 
         var frm:SwfObject = new SwfObject(this.stage);
         frm.addResponder(new mx.rpc.Responder(createModalClassResult, showFaultEvent));
         frm.CreateObject(swf,func);
       }
-
       private function createModalClassResult(data:Object):void
       {
         m_currentView = UiCommon.getObject(data) as View;
@@ -303,296 +147,187 @@
           return;
 
         m_currentView.dbManager = grid.dbManager;
-        updateViewList(m_currentView.dataExchange["meterViewClassId"], m_currentView);
-        addViewToGroup(m_currentView);
+        ncData.addElement(m_currentView);
+        var o:Object = m_viewList[cbMeterKind.value];
+        o.VIEW = m_currentView;
       }
+
 
       private function showFaultEvent(event:FaultEvent):void
       {
         UiMessageBox.show(this, "Błąd ładowania widoku", "Uwaga");
       }
 
-      private function updateViewList(meterTypeId:int, view:*):void
+      public override function menuItemClick(event:MenuEvent):void
       {
-        var o:Object = m_viewList[meterTypeId];
+        var xml:XML = event.item as XML;
+        if (xml == null)
+          return;
 
-        o["VIEW"] = view;
+        var stopPropagation:Boolean = true;
+        switch (xml.@id.toString())
+        {
+          case "DEFAULT_VALUE_CONFIG":
+            if(grid.dbManager.recordCount < 1)
+            {
+              UiMessageBox.show(this, "Brak wybranego typu licznika", "Komunikat");
+              break;
+            }
 
-        m_viewList[meterTypeId] = o;
+            var frm:FrmDefaultValue = new FrmDefaultValue();
+            frm.meterTypeId = grid.getValue("ID");
+            frm.openInContent(UiUtils.getNavigatorContent(this));
+            break;
+          default:
+            stopPropagation = false;
+            break;
+        }
+
+        if (!stopPropagation)
+          super.menuItemClick(event);
       }
 
     ]]>
   </fx:Script>
   <fx:Declarations>
-    <db:DBQuery id="dbQuery" sqlFrom="Network_Meter"
+    <db:DBQuery id="dbQuery" sqlFrom="Network_MeterType"
                 sqlField="{dbField}"
-                sqlWhere="Active=1"
-                sqlOrderBy="Code"
-                sqlIdentityColumn="Id" sqlTable="Network_Meter"/>
+                sqlOrderBy="Id"
+                sqlIdentityColumn="Id" sqlTable="Network_MeterType"/>
+
+    <db:DBQuery id="dbDescMeterProducer" sqlFrom="Network_MeterProducer"
+                sqlFieldString="Id, Symbol, Name" sqlOrderBy="Symbol"
+                sqlTable="Network_MeterProducer" sqlIdentityColumn="Id"  />
 
     <fx:XML id="dbField" xmlns="">
       <fields>
-        <field name="Id" dataField="ID" displayText="Id" width="-1" bindable="false"/>
-        <field name="Code" dataField="CODE" displayText="Kod" width="100"/>
-        <field name="ObjectCode" dataField="OBJECT_CODE" displayText="Kod obiektu" width="50"/>
-        <field name="SerialNo" dataField="SERIAL_NO" displayText="Nr fabryczny" width="100"/>
-        <field name="SerialNo1" dataField="SERIAL_NO_1" displayText="Nr fabryczny 1" width="-1"/>
-        <field name="SerialNo2" dataField="SERIAL_NO_2" displayText="Nr fabryczny 2" width="-1"/>
-        <field name="SerialNo3" dataField="SERIAL_NO_3" displayText="Nr fabryczny 3" width="-1"/>
-        <field name="MeterDocumentTypeId" dataField="METER_DOCUMENT_TYPE_ID" displayText="Id typu dokumentu" width="50"/>
-        <field name="MeterStatusId" dataField="METER_STATUS_ID" displayText="Id statusu" width="50"/>
-        <field name="MeterOwnerId" dataField="METER_OWNER_ID" displayText="Id rodzaju właściciela" width="50"/>
-        <field name="MeterTypeId" dataField="METER_TYPE_ID" displayText="Id typu licznika" width="50"/>
-        <field name="MeterViewClassId" dataField="METER_VIEW_CLASS_ID" displayText="Id rodzaju" width="-1"/>
-        <field name="LegalizationFrom" dataField="LEGALIZATION_FROM" displayText="Data legalizacji od" width="100" type="date"/>
-        <field name="LegalizationTo" dataField="LEGALIZATION_TO" displayText="Data legalizacji do" width="100" type="date"/>
-        <field name="DevelopmentDate" dataField="DEVELOPMENT_DATE" displayText="Data zabudowy" width="100" type="date"/>
-        <field name="SealNo" dataField="SEAL_NO" displayText="Numer plomby" width="100"/>
+        <field name="Id" dataField="ID" displayText="Id" width="100"/>
+        <field name="Symbol" dataField="SYMBOL" displayText="Symbol" width="100"/>
+        <field name="Name" dataField="NAME" displayText="Nazwa" width="100"/>
         <field name="Description" dataField="DESCRIPTION" displayText="Opis" width="250"/>
+        <field name="Meter1No" dataField="METER_1_NO" displayText="Liczba cyfr liczydła 1" width="100"/>
+        <field name="Meter1MinNo" dataField="METER_1_MIN_NO" displayText="L. cyfr po ',' liczydła 1" width="100"/>
+        <field name="Meter2No" dataField="METER_2_NO" displayText="Liczba cyfr liczydła 2" width="100"/>
+        <field name="Meter2MinNo" dataField="METER_2_MIN_NO" displayText="L. cyfr po ',' liczydła 2" width="100"/>
+        <field name="Meter1MaxValue" dataField="METER_1_MAX_VALUE" displayText="Maksymalna wartość dla liczydła 1" width="100"/>
+        <field name="Meter2MaxValue" dataField="METER_2_MAX_VALUE" displayText="Maksymalna wartość dla liczydła 2" width="100"/>
+        <field name="MeterKind" dataField="METER_KIND" displayText="Rodzaj" width="100"/>
+        <field name="MeterProducerId" dataField="METER_PRODUCER_ID" displayText="Id producenta" width="50"/>
+        <field name="ViewSwfName" dataField="VIEW_SWF_NAME" displayText="Biblioteka swf" width="150"/>
+        <field name="ViewClassName" dataField="VIEW_CLASS_NAME" displayText="Klasa formularza" width="150"/>
+
+
+        <field name="FlowNominal" dataField="FLOW_NOMINAL" displayText="Przepływ nominalny" width="-1"/>
+        <field name="FlowMin" dataField="FLOW_MIN" displayText="Przepływ minimalny" width="-1" />
+        <field name="FlowMid" dataField="FLOW_MID" displayText="Przepływ pośredni" width="-1"/>
+        <field name="FlowMax" dataField="FLOW_MAX" displayText="Przepływ maksymalny" width="-1"/>
+
+        <field name="DailyLoadMin" dataField="DAILY_LOAD_MIN" displayText="Minimalne dzienne obciążenie" width="-1" />
+        <field name="DailyLoadMax" dataField="DAILY_LOAD_MAX" displayText="Maksymalne dzienne obciążenie" width="-1" />
+
+        <field name="MeterKindId" dataField="METER_KIND_ID"  displayText="Id rodzaju" width="-1"/>
+        <field name="TempMax" dataField="TEMP_MAX" displayText="Maksymalna temperatura pracy" width="-1"/>
+        <field name="WorkTimeCountType" dataField="WORK_TIME_COUNT_TYPE"  displayText="Sposób liczenia czasu pracy" width="-1"/>
+
+        <field name="DiameterNominal" dataField="DIAMETER_NOMINAL" displayText="Średnica nominalna" width="-1"/>
+        <field name="DiameterMin" dataField="DIAMETER_MIN" displayText="Średnica przyłączeniowa od" width="-1"/>
+        <field name="DiameterMax" dataField="DIAMETER_MAX" displayText="Średnica przyłączeniowa do" width="-1"/>
+
 
         <field name="MeterInstallId" dataField="METER_INSTALL_ID"  displayText="Id miejsca instalacji" width="-1"/>
-        <field name="MeterDefectId" dataField="METER_DEFECT_ID"  displayText="Id usterki" width="-1"/>
-        <field name="SealHalfThread" dataField="SEAL_HALF_THREAD"  displayText="Plomba na półśrubunku" width="-1"/>
-        <field name="IsPulsar" dataField="IS_PULSAR"  displayText="Impulsator" width="-1"/>
-        <field name="IsMagneticSensor" dataField="IS_MAGNETIC_SENSOR"  displayText="Czujnik magnetyczny" width="-1"/>
+        <field name="UnitId" dataField="UNIT_ID"  displayText="Id jednostki licznika" width="-1"/>
+
+        <field name="CanMeasureHeatPoint" dataField="CAN_MEASURE_HEAT_POINT"  displayText="Możliwość pomiaru - ciepło chwilowe" width="-1"/>
+        <field name="CanMeasureHeatMax" dataField="CAN_MEASURE_HEAT_MAX"  displayText="Możliwość pomiaru - ciepło maksymalne" width="-1"/>
+        <field name="CanMeasureHeatOver" dataField="CAN_MEASURE_HEAT_OVER"  displayText="Możliwość pomiaru - przekroczenia mocy" width="-1"/>
+        <field name="CanMeasureConsumptionHeatOver" dataField="CAN_MEASURE_CONSUMPTION_HEAT_OVER"  displayText="Możliwość pomiaru - zużycia przy przekroczenia mocy" width="-1"/>
+        <field name="CanMeasureFlowHeatOver" dataField="CAN_MEASURE_FLOW_HEAT_OVER"  displayText="Możliwość pomiaru - przepływu przy przekroczenia mocy" width="-1"/>
+        <field name="CanMeasureFlowPoint" dataField="CAN_MEASURE_FLOW_POINT"  displayText="Możliwość pomiaru - przepływ chwilowy" width="-1"/>
+        <field name="CanMeasureFlowMax" dataField="CAN_MEASURE_FLOW_MAX"  displayText="Możliwość pomiaru - przepływ maksymalny" width="-1"/>
+        <field name="CanMeasureCapacity" dataField="CAN_MEASURE_CAPACITY"  displayText="Możliwość pomiaru - objętość" width="-1"/>
+        <field name="CanMeasureTempSupply" dataField="CAN_MEASURE_TEMP_SUPPLY"  displayText="Możliwość pomiaru - temperatura zasilania" width="-1"/>
+        <field name="CanMeasureTempReturn" dataField="CAN_MEASURE_TEMP_RETURN"  displayText="Możliwość pomiaru - temperatura powrotu" width="-1"/>
 
         <field name="MeterDeviceCode1" dataField="METER_DEVICE_CODE_1" displayText="Kod licznika powiązanego nr 1" width="-1"/>
         <field name="MeterDeviceCode2" dataField="METER_DEVICE_CODE_2" displayText="Kod licznika powiązanego nr 2" width="-1"/>
         <field name="MeterDeviceCode3" dataField="METER_DEVICE_CODE_3" displayText="Kod licznika powiązanego nr 3" width="-1"/>
         <field name="MeterDeviceCode4" dataField="METER_DEVICE_CODE_4" displayText="Kod licznika powiązanego nr 4" width="-1"/>
 
-        <field name="ReplacementBatteryDate" dataField="REPLACEMENT_BATTERY_DATE" displayText="Data wymiany baterii" width="-1" type="date"/>
-
-
-        <field name="RadioModuleNo" dataField="RADIO_MODULE_NO" displayText="Numer modułu komunikacyjnego" width="-1"/>
+        <field name="MeterTempSensorTypeId" dataField="METER_TEMP_SENSOR_TYPE" displayText="Id rodzaju czujnika temp." width="-1"/>
+        <field name="MeterPowerTypeId" dataField="METER_POWER_TYPE_ID" displayText="Id sposobu zasilania" width="-1"/>
       </fields>
-    </fx:XML>
-
-    <db:DBQuery id="dbDescMeterDocumentType" sqlFrom="Network_MeterDocumentType"
-                sqlField="{dbDescCommonField}" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterDocumentType" sqlIdentityColumn="Id"  />
-
-
-    <db:DBQuery id="dbDescMeterStatus" sqlFrom="Network_MeterStatus"
-                sqlField="{dbDescCommonField}" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterStatus" sqlIdentityColumn="Id"  />
-
-    <db:DBQuery id="dbDescMeterOwner" sqlFrom="Network_MeterOwner"
-                sqlField="{dbDescCommonField}" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterOwner" sqlIdentityColumn="Id"  />
-
-    <db:DBQuery id="dbDescNetworkObject" sqlFrom="Network_Object"
-                sqlField="{dbDescNetworkObjectField}" sqlOrderBy="Code" sqlWhere="Active=1"
-                sqlTable="Network_Object" sqlIdentityColumn="Id"  />
-
-    <db:DBQuery id="dbDescMeterType" sqlFrom="Network_MeterType"
-                sqlField="{dbDescCommonField}" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterType" sqlIdentityColumn="Id"  />
-
-    <db:DBQuery id="dbDescMeterInstall" sqlFrom="Network_MeterInstall"
-                sqlFieldString="Id, Symbol, Name" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterInstall" sqlIdentityColumn="Id"  />
-
-    <db:DBQuery id="dbDescMeterViewClass" sqlFrom="Network_MeterViewClass"
-                sqlField="{dbDescMeterViewClassField}" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterViewClass" sqlIdentityColumn="Id"  />
-
-    <db:DBQuery id="dbMeterDefect" sqlFrom="Network_MeterDefect"
-                sqlFieldString="Id, Symbol, Name" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterDefect" sqlIdentityColumn="Id"  />
-
-    <fx:XML xmlns="" id="dbDescCommonField">
-      <fields>
-        <field name="Id" dataField="Id"/>
-        <field name="Symbol" dataField="Symbol"/>
-        <field name="Name" dataField="Name"/>
-      </fields>
-    </fx:XML>
-
-    <fx:XML xmlns="" id="dbDescMeterViewClassField">
-      <fields>
-        <field name="Id" dataField="Id"/>
-        <field name="Symbol" dataField="Symbol"/>
-        <field name="Name" dataField="Name"/>
-        <field name="ViewSwfName" dataField="ViewSwfName"/>
-        <field name="ViewClassName" dataField="ViewClassName"/>
-      </fields>
-    </fx:XML>
-
-    <fx:XML xmlns="" id="dbDescNetworkObjectField">
-      <fields>
-        <field name="Id" dataField="Id"/>
-        <field name="Code" dataField="Code"/>
-        <field name="Active" dataField="Active"/>
-        <field name="Symbol" dataField="Symbol"/>
-        <field name="Name" dataField="Name"/>
-
-      </fields>
-    </fx:XML>
-    <!--
-    * Lista dodatkowych kolumn zdefiniowanych zewnętrznie dla kontrolki opisującej typ licznika.
-    *
-    * Element listy wskazuje na kolumnę w bazie lub podzapytanie (w odwołaniu do Networ_Meter) oraz nazwę pod jaką będzie ta informacja w mapie i w elemencie drzewka (xml)
-    -->
-    <fx:XML xmlns="" id="meterTypeDataList">
-      <fields>
-        <field name="ltrim(str(DiameterNominal, 10, 2))" dataField="DIAMETER"/>
-        <field name="isnull(ltrim(str(PressureMax, 10, 2)), '-,--')" dataField="PRESSURE_MAX"/>
-        <field name="ltrim(str(TempMax, 10, 0))" dataField="TEMP_MAX"/>
-        <field name="ltrim(str(DailyLoadMin, 10, 1))" dataField="DAILY_LOAD_MIN"/>
-        <field name="ltrim(str(DailyLoadMax, 10, 1))" dataField="DAILY_LOAD_MAX"/>
-        <field name="ltrim(str(FlowMin, 10, 2))" dataField="FLOW_MIN"/>
-        <field name="ltrim(str(FlowMid, 10, 2))" dataField="FLOW_MID"/>
-        <field name="ltrim(str(FlowNominal, 10, 2))" dataField="FLOW_NOMINAL"/>
-        <field name="ltrim(str(FlowMax, 10, 2))" dataField="FLOW_MAX"/>
-        <field name="isnull((select Name from Network_MeterProducer where Id = MeterProducerId), '---')" dataField="METER_PRODUCER"/>
-      </fields>
-    </fx:XML>
-    <!--
-    * XML opisujący wygląd elementu wyswietlanego dla opisu typu licznika
-    * np.:
-    * <form xmlns:s="spark.components">
-    *   <components>
-    *     <s:HGroup percentWidth="100" height="100">
-    *       <item className='pl.logicsynergy.components.Label' dataField='@TITLE' fontStyle='italic' fontSize='10' paddingBottom='10'/>
-    *
-    *     </s:HGroup>
-    *   </components>
-    * </form>
-    * null - standardowy tekst (pojedynczy)
-    -->
-    <fx:XML xmlns="" id="meterTypeDescriptionView">
-      <form xmlns:s="spark.components" xmlns:c="pl.logicsynergy.components">
-        <components>
-          <s:VGroup id="vg" percentWidth="100" percentHeight="100" paddingLeft="5" paddingRight="5" paddingTop="20" gap="10">
-            <s:HGroup id="hg1" percentWidth="100" gap="10">
-              <c:Label id="lblDiameterValue" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Średnica (mm)" dataField="DIAMETER"  vColor="0x0000ff" vFontSize="20"/>
-              <c:Label id="lblProducer" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Producent" dataField="METER_PRODUCER" fontWeight="bold" vFontSize="16"/>
-            </s:HGroup>
-            <s:HGroup id="hg2" percentWidth="100" gap="10">
-              <c:Label id="lblPressureMax" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Max. ciśń. rob. (MPa)" dataField="PRESSURE_MAX" vFontSize="16"/>
-              <c:Label id="lblDailyLoadMin" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Obc. min. dz. (m3/dz.)" dataField="DAILY_LOAD_MIN" vFontSize="16" />
-
-            </s:HGroup>
-            <s:HGroup id="hg3" percentWidth="100" gap="10">
-              <c:Label id="lblPressureMax" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Max. temp. rob. (C°)" dataField="TEMP_MAX" vFontSize="16"/>
-              <c:Label id="lblDailyLoadMaz" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Obc. max. dz. (m3/dz.)" dataField="DAILY_LOAD_MAX" vFontSize="16"/>
-            </s:HGroup>
-            <s:HGroup id="hg4" percentWidth="100" gap="10">
-              <c:Label id="lblFlowMin" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Przepływ min. Q1 (m3/h)" dataField="FLOW_MIN" vFontSize="16"/>
-              <c:Label id="lblFlowMid" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Przepływ śr. Q2 (m3/h)" dataField="FLOW_MID" vFontSize="16"/>
-              <c:Label id="lblFlowNominal" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Przepływ nom. Q3 (m3/h)" dataField="FLOW_NOMINAL" vFontSize="16"/>
-              <c:Label id="lblFlowMax" width="140" _skinClass="pl.logicsynergy.skins.LabelDescSkin" label="Przepływ max. Q4 (m3/h)" dataField="FLOW_MAX" vFontSize="16"/>
-            </s:HGroup>
-          </s:VGroup>
-        </components>
-      </form>
     </fx:XML>
 
     <fx:XML id="menuEx" xmlns="">
       <menu xmlNodePosition="-1">
-        <menuitem id="PRINTING" labelName="Wydruki" xmlNodePosition="-1">
-          <menuitem id="PRINT_METERS" labelName="Drukuj wodomierze" report="REPORT_NAME=@PrintWaterMeters" reportRunInBackground="true" dbManager="{'{this.grid.dbManager}'}" useQuery="true"/>
+        <menuitem id="OPTIONS" labelName="Opcje" xmlNodePosition="6" enabledInWriteMode='false'>
+          <meuitem id="DEFAULT_VALUE_CONFIG" labelName="Konfiguracja wartości domyślnych"/>
         </menuitem>
       </menu>
     </fx:XML>
 
   </fx:Declarations>
-  <s:Scroller left="0" right="0" top="0" bottom="25">
-
-  <s:VGroup id="grMain" width="100%" height="100%"  minWidth="500">
+  <s:VGroup id="grMain" left="0" right="0" top="0" bottom="25" minWidth="780">
     <s:HGroup width="100%">
-      <c:TextInput id="txtCode" width="108" label="Kod" autogenerate="false" columnName="Code"
-  				 dataField="CODE" dbProvider="{grid.dbManager}" enabledInEditMode="false"
-  				 restrict="0-9" skinClass="pl.logicsynergy.skins.TextInputCodeSkin"
-  				 useValidator="false"/>
-      <!--<c:DateField id="dfModifyDate" width="108" label="Data modyfikacji"
-                   dataField="MODIFY_DATE" dbProvider="{grid.dbManager}" enabledInNewMode="false"
-                   />-->
-      <c:TextInput id="txtSerialNo" width="220" label="Numer fabryczny"
-                   columnName="SerialNo" dataField="SERIAL_NO" dbProvider="{grid.dbManager}"/>
-    </s:HGroup>
-    <s:HGroup width="100%">
-      <c:DateField id="dfLegalizationFrom" width="108" label="Data legalizacji od"
-                   columnName="LegalizationFrom" dataField="LEGALIZATION_FROM"
-                   dbProvider="{grid.dbManager}" skinClass="pl.logicsynergy.skins.DateFieldSkin"/>
-      <c:DateField id="dfLegalizationTo" width="108" label="Data legalizacji do"
-                   columnName="LegalizationTo" dataField="LEGALIZATION_TO"
-                   dbProvider="{grid.dbManager}"/>
-      <c:DateField id="dfDevelopmentDate" width="108" label="Data zabudowy"
-                   columnName="DevelopmentDate" dataField="DEVELOPMENT_DATE"
-                   dbProvider="{grid.dbManager}"/>
-      <c:TextInput id="txtSealNo" width="220" label="Numer plomby" columnName="SealNo"
-                   dataField="SEAL_NO" dbProvider="{grid.dbManager}"/>
+      <c:TextInput id="txtSymbol" width="40" label="Symbol" columnName="Symbol"
+                   dataField="SYMBOL" dbProvider="{grid.dbManager}"/>
+      <c:TextInput id="txtName" width="100%" label="Nazwa" columnName="Name"
+                   dataField="NAME" dbProvider="{grid.dbManager}"/>
     </s:HGroup>
 
-    <c:DatabaseField id="dbfMeterType" width="100%" label="Typ licznika" columnName="MeterTypeId" dataField="METER_TYPE_ID" dbProvider="{grid.dbManager}"
-                     idField="Id" sqlTable="Network_MeterType" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterType}"
-                     swfClassName="pl.logicsynergy.ui.network.meter.FrmMeterType" swfFile="eMediaUiNetwork.swf" />
-    <c:Panel id="pMeterType" left="0" right="0" height="200" label="Dane typu" dbProvider="{grid.dbManager}">
-      <c:LabelArea id="fArea" width="100%" height="100%"
-                   dataField="METER_TYPE_ID" dbProvider="{grid.dbManager}" sqlTable="Network_MeterType"
-                   dataList="{meterTypeDataList}" xmlContentView="{meterTypeDescriptionView}"/>
-    </c:Panel>
-
+    <s:HGroup width="100%">
+      <c:ComboBox id="cbMeterKind" label="Rodzaj" width="220"
+                    columnName="MeterKind"
+                    dataField="METER_KIND" dbProvider="{grid.dbManager}"/>
+      <c:DatabaseField id="dbfMeterProducer" width="100%" label="Producent" columnName="MeterProducerId" dataField="METER_PRODUCER_ID" dbProvider="{grid.dbManager}"
+                       idField="Id" sqlTable="Network_MeterProducer" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterProducer}"
+                       swfClassName="pl.logicsynergy.ui.common.FrmDictionary" swfFile="eMediaUiCommon.swf"
+                       dataExchange="{{'dbQuery.sqlTable':'Network_MeterProducer', 'dbQuery.sqlFrom':'Network_MeterProducer', formName:'Producent licznika', type: 1 }}"
+                       />
+    </s:HGroup>
     <s:TabBar id="tbMain" width="100%" height="25" dataProvider="{vcTab}"/>
     <mx:ViewStack id="vcTab" width="100%" height="100%" creationPolicy="all" minHeight="300">
       <s:NavigatorContent id="ncMain" width="100%" height="100%" label="Dane ogólne">
-        <s:VGroup width="100%">
-          <c:DatabaseField id="dbfMeterViewClass" width="100%" label="Rodzaj ewidencji" columnName="MeterViewClassId" dataField="METER_VIEW_CLASS_ID" dbProvider="{grid.dbManager}"
-                           idField="Id" sqlTable="Network_MeterViewClass" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterViewClass}"
-                           swfClassName="pl.logicsynergy.ui.network.meter.FrmMeterViewClass" swfFile="eMediaUiNetwork.swf"
-                           skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+        <s:VGroup id="grMainData" width="100%">
+          <c:Panel id="pMeter1" width="100%" height="55"
+                   label="Licznik 1" dbProvider="{grid.dbManager}">
+            <s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingTop="15" verticalAlign="middle">
+              <c:TextInput id="txtMeter1No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter1No"
+                           dataField="METER_1_NO" dbProvider="{grid.dbManager}"/>
+              <c:TextInput id="txtMeter1MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter1MinNo"
+                           dataField="METER_1_MIN_NO" dbProvider="{grid.dbManager}"
+                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
+              <s:Label id="lblMeter1Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
+              <c:TextInput id="txtMeter1MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter1MaxValue"
+                           dataField="METER_1_MAX_VALUE" dbProvider="{grid.dbManager}"
+                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
 
-          <c:DatabaseField id="dbfObjectCode" width="100%" label="Obiekt sieci" columnName="ObjectCode" dataField="OBJECT_CODE" dbProvider="{grid.dbManager}"
-                           idField="Code" sqlTable="Network_Object" swfClassName="pl.logicsynergy.ui.network.object.MdiObject" swfFile="eMediaUiNetwork.swf"
-                           valueType="Integer"
-                           descField="[Symbol] | [Name]" dbDescQuery="{dbDescNetworkObject}" history="true"/>
+            </s:HGroup>
+          </c:Panel>
 
-          <c:DatabaseField id="dbfMeterDocumentTypeId" width="100%" label="Typ dokumentu" columnName="MeterDocumentTypeId" dataField="METER_DOCUMENT_TYPE_ID" dbProvider="{grid.dbManager}"
-                           idField="Id" sqlTable="Network_MeterDocumentType" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterDocumentType}"
-                           swfClassName="pl.logicsynergy.ui.network.meter.FrmMeterDocumentType" swfFile="eMediaUiNetwork.swf"
-                           />
-          <s:HGroup width="100%">
-            <c:ComboBox id="cbMeterStatusId" width="50%" label="Status" columnName="MeterStatusId"
-                        dataField="METER_STATUS_ID" dbProvider="{grid.dbManager}"
-                        descField="[Symbol] | [Name]" dbQuery="{dbDescMeterStatus}"/>
-
-            <c:DatabaseField id="dbfMeterOwnerId" width="50%" label="Rodzaj właściciela" columnName="MeterOwnerId" dataField="METER_OWNER_ID" dbProvider="{grid.dbManager}"
-                             idField="Id" sqlTable="Network_MeterOwner" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterOwner}"
-                             swfClassName="pl.logicsynergy.ui.common.FrmDictionary" swfFile="eMediaUiCommon.swf"
-                             dataExchange="{{'dbQuery.sqlTable':'Network_MeterOwner', 'dbQuery.sqlFrom':'Network_MeterOwner', formName:'Rodzaje właścicieli', type: 1 }}"/>
-          </s:HGroup>
-          <s:HGroup width="100%" verticalAlign="middle">
-            <c:DatabaseField id="dbfMeterInstall" width="100%" label="Miejsce instalacji" columnName="MeterInstallId" dataField="METER_INSTALL_ID" dbProvider="{grid.dbManager}"
-                             idField="Id" sqlTable="Network_MeterInstall" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterInstall}"
-                             swfClassName="pl.logicsynergy.ui.common.FrmDictionary" swfFile="eMediaUiCommon.swf"
-                             dataExchange="{{'dbQuery.sqlTable':'Network_MeterInstall', 'dbQuery.sqlFrom':'Network_MeterInstall', formName:'Miejsce instalacji', type: 1 }}"/>
-            <c:CheckBox id="chbSealHalfThread" width="200" height="23"
-                        label="Plomba na półśrubunku"
-                        dataField="SEAL_HALF_THREAD" dbProvider="{grid.dbManager}"
-                        columnName="SealHalfThread"
-                        defaultValue="false"/>
-          </s:HGroup>
-          <c:DatabaseField id="dbfMeterDefect" width="100%" label="Rodzaj usterki" columnName="MeterDefectId" dataField="METER_DEFECT_ID" dbProvider="{grid.dbManager}"
-                           idField="Id" sqlTable="Network_MeterDefect" descField="[Symbol] | [Name]" dbDescQuery="{dbMeterDefect}"
-                           swfClassName="pl.logicsynergy.ui.common.FrmDictionary" swfFile="eMediaUiCommon.swf"
-                           dataExchange="{{'dbQuery.sqlTable':'Network_MeterDefect', 'dbQuery.sqlFrom':'Network_MeterDefect', formName:'Rodzaje usterek liczników', type: 1 }}"/>
+          <c:Panel id="pMeter2" width="100%" height="55"
+                   label="Licznik 2" dbProvider="{grid.dbManager}">
+            <s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingTop="15" verticalAlign="middle">
+              <c:TextInput id="txtMeter2No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter2No"
+                           dataField="METER_2_NO" dbProvider="{grid.dbManager}"/>
+              <c:TextInput id="txtMeter2MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter2MinNo"
+                           dataField="METER_2_MIN_NO" dbProvider="{grid.dbManager}"
+                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
+              <s:Label id="lblMeter2Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
+              <c:TextInput id="txtMeter2MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter2MaxValue"
+                           dataField="METER_2_MAX_VALUE" dbProvider="{grid.dbManager}"
+                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
+            </s:HGroup>
+          </c:Panel>
 
           <c:TextArea id="txtaDescription" width="100%" height="80" label="Opis"
                       columnName="Description" dataField="DESCRIPTION" dbProvider="{grid.dbManager}" />
-
         </s:VGroup>
       </s:NavigatorContent>
       <s:NavigatorContent id="ncData" width="100%" height="100%" label="Dane typu">
 
       </s:NavigatorContent>
+
     </mx:ViewStack>
-
-
-
-
-
   </s:VGroup>
-  </s:Scroller>
 </ui:UiDictionary>

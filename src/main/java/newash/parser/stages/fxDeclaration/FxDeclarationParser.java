@@ -77,7 +77,7 @@ public class FxDeclarationParser extends Parser {
       if (isFoundRegex("\\w+=\"\\w+\"") && !isIdForFieldsFound) {
         String idValue = found;
         idValue = idValue.substring(idValue.indexOf("\"") + 1, idValue.length() - 1);
-        idValue = "get" + ((Character) idValue.charAt(0)).toString().toUpperCase() + idValue.substring(0);
+        idValue = "get" + ((Character) idValue.charAt(0)).toString().toUpperCase() + idValue.substring(1);
         XmlField.setId(idValue);
         isIdForFieldsFound = true;
       } else {

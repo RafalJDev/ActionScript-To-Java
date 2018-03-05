@@ -121,6 +121,7 @@ public class ComponentsParser extends Parser {
     String methodToAdd =
        comments + methodDeclarationAndBegining + methodBodyForDataExchange + closeMethodBody;
     actionScriptStage.getDbMethods().add(methodToAdd);
+    methodBodyForDataExchange = "";
   }
   private void simpleReplaceAll() {
     for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
