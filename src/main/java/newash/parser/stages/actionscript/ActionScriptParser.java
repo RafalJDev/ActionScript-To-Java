@@ -49,6 +49,12 @@ public class ActionScriptParser extends Parser {
 
     replaceAsToCast();
 
+    isNanToNull();
+
+    ifLineIsClassNameThenCreateFieldWithThatClass();
+
+    changeToSetCall();
+
     if (thereIsRoCall && line.contains("ro.call")) {
 
       String spaces = line.substring(0, line.indexOf("r") - 1);
@@ -93,8 +99,6 @@ public class ActionScriptParser extends Parser {
       line = "  @Override\n  " + line.replace("override ", "").trim();
     }
     if (line.contains("var")) {
-      int firstColon = line.indexOf(":");
-
       if (isFoundRegex(":[a-zA-Z0-9]*\\s{0}")) {
         line = line.replace("var", found.replace(":", ""));
         line = line.replace(found, "");
@@ -107,7 +111,7 @@ public class ActionScriptParser extends Parser {
     }
     if (line.contains("addEventListener(")) {
       if (line.contains(")")) {
-        methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.indexOf(")")).trim());
+        methodsForEventListeners.add(line.substring(line.indexOf(",") + 2, line.lastIndexOf(")")).trim());
         line = line.replace(")", "(event))");
         line = line.replace(", ", ", event -> ");
         line = line.replaceAll("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
@@ -135,7 +139,7 @@ public class ActionScriptParser extends Parser {
 
   private void convertFunctionToJavaMethod() {
     if (line.contains(" function ")) {
-      if (!line.contains(", function ")) {//TODO the fuck, I did there, dobule check ?
+      if (!line.contains(", function ")) {
         int lastIndexOfColon = line.lastIndexOf(":");
         String returnTypeWithoutSpace = line.substring(lastIndexOfColon + 1)
            .trim();
@@ -194,9 +198,36 @@ public class ActionScriptParser extends Parser {
     }
   }
 
+  public void isNanToNull() {
+    if (line.contains("(isNaN(")) {
+      if (isFoundRegex("\\(isNaN\\((\\w+)\\)", 1)) {
+        line = line.replaceAll("isNaN\\(" + found + "\\)", found + " == null");
+        line += "//moze trzeba przyrownac do \"\"";
+      }
+    }
+  }
+
+  public void ifLineIsClassNameThenCreateFieldWithThatClass() {
+    if (line.matches("\\s*\\w+;")) {
+      if (!(line.contains("break;") || line.contains("return;") || line.contains("continue;"))) {
+        foundRegex("\\s+(\\w+);", 1);
+        String foundWithFirstLetterToLower = ((Character) found.toCharArray()[0]).toString().toLowerCase() + found.substring(1);
+        actionScriptStage.getComponentsThatNeedField().put(foundWithFirstLetterToLower, found);
+        line = "";
+      }
+    }
+  }
+
+  public void changeToSetCall() {
+    if (isFoundRegex("\\w+\\.(\\w+) = .+;", 1)) {
+      String createSetToReplace = "\\.set" + ((Character) found.charAt(0)).toString().toUpperCase() + found.substring(1) + "(";
+      line = line.replaceAll("\\." + found + " = ", createSetToReplace)
+         .replaceAll(";", ");");
+    }
+  }
+
   public void replaceAsToCast() {
     if (line.contains(" = ") && line.contains(" as ")) {
-      int indexOfEquals = line.indexOf("=");
       if (isFoundRegex(" as \\w+")) {
         line = line.replaceAll(found, "");
         line = line.replaceAll("= ", "= (" + found.substring(4) + ") ");
@@ -204,20 +235,28 @@ public class ActionScriptParser extends Parser {
     }
   }
 
-  public StringBuilder secondParsingForAddingComponents() {
+  public void addFields() {
 
     String oldValue = "APPEND_HERE_FIELDS";
     String componentFields = "\n";
     for (Map.Entry<String, String> entry : actionScriptStage.getComponentsThatNeedField().entrySet()) {
-      componentFields += "  public " + entry.getValue() + " " + entry.getKey() + ";\n\n";
+      componentFields += "  public " + entry.getValue() + " " + entry.getKey() + ";\t//import or create ME\n\n";
     }
     int hanysIndex = actionScriptStage.getCode().indexOf(oldValue);
 
-    return actionScriptStage.getCode().replace(hanysIndex, hanysIndex + oldValue.length(), componentFields);
+    actionScriptStage.getCode().replace(hanysIndex, hanysIndex + oldValue.length(), componentFields);
   }
 
-  public void changeToSet() {
+  public void addMethods() {
 
+    String oldValue = "APPEND_HERE_METHODS";
+    String dbMethods = "\n";
+    for (String dbMethod : actionScriptStage.getDbMethods()) {
+      dbMethods += dbMethod;
+    }
+    int hanysIndex = actionScriptStage.getCode().indexOf(oldValue);
+
+    actionScriptStage.getCode().replace(hanysIndex, hanysIndex + oldValue.length(), dbMethods);
   }
 
   public void appendEndClassBraces() {
@@ -251,7 +290,7 @@ public class ActionScriptParser extends Parser {
     replaceMap.put("\\.currentIndex", "\\.getCurrentIndex()");
     replaceMap.put("\\.isResultOK", "\\.isResultOk");
     replaceMap.put("StringUtils\\.IsNullOrEmpty", "StringUtils.isNullOrEmpty");
-    //TODO * na Object, przy var, ale jeszcze nie zamienia miejscami
     replaceMap.put("\\*", "Object");
+    replaceMap.put("@id", "getId()");
   }
 }

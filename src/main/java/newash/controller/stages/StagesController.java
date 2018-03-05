@@ -4,13 +4,13 @@ import lombok.extern.java.Log;
 import newash.actionscript.stage.stages.*;
 import newash.io.code.IOEntity;
 import newash.io.reader.current.LineEntity;
+import newash.parser.stages.Formatter;
 import newash.parser.stages.actionscript.ActionScriptParser;
 import newash.parser.stages.coponents.ComponentsParser;
 import newash.parser.stages.fxDeclaration.FxDeclarationParser;
 import newash.parser.stages.imports.ImportParser;
 import newash.parser.stages.uidesign.UiDesignParser;
 
-import javax.sound.sampled.Line;
 import java.io.IOException;
 
 /**
@@ -64,7 +64,8 @@ public class StagesController {
           componentsParser.parseThisStage();
         } else if (componentsStage.getLastLine() == lineCount) {
           componentsParser.parseThisStage();
-          actionScriptParser.secondParsingForAddingComponents();
+          actionScriptParser.addFields();
+          actionScriptParser.addMethods();
         }
       }
     } catch (IOException e) {
@@ -75,6 +76,9 @@ public class StagesController {
     }
 
     addOutputCode();
+
+    Formatter formatter = new Formatter();
+    formatter.replaceTwoAndMoreNewLinesWithOneLine();
   }
 
   public void addOutputCode() {

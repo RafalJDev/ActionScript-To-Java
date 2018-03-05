@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
  */
 public class Regex {
 
-  private static Pattern pattern;
-  private static Matcher matcher;
+  private Pattern pattern;
+  private Matcher matcher;
 
   protected final String POLISH_WORDS = "[A-Za-zżźćńółęąśŻŹĆĄŚĘŁÓŃ]";
 

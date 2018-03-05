@@ -14,6 +14,9 @@ public class ActionScriptStage extends Stage {
 
   private List<String> candidatesForComponents = new ArrayList<>();
   private Map<String, String> componentsThatNeedField = new HashMap<>();
+
+  private List<String> dbMethods = new ArrayList<>();
+
   private static ActionScriptStage ourInstance = new ActionScriptStage();
 
   public static ActionScriptStage getInstance() {
@@ -39,5 +42,13 @@ public class ActionScriptStage extends Stage {
 
   public void setComponentsThatNeedField(Map<String, String> componentsThatNeedField) {
     this.componentsThatNeedField = componentsThatNeedField;
+  }
+
+  public List<String> getDbMethods() {
+    return dbMethods;
+  }
+
+  public void setDbMethods(List<String> dbMethods) {
+    this.dbMethods = dbMethods;
   }
 }

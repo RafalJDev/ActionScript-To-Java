@@ -35,7 +35,7 @@ public class StagesFinderTest {
     stages = Arrays.asList(uiDesignStage, importStage, actionScriptStage, fxDeclarationStage, componentsStage);
 
     controller = new Controller();
-      controller.launchIt();
+    controller.launchIt();
   }
 
   @Test

@@ -6,11 +6,8 @@ import newash.actionscript.stage.stages.UiDesignStage;
 import newash.io.reader.current.LineEntity;
 import newash.parser.stages.Parser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Created by Jaszczynski.Rafal on 04.03.2018.
@@ -21,8 +18,9 @@ public class ComponentsParser extends Parser {
   ComponentsStage componentsStage;
   UiDesignStage uiDesignStage;
 
-//  private List<String> candidatesForComponents = new ArrayList<>();
-//  private Map<String, String> componentsThatNeedField = new HashMap<>();
+  private String idValueForCurrentComponent = "";
+  private String methodBodyForDataExchange = "";
+  private String dataExchangeMethodName = "";
 
   private Map<String, String> replaceMap = new HashMap<>();
 
@@ -39,6 +37,9 @@ public class ComponentsParser extends Parser {
   public void parseThisStage() {
     line = lineEntity.getLine();
 
+    getIdValueForComponent();
+    createDataExchangeMethod();
+
     findComponents();
     simpleReplaceAll();
 
@@ -49,7 +50,7 @@ public class ComponentsParser extends Parser {
     if (isFoundRegex("id=\"[^\"]*\"")) {
       String id = found.substring(4, found.length() - 1);
       String componentClass = "";
-      if (isFoundRegex("<\\w:(\\w+) \\w",1)) {
+      if (isFoundRegex("<\\w:(\\w+) \\w", 1)) {
         componentClass = found.trim();
       }
 
@@ -63,6 +64,64 @@ public class ComponentsParser extends Parser {
     }
   }
 
+  public void getIdValueForComponent() {
+    if (isFoundRegex("id=\"(\\w+)\"", 1)) {
+      idValueForCurrentComponent = found;
+    }
+  }
+
+  public void createDataExchangeMethod() {
+    if (isFoundRegex("dataExchange=\"\\{\\{(.*)\\}\\}", 1)) {
+      createMethodNameAndReplaceItWithOldDataExchange();
+      String[] arguments = found.trim().split(",");
+
+      for (String argument : arguments) {
+        String[] keyValueArray = argument.replaceAll("'", "").split(":");
+        if (keyValueArray.length != 2) {
+          throw new IllegalStateException("keyValueArray should have 2 objects, but have: " + keyValueArray.length);
+        }
+        String key = keyValueArray[0].trim();
+        String value = "\"" + keyValueArray[1].trim() + "\"";
+
+        String putCall = "\t   dataMap.put(" + key + ", " + value + ");\n";
+        methodBodyForDataExchange += putCall;
+      }
+      sumUpDataExchangeMethodAndToJavaMethods();
+    }
+  }
+
+  public void createMethodNameAndReplaceItWithOldDataExchange() {
+    dataExchangeMethodName = "get" +
+       ((Character) idValueForCurrentComponent.charAt(0)).toString().toUpperCase()
+       + idValueForCurrentComponent.substring(1) + "()";
+    line = line.replace(found, dataExchangeMethodName)
+       .replaceAll("\\{\\{", "{")
+       .replaceAll("\\}\\}", "}")
+       .replaceAll("\\(\\)", "");
+
+  }
+
+  public void sumUpDataExchangeMethodAndToJavaMethods() {
+    String comments =
+       "\n\t /**\n" +
+          "\t * Zwrócenie DataMap dla komponentu " + idValueForCurrentComponent + "\n" +
+          "\t *\n" +
+          "\t * @return Data Exchange\n" +
+          "\t */\n";
+
+    String methodDeclarationAndBegining =
+       "\t public DataMap " + dataExchangeMethodName + "\n" +
+          "\t {\n" +
+          "\t   DataMap dataMap = new DataMap();\n";
+
+    String closeMethodBody =
+       "\t   return dataMap;\n" +
+          "\t }\n";
+
+    String methodToAdd =
+       comments + methodDeclarationAndBegining + methodBodyForDataExchange + closeMethodBody;
+    actionScriptStage.getDbMethods().add(methodToAdd);
+  }
   private void simpleReplaceAll() {
     for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
       String oldValue = entry.getKey();

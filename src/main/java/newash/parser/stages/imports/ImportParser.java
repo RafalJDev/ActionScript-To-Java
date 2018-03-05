@@ -57,8 +57,8 @@ public class ImportParser extends Parser {
     if (!isPackageAdded) {
       Regex regex = new Regex();
       regex.setLine(ioEntity.getFilePackage());
-      String packageWithoutDots= regex.foundRegex("\\.(.*)\\.", 1);
-      packageName = "package " + packageWithoutDots + ";\n";
+      String packageWithoutDots = regex.foundRegex("\\.(.*)\\.", 1);
+      packageName = "package " + packageWithoutDots + ";\n\n";
       line = packageName + line;
       isPackageAdded = true;
     }

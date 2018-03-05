@@ -9,15 +9,15 @@ import java.io.*;
  */
 public class FileReader {
 
-    private static final String fileToReadFrom = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\flashCodeJustActionScript.txt";
-    private static final String fileToWrite = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\javaCodeByRJ.txt";
+  private static final String fileToReadFrom = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\flashCodeJustActionScript.txt";
+  private static final String fileToWrite = System.getProperty("user.dir") + "\\ActionScript-To-Java\\files\\javaCodeByRJ.txt";
 
-    private static StringBuilder stringBuilder = new StringBuilder("import logica.data.DataMap;\n" +
-            "import pl.logicsynergy.annotations.UiDesign;\n" +
-            "import pl.logicsynergy.components.ComboBox;\n" +
-            "import pl.logicsynergy.components.mdi.View;\n" +
-            "import pl.logicsynergy.creator.UiCreator;\n" +
-            "import pl.logicsynergy.database.DBQuery;\n\n");
+  private static StringBuilder stringBuilder = new StringBuilder("import logica.data.DataMap;\n" +
+     "import pl.logicsynergy.annotations.UiDesign;\n" +
+     "import pl.logicsynergy.components.ComboBox;\n" +
+     "import pl.logicsynergy.components.mdi.View;\n" +
+     "import pl.logicsynergy.creator.UiCreator;\n" +
+     "import pl.logicsynergy.database.DBQuery;\n\n");
 
 //    public static void openFileAndGetBufferedReader() throws IOException {
 //
@@ -51,7 +51,7 @@ public class FileReader {
 //        }
 //        stringBuilder.append("}");
 //
-//        stringBuilder = Parser.secondParsingForAddingComponents(stringBuilder, "HANYS");
+//        stringBuilder = Parser.addFields(stringBuilder, "HANYS");
 //
 //        System.out.println(stringBuilder);
 ////Close the input stream
