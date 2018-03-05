@@ -50,42 +50,42 @@ public class Parser {
       return line;
     }
 
-    if (line.contains("fx:Script")) {
-      if (parsedPart == 1) {
-        parsedPart = 2;
-      } else {
-        parsedPart = 3;
-      }
-      line = "";
-    } else if (parsedPart == 1) {
-//            parseThisStage();
-    } else if (parsedPart == 2) {
-      convertActionScriptToJava();
-    } else if (parsedPart == 3) {
-      if (line.contains("<fx:XML")) {
-        parsedPart = 4;
-        line = getSpacingAndCutHalf() + line.trim();
-        return line;
-      } else if (line.contains("</fx:Declarations>")) {
-        parsedPart = 5;
-        line = getSpacingAndCutHalf() + line.trim();
-        return line;
-      }
-      parseDbQuery();
-    } else if (parsedPart == 4) {
-      if (line.contains("</fx:XML>")) {
-        parsedPart = 5;
-        line = getSpacingAndCutHalf() + line.trim();
-        return line;
-      }
-      parseXmlFields();
-    } else if (parsedPart == 5) {
-      if (justOnce) {
-        justOnce = false;
-        return "AddMethods";
-      }
-      parseXmlComponents();
-    }
+//    if (line.contains("fx:Script")) {
+//      if (parsedPart == 1) {
+//        parsedPart = 2;
+//      } else {
+//        parsedPart = 3;
+//      }
+//      line = "";
+//    } else if (parsedPart == 1) {
+////            parseThisStage();
+//    } else if (parsedPart == 2) {
+//      convertActionScriptToJava();
+//    } else if (parsedPart == 3) {
+//      if (line.contains("<fx:XML")) {
+//        parsedPart = 4;
+//        line = getSpacingAndCutHalf() + line.trim();
+//        return line;
+//      } else if (line.contains("</fx:Declarations>")) {
+//        parsedPart = 5;
+//        line = getSpacingAndCutHalf() + line.trim();
+//        return line;
+//      }
+//      parseDbQuery();
+//    } else if (parsedPart == 4) {
+//      if (line.contains("</fx:XML>")) {
+//        parsedPart = 5;
+//        line = getSpacingAndCutHalf() + line.trim();
+//        return line;
+//      }
+//      parseXmlFields();
+//    } else if (parsedPart == 5) {
+//      if (justOnce) {
+//        justOnce = false;
+//        return "AddMethods";
+//      }
+//      parseXmlComponents();
+//    }
 
     line = getSpacingAndCutHalf() + line.trim();
     return line;
@@ -312,75 +312,75 @@ public class Parser {
 //
   }
 
-  public static void parseDbQuery() {
-
-    if (line.contains("db:DBQuery")) {
-      countDbQuery++;
-    }
-    if (countDbQuery >= 1) {
-      pattern = Pattern.compile("\\w+=\"[a-zA-Z0-9_, {}]+\"");
-      matcher = pattern.matcher(line);
-
-      while (matcher.find()) {
-        if (matcher.group().contains("sqlTable")) {
-          continue;
-        }
-        dbQueryAtributes.add(matcher.group().trim());
-      }
-      if (line.contains("/>")) {
-        if (!dbQueryAtributes.isEmpty()) {
-//                    createMethodForDbQuery();
-        }
-      }
-    }
-  }
-
-  private static boolean iHaveDoneIt = false;
-
-  public static void parseXmlFields() {
-
-    if (!iHaveDoneIt) {
-      iHaveDoneIt = true;
-      pattern = Pattern.compile("\\w+=\"\\w+\"");
-      matcher = pattern.matcher(line);
-
-      if (matcher.find()) {
-        String idRegex = matcher.group();
-        XmlField.setId(idRegex.substring(idRegex.indexOf("\""), idRegex.length() - 1));
-      }
-    } else {
-      XmlField.getXmlFieldLines().add(line);
-    }
-
-    if (line.contains("</fields>")) {
-      if (!XmlField.xmlFieldLines.isEmpty()) {
-//                createMethodForFields();
-        iHaveDoneIt = false;
-      }
-    }
-  }
-
-  public static void createMethodForDbQuery() {
-
-    String firstString = dbQueryAtributes.get(0);
-    String methodName = firstString.substring(firstString.indexOf("\"") + 1, firstString.lastIndexOf("\""));
-    String methodString = "/**\n" +
-       " * Zwrócenie obiektu DBQuery dla tabeli XXXXXX\n" +
-       " * \n" +
-       " * @return From XXXXXX\n" +
-       " */\n" +
-       " public DBQuery " + methodName + "()\n" +
-       " {\n" +
-       "    DBQuery result = new DBQuery();\n";
-
-    for (int i = 1; i < dbQueryAtributes.size(); i++) {
-      methodString += "    result." + dbQueryAtributes.get(i).trim() + ";\n";
-    }
-    methodString += "    return result;\n }\n\n";
-    dbMethods.add(methodString);
-    dbQueryAtributes.clear();
-  }
-
+//  public static void parseDbQuery() {
+//
+//    if (line.contains("db:DBQuery")) {
+//      countDbQuery++;
+//    }
+//    if (countDbQuery >= 1) {
+//      pattern = Pattern.compile("\\w+=\"[a-zA-Z0-9_, {}]+\"");
+//      matcher = pattern.matcher(line);
+//
+//      while (matcher.find()) {
+//        if (matcher.group().contains("sqlTable")) {
+//          continue;
+//        }
+//        dbQueryAtributes.add(matcher.group().trim());
+//      }
+//      if (line.contains("/>")) {
+//        if (!dbQueryAtributes.isEmpty()) {
+////                    createMethodForDbQuery();
+//        }
+//      }
+//    }
+//  }
+//
+//  private static boolean iHaveDoneIt = false;
+//
+//  public static void parseXmlFields() {
+//
+//    if (!iHaveDoneIt) {
+//      iHaveDoneIt = true;
+//      pattern = Pattern.compile("\\w+=\"\\w+\"");
+//      matcher = pattern.matcher(line);
+//
+//      if (matcher.find()) {
+//        String idRegex = matcher.group();
+//        XmlField.setId(idRegex.substring(idRegex.indexOf("\""), idRegex.length() - 1));
+//      }
+//    } else {
+//      XmlField.getXmlFieldLines().add(line);
+//    }
+//
+//    if (line.contains("</fields>")) {
+//      if (!XmlField.xmlFieldLines.isEmpty()) {
+////                createMethodForFields();
+//        iHaveDoneIt = false;
+//      }
+//    }
+//  }
+//
+//  public static void createMethodForDbQuery() {
+//
+//    String firstString = dbQueryAtributes.get(0);
+//    String methodName = firstString.substring(firstString.indexOf("\"") + 1, firstString.lastIndexOf("\""));
+//    String methodString = "/**\n" +
+//       " * Zwrócenie obiektu DBQuery dla tabeli XXXXXX\n" +
+//       " * \n" +
+//       " * @return From XXXXXX\n" +
+//       " */\n" +
+//       " public DBQuery " + methodName + "()\n" +
+//       " {\n" +
+//       "    DBQuery result = new DBQuery();\n";
+//
+//    for (int i = 1; i < dbQueryAtributes.size(); i++) {
+//      methodString += "    result." + dbQueryAtributes.get(i).trim() + ";\n";
+//    }
+//    methodString += "    return result;\n }\n\n";
+//    dbMethods.add(methodString);
+//    dbQueryAtributes.clear();
+//  }
+//
 //    public static void createMethodForFields() {
 //
 //        String methodString = "/*\n" +
@@ -401,36 +401,36 @@ public class Parser {
 //        XmlField.setId("");
 //        XmlField.getXmlFieldLines().clear();
 //    }
-
-  //stage 5
-  public static void parseXmlComponents() {
-
-    simpleReplaceAllOnMap();
-
-    findComponents();
-  }
-
-  public static void findComponents() {
-    pattern = Pattern.compile("id=\"[^\"]*\"");
-    matcher = pattern.matcher(line);
-    if (matcher.find()) {
-      String id = matcher.group().substring(4, matcher.group().length() - 1);
-
-      String componentClass = "";
-      pattern = Pattern.compile("(<c:){1}(\\w+)");
-      matcher = pattern.matcher(line);
-      if (matcher.find()) {
-        componentClass = matcher.group().trim().substring(3, matcher.group().length());
-      }
-
-      for (String candidateForComponent : candidatesForComponents) {
-        if (id.equals(candidateForComponent)) {
-          componentsThatNeedField.put(id, componentClass);
-          break;
-        }
-      }
-    }
-  }
+//
+//  //stage 5
+//  public static void parseXmlComponents() {
+//
+//    simpleReplaceAllOnMap();
+//
+//    findComponents();
+//  }
+//
+//  public static void findComponents() {
+//    pattern = Pattern.compile("id=\"[^\"]*\"");
+//    matcher = pattern.matcher(line);
+//    if (matcher.find()) {
+//      String id = matcher.group().substring(4, matcher.group().length() - 1);
+//
+//      String componentClass = "";
+//      pattern = Pattern.compile("(<c:){1}(\\w+)");
+//      matcher = pattern.matcher(line);
+//      if (matcher.find()) {
+//        componentClass = matcher.group().trim().substring(3, matcher.group().length());
+//      }
+//
+//      for (String candidateForComponent : candidatesForComponents) {
+//        if (id.equals(candidateForComponent)) {
+//          componentsThatNeedField.put(id, componentClass);
+//          break;
+//        }
+//      }
+//    }
+//  }
 
   public static void initializeReplaceMap() {
     replaceMap2.put("._dbManager", ".getDbManager()");
