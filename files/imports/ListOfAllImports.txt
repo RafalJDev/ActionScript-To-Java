@@ -1,0 +1,45 @@
+import logica.data.DataMap;
+import pl.logicsynergy.annotations.UiDesign;
+import pl.logicsynergy.components.ComboBox;
+import pl.logicsynergy.components.mdi.View;
+import pl.logicsynergy.creator.UiCreator;
+import pl.logicsynergy.database.DBQuery;
+import pl.logicsynergy.common.GridModes;
+import pl.logicsynergy.components.ui.UiMessageBox;
+import pl.logicsynergy.database.DBManager;
+import pl.logicsynergy.events.DBEvent;
+import pl.logicsynergy.ro.ROManager;
+import pl.logicsynergy.ro.ROUiEventService;
+import pl.logicsynergy.skins.ui.UiDictionaryComponentSkin;
+import pl.logicsynergy.ui.gis.order.FrmOrderPosition;
+import pl.logicsynergy.ui.gis.resources.TaskResourceType;
+import pl.logicsynergy.ui.gis.task.FrmTask;
+import pl.logicsynergy.ui.gis.task.FrmTaskRelation;
+import pl.logicsynergy.ui.gis.task.FrmTaskResource;
+import pl.logicsynergy.ui.gis.task.components.TaskRelation;
+import pl.logicsynergy.ui.gis.task.components.TaskToAction;
+import pl.logicsynergy.ui.gis.task.components.TaskToAttachment;
+import pl.logicsynergy.ui.gis.task.components.TaskToDocumentType;
+import pl.logicsynergy.ui.gis.task.components.TaskToMaterial;
+import pl.logicsynergy.ui.gis.task.components.TaskToOther;
+import pl.logicsynergy.utils.MenuUtils;
+import pl.logicsynergy.utils.StringUtils;
+import pl.logicsynergy.utils.UiUtils;
+import pl.logicsynergy.components.Label
+    import pl.logicsynergy.components.TextInput
+    import pl.logicsynergy.components.ComboBox
+    import pl.logicsynergy.components.ui.UiDictionary
+    import pl.logicsynergy.components.mdi.View
+    import pl.logicsynergy.database.DBQuery
+    import org.w3c.dom.Element
+    import logica.data.DataMap
+    import pl.logicsynergy.components.grid.Grid
+    import pl.logicsynergy.utils.XMLUtils;
+    import pl.logicsynergy.database.DBManager
+    import pl.logicsynergy.creator.UiCreator
+    import pl.logicsynergy.components.mdi.UiMdiTab
+    import pl.logicsynergy.components.ListDatabase
+    import pl.logicsynergy.annotations.UiDesign
+    import pl.logicsynergy.common.GridModes
+    import pl.logicsynergy.components.ui.UiMessageBox
+    import pl.logicsynergy.events.DBEvent

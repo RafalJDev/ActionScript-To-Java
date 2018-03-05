@@ -6,10 +6,4 @@ public enum AllStages {
   ASCODE,
   DBFIELDS,
   COMPONENTS;
-
-//    private int stageNumber;
-//
-//    AllStages(int stageNumber) {
-//        this.stageNumber = stageNumber;
-//    }
 }

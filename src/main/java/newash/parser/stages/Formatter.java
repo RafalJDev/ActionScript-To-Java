@@ -1,15 +1,15 @@
 package newash.parser.stages;
 
-import newash.io.code.IOEntity;
+import newash.io.code.IOCodeEntity;
 
 public class Formatter {
 
-  IOEntity ioEntity = IOEntity.getInstance();
+  IOCodeEntity ioCodeEntity = IOCodeEntity.getInstance();
 
   public void replaceTwoAndMoreNewLinesWithOneLine() {
     StringBuilder sb = new StringBuilder();
-    sb.append(ioEntity.getOutputCode().toString().replaceAll("\n(\\s*\\n){2}", "\n\n"));
-    ioEntity.setOutputCode(sb);
+    sb.append(ioCodeEntity.getOutputCode().toString().replaceAll("\n(\\s*\\n){2}", "\n\n"));
+    ioCodeEntity.setOutputCode(sb);
 
   }
 }

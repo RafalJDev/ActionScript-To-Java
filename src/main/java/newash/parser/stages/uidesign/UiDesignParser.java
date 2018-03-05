@@ -1,7 +1,7 @@
 package newash.parser.stages.uidesign;
 
 import newash.actionscript.stage.stages.UiDesignStage;
-import newash.io.reader.current.LineEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
 
 /**
@@ -18,12 +18,12 @@ public class UiDesignParser extends Parser {
 
   public UiDesignParser() {
     uiDesignStage = UiDesignStage.getInstance();
-    lineEntity = LineEntity.getInstance();
+    codeLineEntity = CodeLineEntity.getInstance();
   }
 
   @Override
   public void parseThisStage() {
-    line = lineEntity.getLine();
+    line = codeLineEntity.getLine();
 
     switch (regexIndex) {
       case 1:

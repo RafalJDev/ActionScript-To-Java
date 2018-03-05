@@ -191,7 +191,7 @@
   </fx:Script>
   <fx:Declarations>
     <db:DBQuery id="dbQuery" sqlFrom="Network_MeterType"
-                sqlField="{dbField}"
+                sqlFi eld="{dbField}"
                 sqlOrderBy="Id"
                 sqlIdentityColumn="Id" sqlTable="Network_MeterType"/>
 

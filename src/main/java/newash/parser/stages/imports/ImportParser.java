@@ -1,8 +1,8 @@
 package newash.parser.stages.imports;
 
 import newash.actionscript.stage.stages.ImportStage;
-import newash.io.code.IOEntity;
-import newash.io.reader.current.LineEntity;
+import newash.io.code.IOCodeEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
 import newash.regex.Regex;
 
@@ -16,24 +16,16 @@ import java.util.Map;
 public class ImportParser extends Parser {
 
   ImportStage importStage;
-  IOEntity ioEntity;
+  IOCodeEntity ioCodeEntity;
 
   private boolean isPackageAdded = false;
   private String packageName;
   private Map<String, String> replaceMap = new HashMap<>();
 
-  private String stringBuilder =
-     "import logica.data.Dat  aMap;\n" +
-        "import pl.logicsynergy.annotations.UiDesign;\n" +
-        "import pl.logicsynergy.components.ComboBox;\n" +
-        "import pl.logicsynergy.components.mdi.View;\n" +
-        "import pl.logicsynergy.creator.UiCreator;\n" +
-        "import pl.logicsynergy.database.DBQuery;\n\n";
-
   public ImportParser() {
     importStage = ImportStage.getInstance();
-    ioEntity = IOEntity.getInstance();
-    lineEntity = LineEntity.getInstance();
+    ioCodeEntity = IOCodeEntity.getInstance();
+    codeLineEntity = CodeLineEntity.getInstance();
 
     prepareReplaceMap();
   }
@@ -41,7 +33,7 @@ public class ImportParser extends Parser {
   @Override
   public void parseThisStage() {
 
-    line = lineEntity.getLine();
+    line = codeLineEntity.getLine();
 
     simpleReplaceAll();
 
@@ -56,7 +48,7 @@ public class ImportParser extends Parser {
   private void addPackage() {
     if (!isPackageAdded) {
       Regex regex = new Regex();
-      regex.setLine(ioEntity.getFilePackage());
+      regex.setLine(ioCodeEntity.getFilePackage());
       String packageWithoutDots = regex.foundRegex("\\.(.*)\\.", 1);
       packageName = "package " + packageWithoutDots + ";\n\n";
       line = packageName + line;

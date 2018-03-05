@@ -2,8 +2,8 @@ package newash.controller.stages;
 
 import lombok.extern.java.Log;
 import newash.actionscript.stage.stages.*;
-import newash.io.code.IOEntity;
-import newash.io.reader.current.LineEntity;
+import newash.io.code.IOCodeEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Formatter;
 import newash.parser.stages.actionscript.ActionScriptParser;
 import newash.parser.stages.coponents.ComponentsParser;
@@ -19,9 +19,9 @@ import java.io.IOException;
 @Log
 public class StagesController {
 
-  IOEntity ioEntity = IOEntity.getInstance();
+  IOCodeEntity ioCodeEntity = IOCodeEntity.getInstance();
 
-  LineEntity lineEntity = LineEntity.getInstance();
+  CodeLineEntity codeLineEntity = CodeLineEntity.getInstance();
 
   //TODO create class for common fields
   UiDesignStage uiDesignStage = UiDesignStage.getInstance();
@@ -34,7 +34,7 @@ public class StagesController {
   ImportParser importParser = new ImportParser();
   ActionScriptParser actionScriptParser = new ActionScriptParser();
   FxDeclarationParser fxDeclarationParser = new FxDeclarationParser();
-  ComponentsParser componentsParser = new ComponentsParser();
+  ComponentsParser componentsParser;
 
   String currentLine;
 
@@ -44,9 +44,9 @@ public class StagesController {
     int lineCount = 0;
 
     try {
-      while ((currentLine = ioEntity.getInputCode().readLine()) != null) {
+      while ((currentLine = ioCodeEntity.getInputCode().readLine()) != null) {
         lineCount++;
-        lineEntity.setLine(currentLine);
+        codeLineEntity.setLine(currentLine);
         if (uiDesignStage.getFirstLine() <= lineCount && uiDesignStage.getLastLine() >= lineCount) {
           uiDesignParser.parseThisStage();
         } else if (importStage.getFirstLine() <= lineCount && importStage.getLastLine() >= lineCount) {
@@ -87,6 +87,6 @@ public class StagesController {
     outputCode.append(actionScriptStage.getCode());
     outputCode.append(fxDeclarationStage.getCode());
     outputCode.append(componentsStage.getCode());
-    ioEntity.setOutputCode(outputCode);
+    ioCodeEntity.setOutputCode(outputCode);
   }
 }

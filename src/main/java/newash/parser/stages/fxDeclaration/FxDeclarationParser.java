@@ -2,14 +2,13 @@ package newash.parser.stages.fxDeclaration;
 
 import newash.actionscript.stage.stages.ActionScriptStage;
 import newash.actionscript.stage.stages.FxDeclarationStage;
-import newash.io.reader.current.LineEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 /**
@@ -27,14 +26,14 @@ public class FxDeclarationParser extends Parser {
   ActionScriptStage actionScriptStage;
 
   public FxDeclarationParser() {
-    lineEntity = LineEntity.getInstance();
+    codeLineEntity = CodeLineEntity.getInstance();
     fxDeclarationStage = FxDeclarationStage.getInstance();
     actionScriptStage = ActionScriptStage.getInstance();
   }
 
   @Override
   public void parseThisStage() {
-    line = lineEntity.getLine();
+    line = codeLineEntity.getLine();
 
     if (line.contains("db:DBQuery") || isDbQueryElement) {
       parseDbQuery();

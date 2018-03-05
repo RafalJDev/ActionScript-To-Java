@@ -1,8 +1,8 @@
-package newash.io.writer;
+package newash.io.writers;
 
-import com.sun.media.jfxmedia.logging.Logger;
 import lombok.extern.java.Log;
-import newash.io.code.IOEntity;
+import newash.io.code.IOCodeEntity;
+import newash.io.writers.writer.Writer;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,33 +13,19 @@ import java.io.IOException;
  * Created by Jaszczynski.Rafal on 02.03.2018.
  */
 @Log
-public class Writer {
+public class CodeWriter extends Writer {
 
   private final String outputDirectory = "output";
-  private String outputDirectoryPath;
-  private IOEntity ioEntity = IOEntity.getInstance();
+//  private String outputDirectoryPath;
 
   public void saveFile() {
 
+    ioEntity = (IOCodeEntity)IOCodeEntity.getInstance();
     findPathForOutputDirectory(System.getProperty("user.dir"));
     outputDirectoryPath += "\\" + ioEntity.getFileName() + "Flash.txt";
-    log.info("In Writer");
+    log.info("In CodeWriter");
 
-    BufferedWriter writer = null;
-    try {
-      writer = new BufferedWriter(new FileWriter(outputDirectoryPath));
-      writer.write(ioEntity.getOutputCode().toString());
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      if (writer != null) {
-        try {
-          writer.close();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
+    save();
   }
 
   public void findPathForOutputDirectory(String directoryName) {

@@ -3,7 +3,7 @@ package newash.parser.stages.coponents;
 import newash.actionscript.stage.stages.ActionScriptStage;
 import newash.actionscript.stage.stages.ComponentsStage;
 import newash.actionscript.stage.stages.UiDesignStage;
-import newash.io.reader.current.LineEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class ComponentsParser extends Parser {
   private Map<String, String> replaceMap = new HashMap<>();
 
   public ComponentsParser() {
-    lineEntity = LineEntity.getInstance();
+    codeLineEntity = CodeLineEntity.getInstance();
     actionScriptStage = ActionScriptStage.getInstance();
     componentsStage = ComponentsStage.getInstance();
     uiDesignStage = UiDesignStage.getInstance();
@@ -35,7 +35,7 @@ public class ComponentsParser extends Parser {
 
   @Override
   public void parseThisStage() {
-    line = lineEntity.getLine();
+    line = codeLineEntity.getLine();
 
     getIdValueForComponent();
     createDataExchangeMethod();

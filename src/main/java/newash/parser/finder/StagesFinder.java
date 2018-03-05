@@ -3,9 +3,8 @@ package newash.parser.finder;
 import lombok.extern.java.Log;
 import newash.actionscript.stage.AllStages;
 import newash.actionscript.stage.stages.*;
-import newash.io.code.IOEntity;
-import newash.io.reader.current.LineEntity;
-import newash.parser.stages.Parser;
+import newash.io.code.IOCodeEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.regex.Regex;
 
 import java.io.IOException;
@@ -16,9 +15,9 @@ import java.io.IOException;
 @Log
 public class StagesFinder extends Regex {
 
-  IOEntity globalReader = IOEntity.getInstance();
+  IOCodeEntity globalReader = IOCodeEntity.getInstance();
 
-  LineEntity lineEntity = LineEntity.getInstance();
+  CodeLineEntity codeLineEntity = CodeLineEntity.getInstance();
 
   //TODO create class for common fields
   UiDesignStage uiDesignStage = UiDesignStage.getInstance();
@@ -101,7 +100,7 @@ public class StagesFinder extends Regex {
             throw new IllegalArgumentException("Sth bad");
         }
       }
-      lineEntity.setTotalLineCount(lineCount);
+      codeLineEntity.setTotalLineCount(lineCount);
     } catch (IOException e) {
       e.printStackTrace();
     }

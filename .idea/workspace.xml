@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6b72f769-ead1-4c35-b3cf-ca4c8571cb14" name="Default" comment="More refactoring">
+    <list default="true" id="6b72f769-ead1-4c35-b3cf-ca4c8571cb14" name="Default" comment="Import Lis Logic&#10;&#10;warining not all local changes may be shown due to an error fatali git/indexl index file open failed: permission denied">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/files/imports/ListOfAllImports.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/files/input/Publisher.mxml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/files/output/FrmMeterTypeFlashFlash.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/files/output/TabEstateOwnerFlash.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/controller/stages/ListImportController.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/io/code/IOImportEntity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/io/code/entity/IOEntity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/io/readers/ImportReader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/io/readers/current/ImportLineEntity.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/io/readers/reader/Reader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/io/writers/ImportWriter.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/io/writers/writer/Writer.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportListParser.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/mapBAD/stage/bad/BoundariesOfStages.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/oldasf/reader/FileReader.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/oldasf/rj/parse/actionscrypt/to/java/main/Main.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/parser/ParserTest.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/files/input/FrmMeterTypeFlash.txt" afterPath="$PROJECT_DIR$/files/input/FrmMeterTypeFlash.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/AllStages.java" afterPath="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/AllStages.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ImportStage.java" afterPath="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ImportStage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/controller/Controller.java" afterPath="$PROJECT_DIR$/src/main/java/newash/controller/Controller.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/controller/stages/StagesController.java" afterPath="$PROJECT_DIR$/src/main/java/newash/controller/stages/StagesController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/finder/StagesFinder.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/finder/StagesFinder.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/stages/Formatter.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/Formatter.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/stages/Parser.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/Parser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/stages/actionscript/ActionScriptParser.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/actionscript/ActionScriptParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/stages/coponents/ComponentsParser.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/coponents/ComponentsParser.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/stages/fxDeclaration/FxDeclarationParser.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/fxDeclaration/FxDeclarationParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/oldasf/parser/Parser.java" afterPath="$PROJECT_DIR$/src/main/java/oldasf/parser/Parser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportParser.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportParser.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/newash/parser/stages/uidesign/UiDesignParser.java" afterPath="$PROJECT_DIR$/src/main/java/newash/parser/stages/uidesign/UiDesignParser.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/newash/io/code/IOEntity.java" afterPath="$PROJECT_DIR$/src/main/java/newash/io/code/IOCodeEntity.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/newash/io/reader/Reader.java" afterPath="$PROJECT_DIR$/src/main/java/newash/io/readers/CodeReader.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/newash/io/reader/current/LineEntity.java" afterPath="$PROJECT_DIR$/src/main/java/newash/io/readers/current/CodeLineEntity.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/newash/io/writer/Writer.java" afterPath="$PROJECT_DIR$/src/main/java/newash/io/writers/CodeWriter.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -20,14 +52,14 @@
     <favorites_list name="doit" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.59228444">
+    <splitter split-orientation="horizontal" split-proportion="0.6686838">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="FxDeclarationParser.java" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/fxDeclaration/FxDeclarationParser.java">
+          <file leaf-file-name="Reader.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/reader/Reader.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="272">
-                  <caret line="17" column="25" lean-forward="false" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
+                <state relative-caret-position="104">
+                  <caret line="15" column="21" lean-forward="false" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
                   <folding>
                     <element signature="imports" expanded="true" />
                   </folding>
@@ -35,89 +67,94 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Controller.java" pinned="false" current-in-tab="false">
+          <file leaf-file-name="Controller.java" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/Controller.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="16">
-                  <caret line="22" column="51" lean-forward="false" selection-start-line="22" selection-start-column="40" selection-end-line="22" selection-end-column="51" />
+                <state relative-caret-position="429">
+                  <caret line="44" column="38" lean-forward="false" selection-start-line="44" selection-start-column="38" selection-end-line="44" selection-end-column="38" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="ImportParser.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportParser.java">
+          <file leaf-file-name="ImportListParser.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportListParser.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                <state relative-caret-position="78">
+                  <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Regex.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/regex/Regex.java">
+          <file leaf-file-name="Parser.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/Parser.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="547">
-                  <caret line="54" column="27" lean-forward="false" selection-start-line="54" selection-start-column="27" selection-end-line="54" selection-end-column="27" />
+                <state relative-caret-position="91">
+                  <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ImportLineEntity.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/current/ImportLineEntity.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="234">
+                  <caret line="24" column="1" lean-forward="false" selection-start-line="24" selection-start-column="1" selection-end-line="24" selection-end-column="1" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ListImportController.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/stages/ListImportController.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="65">
+                  <caret line="5" column="33" lean-forward="false" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="StagesController.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/stages/StagesController.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="351">
+                  <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="CodeLineEntity.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/current/CodeLineEntity.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="78">
+                  <caret line="6" column="2" lean-forward="false" selection-start-line="6" selection-start-column="2" selection-end-line="25" selection-end-column="3" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ImportReader.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/ImportReader.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="351">
+                  <caret line="32" column="63" lean-forward="false" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Writer.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/writers/writer/Writer.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="91">
+                  <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
                   <folding>
                     <element signature="imports" expanded="true" />
-                    <element signature="e#1308#1309#0" expanded="true" />
-                    <element signature="e#1346#1347#0" expanded="true" />
-                    <element signature="e#1372#1373#0" expanded="true" />
                   </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ActionScriptParser.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/actionscript/ActionScriptParser.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="211">
-                  <caret line="204" column="3" lean-forward="true" selection-start-line="204" selection-start-column="3" selection-end-line="204" selection-end-column="3" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ActionScriptStage.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ActionScriptStage.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="Reader.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/reader/Reader.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="384">
-                  <caret line="24" column="9" lean-forward="true" selection-start-line="24" selection-start-column="9" selection-end-line="24" selection-end-column="9" />
-                  <folding>
-                    <element signature="imports" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="XmlField.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/fxDeclaration/XmlField.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="112">
-                  <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="ComponentsParser.java" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/coponents/ComponentsParser.java">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="144">
-                  <caret line="9" column="25" lean-forward="true" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-                  <folding />
                 </state>
               </provider>
             </entry>
@@ -129,7 +166,7 @@
           <file leaf-file-name="spostrzeżenia.txt" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/files/spostrzeżenia.txt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="16">
+                <state relative-caret-position="13">
                   <caret line="1" column="33" lean-forward="false" selection-start-line="1" selection-start-column="33" selection-end-line="1" selection-end-column="33" />
                   <folding />
                 </state>
@@ -139,29 +176,119 @@
           <file leaf-file-name="FrmMeterTypeFlash.txt" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/files/input/FrmMeterTypeFlash.txt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="176">
-                  <caret line="195" column="53" lean-forward="true" selection-start-line="195" selection-start-column="53" selection-end-line="195" selection-end-column="53" />
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="FrmMeterTypeFlashFlash.txt" pinned="false" current-in-tab="false">
+          <file leaf-file-name="javaCodeByRJ.txt" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/files/javaCodeByRJ.txt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="28" selection-end-column="39" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="FrmMeterTypeFlashFlash.txt" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/files/output/FrmMeterTypeFlashFlash.txt">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="80">
-                  <caret line="45" column="6" lean-forward="true" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="6" />
+                <state relative-caret-position="565">
+                  <caret line="455" column="0" lean-forward="false" selection-start-line="455" selection-start-column="0" selection-end-line="455" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="Parser.java" pinned="false" current-in-tab="true">
+          <file leaf-file-name="TabEstateOwnerFlash.txt" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/files/output/TabEstateOwnerFlash.txt">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Parser.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/main/java/oldasf/parser/Parser.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="240">
-                  <caret line="55" column="16" lean-forward="true" selection-start-line="55" selection-start-column="16" selection-end-line="55" selection-end-column="16" />
-                  <folding />
+                <state relative-caret-position="1118">
+                  <caret line="91" column="3" lean-forward="false" selection-start-line="91" selection-start-column="3" selection-end-line="91" selection-end-column="3" />
+                  <folding>
+                    <element signature="imports" expanded="false" />
+                    <element signature="e#17820#17821#0" expanded="false" />
+                    <element signature="e#17847#17848#0" expanded="false" />
+                    <element signature="e#17901#17902#0" expanded="false" />
+                    <element signature="e#17941#17942#0" expanded="false" />
+                    <element signature="e#17977#17978#0" expanded="false" />
+                    <element signature="e#17998#17999#0" expanded="false" />
+                    <element signature="e#18043#18044#0" expanded="false" />
+                    <element signature="e#18071#18072#0" expanded="false" />
+                    <element signature="e#18111#18112#0" expanded="false" />
+                    <element signature="e#18135#18136#0" expanded="false" />
+                    <element signature="e#18187#18188#0" expanded="false" />
+                    <element signature="e#18221#18222#0" expanded="false" />
+                    <element signature="e#18261#18262#0" expanded="false" />
+                    <element signature="e#18285#18286#0" expanded="false" />
+                    <element signature="e#18337#18338#0" expanded="false" />
+                    <element signature="e#18371#18372#0" expanded="false" />
+                    <element signature="e#18424#18425#0" expanded="false" />
+                    <element signature="e#18449#18450#0" expanded="false" />
+                    <element signature="e#18515#18516#0" expanded="false" />
+                    <element signature="e#18551#18552#0" expanded="false" />
+                    <element signature="e#18607#18608#0" expanded="false" />
+                    <element signature="e#18635#18636#0" expanded="false" />
+                    <element signature="e#18707#18708#0" expanded="false" />
+                    <element signature="e#18749#18750#0" expanded="false" />
+                    <element signature="e#18805#18806#0" expanded="false" />
+                    <element signature="e#18833#18834#0" expanded="false" />
+                    <element signature="e#18905#18906#0" expanded="false" />
+                    <element signature="e#18947#18948#0" expanded="false" />
+                    <element signature="e#18998#18999#0" expanded="false" />
+                    <element signature="e#19034#19035#0" expanded="false" />
+                    <element signature="e#19227#19228#0" expanded="false" />
+                    <element signature="e#19271#19272#0" expanded="false" />
+                    <element signature="e#19482#19483#0" expanded="false" />
+                    <element signature="e#19512#19513#0" expanded="false" />
+                    <element signature="e#19576#19577#0" expanded="false" />
+                    <element signature="e#19622#19623#0" expanded="false" />
+                    <element signature="e#19673#19674#0" expanded="false" />
+                    <element signature="e#19709#19710#0" expanded="false" />
+                    <element signature="e#19891#19892#0" expanded="false" />
+                    <element signature="e#19925#19926#0" expanded="false" />
+                    <element signature="e#19997#19998#0" expanded="false" />
+                    <element signature="e#20051#20052#0" expanded="false" />
+                    <element signature="e#20113#20114#0" expanded="false" />
+                    <element signature="e#20154#20155#0" expanded="false" />
+                    <element signature="e#20374#20375#0" expanded="false" />
+                    <element signature="e#20414#20415#0" expanded="false" />
+                    <element signature="e#20610#20611#0" expanded="false" />
+                    <element signature="e#20639#20640#0" expanded="false" />
+                    <element signature="e#20697#20698#0" expanded="false" />
+                    <element signature="e#20741#20742#0" expanded="false" />
+                    <element signature="e#20795#20796#0" expanded="false" />
+                    <element signature="e#20828#20829#0" expanded="false" />
+                    <element signature="e#20903#20904#0" expanded="false" />
+                    <element signature="e#20955#20956#0" expanded="false" />
+                    <element signature="e#21023#21024#0" expanded="false" />
+                    <element signature="e#21063#21064#0" expanded="false" />
+                    <element signature="e#21272#21273#0" expanded="false" />
+                    <element signature="e#21298#21299#0" expanded="false" />
+                    <element signature="e#21359#21360#0" expanded="false" />
+                    <element signature="e#21397#21398#0" expanded="false" />
+                    <element signature="e#21529#21530#0" expanded="false" />
+                    <element signature="e#21548#21549#0" expanded="false" />
+                    <element signature="e#21589#21590#0" expanded="false" />
+                    <element signature="e#21615#21616#0" expanded="false" />
+                    <element signature="e#21666#21667#0" expanded="false" />
+                    <element signature="e#21696#21697#0" expanded="false" />
+                    <element signature="e#21765#21766#0" expanded="false" />
+                    <element signature="e#21813#21814#0" expanded="false" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -182,18 +309,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>last</find>
-      <find>End</find>
-      <find>static</find>
-      <find>stringBuilder</find>
-      <find>IOEntity</find>
-      <find>ActionScriptStage</find>
-      <find>ComponentsStage</find>
-      <find>FxDeclarationStage</find>
-      <find>ImportStage</find>
-      <find>\n\n\n</find>
-      <find>lastLine</find>
-      <find>UiMDITab</find>
       <find>\|\|</find>
       <find>{</find>
       <find>matcher.group\(\)</find>
@@ -212,6 +327,18 @@
       <find>addDbQueryAndElementFieldsMethods</find>
       <find>parseXmlFields</find>
       <find>tInput</find>
+      <find>DBEvent</find>
+      <find>;&quot;\);</find>
+      <find>s</find>
+      <find>syst</find>
+      <find>system.out</find>
+      <find>system.ou</find>
+      <find>system.o</find>
+      <find>system.</find>
+      <find>system</find>
+      <find>p</find>
+      <find>printl</find>
+      <find>println</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -245,24 +372,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/LineNumbers.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/Stage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/Stage2.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/LineNumbersOfStages2.java" />
-        <option value="$PROJECT_DIR$/src/main/java/oldasf/reader/FileReader.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/LineNumbersOfStages.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/StagesAndLineNumbers.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/StageBoundaries.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/current/Line.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/stage/Stage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/BoundariesOfStages.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/stage/UiDesignStage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/ImportStage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stages/UiDesignStage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/map/stage/bad/BoundariesOfStages.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/reader/code/CodeString.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/reader/code/CodeBufferedReader.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/reader/code/IOEntieties.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/reader/code/IOEntitys.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/reader/Reader.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/reader/code/IOEntity.java" />
@@ -272,12 +381,8 @@
         <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/Stage.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/io/reader/current/LineEntity.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/Parser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ImportStage.java" />
         <option value="$PROJECT_DIR$/files/TabEstateOwner.txt" />
         <option value="$PROJECT_DIR$/files/TabEstateOwnerJAVA.txt" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/io/code/IOEntity.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/controller/Controller.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/UiDesignStage.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/FxDeclarationStage.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ComponentsStage.java" />
@@ -290,12 +395,34 @@
         <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/uidesign/UiDesignParser.java" />
         <option value="$PROJECT_DIR$/src/test/java/newash/parser/finder/stages/StagesFinderTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/newash/regex/Regex.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportParser.java" />
         <option value="$PROJECT_DIR$/files/output/FrmMeterTypeFlashFlash.txt" />
         <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/coponents/ComponentsParser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/controller/stages/StagesController.java" />
-        <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/fxDeclaration/FxDeclarationParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/oldasf/parser/Parser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/fxDeclaration/FxDeclarationParser.java" />
+        <option value="$PROJECT_DIR$/files/input/FrmMeterTypeFlash.txt" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ImportStage.java" />
+        <option value="$PROJECT_DIR$/files/imports/listOfImports.txt" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/reader/ImportReader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/writer/ImportWriter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/code/entity/Entity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/code/IOEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/code/IOImportEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/code/IOCodeEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/writers/writer/Writer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/writers/ImportWriter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/writers/CodeWriter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/mapBAD/stage/bad/BoundariesOfStages.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/actionscript/stage/AllStages.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/readers/Reader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/readers/CodeReader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/readers/ImportReader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/readers/reader/Reader.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportListParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/parser/stages/Parser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/io/readers/current/ImportLineEntity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/controller/stages/StagesController.java" />
+        <option value="$PROJECT_DIR$/src/main/java/newash/controller/Controller.java" />
       </list>
     </option>
   </component>
@@ -364,48 +491,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
-      <pane id="Scratches">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Extensions" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyRootNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com.intellij.database" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Extensions" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyRootNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com.intellij.database" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="data" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="extractors" />
-              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -415,32 +500,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="parser" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -497,62 +556,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="oldasf" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="oldasf" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="reader" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -934,6 +937,44 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="writers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="doit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="doit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="newash" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="io" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="writers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="writer" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -968,6 +1009,44 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="readers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="doit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="doit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="newash" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="io" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="readers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="reader" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -1002,7 +1081,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="reader" />
+              <option name="myItemId" value="readers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -1070,6 +1149,44 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="io" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="code" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="entity" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="doit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="doit" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="newash" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="controller" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -1180,54 +1297,46 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="Scratches">
+        <subPane>
           <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemId" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemId" value="Extensions" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyRootNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="files" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemId" value="com.intellij.database" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemId" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemId" value="Extensions" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyRootNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="files" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemId" value="com.intellij.database" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="output" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemId" value="data" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="doit" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="files" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="input" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemId" value="extractors" />
+              <option name="myItemType" value="com.intellij.ide.scratch.ScratchProjectViewPane$MyPsiNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -1255,6 +1364,7 @@
     <property name="LombokPluginIS_LOMBOK_VERSION_CHECK_Enabled" value="false" />
     <property name="LombokPluginIS_MISSING_LOMBOK_CHECK_Enabled" value="false" />
     <property name="SearchEverywhereHistoryKey" value="stagef&#9;FILE&#9;file://D:/Programowanko/jaszc/Intelij_projects/doit/src/main/java/newash/parser/finder/StagesFinder.java" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
@@ -1841,6 +1951,7 @@
       <workItem from="1520184387683" duration="3429000" />
       <workItem from="1520201340799" duration="3677000" />
       <workItem from="1520206668072" duration="1592000" />
+      <workItem from="1520286316697" duration="75000" />
     </task>
     <task id="LOCAL-00001" summary="Commit #2">
       <created>1519689071163</created>
@@ -1916,21 +2027,6 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="StagesFinderTest - 2018.03.04 at 23h 53m 13s.xml">
-      <configuration name="StagesFinderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="StagesFinderTest - 2018.03.04 at 23h 57m 24s.xml">
-      <configuration name="StagesFinderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="StagesFinderTest - 2018.03.04 at 23h 58m 20s.xml">
-      <configuration name="StagesFinderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="StagesFinderTest - 2018.03.04 at 23h 58m 38s.xml">
-      <configuration name="StagesFinderTest" configurationId="JUnit" />
-    </history-entry>
-    <history-entry file="StagesFinderTest - 2018.03.05 at 00h 39m 34s.xml">
-      <configuration name="StagesFinderTest" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="StagesFinderTest - 2018.03.05 at 00h 40m 57s.xml">
       <configuration name="StagesFinderTest" configurationId="JUnit" />
     </history-entry>
@@ -1946,9 +2042,24 @@
     <history-entry file="StagesFinderTest - 2018.03.05 at 00h 46m 47s.xml">
       <configuration name="StagesFinderTest" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="StagesFinderTest - 2018.03.05 at 21h 04m 28s.xml">
+      <configuration name="StagesFinderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="StagesFinderTest - 2018.03.05 at 21h 06m 31s.xml">
+      <configuration name="StagesFinderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="StagesFinderTest - 2018.03.05 at 21h 54m 56s.xml">
+      <configuration name="StagesFinderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="StagesFinderTest - 2018.03.05 at 21h 57m 12s.xml">
+      <configuration name="StagesFinderTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="StagesFinderTest - 2018.03.05 at 22h 04m 40s.xml">
+      <configuration name="StagesFinderTest" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="85668000" />
+    <option name="totallyTimeSpent" value="96260000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1964,38 +2075,38 @@
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Nl-Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="TCPMON" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.0" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33296704" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21785174" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Tail" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3982684" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32611832" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="TCPMON" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3297062" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.0" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33296704" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21785174" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3982684" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32611832" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="544" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35024875" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.34920636" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -2077,14 +2188,15 @@
     <MESSAGE value="tbc" />
     <MESSAGE value="Adding fields for components that appear in components section" />
     <MESSAGE value="More refactoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="More refactoring" />
+    <MESSAGE value="Import Lis Logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="Import Lis Logic" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/newash/io/reader/Reader.java</url>
-          <line>36</line>
+          <url>file://$PROJECT_DIR$/src/main/java/newash/io/readers/CodeReader.java</url>
+          <line>39</line>
           <properties />
           <option name="timeStamp" value="35" />
         </line-breakpoint>
@@ -2107,83 +2219,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stages/LineNumbersOfStages2.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/reader/current/Line.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/CurrentLine.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/mapBAD/stage/bad/BoundariesOfStages.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="65" column="6" lean-forward="false" selection-start-line="65" selection-start-column="6" selection-end-line="65" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages.java" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/AllStages.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="10" column="2" lean-forward="true" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/parser/ParserTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1808">
-          <caret line="116" column="52" lean-forward="false" selection-start-line="116" selection-start-column="52" selection-end-line="116" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/oldasf/rj/parse/actionscrypt/to/java/main/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="14" column="50" lean-forward="false" selection-start-line="14" selection-start-column="50" selection-end-line="14" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/main/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/reader/current/LineEntity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="23" column="30" lean-forward="false" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="38" column="32" lean-forward="false" selection-start-line="38" selection-start-column="32" selection-end-line="38" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/TabEstateOwner.txt" />
-    <entry file="file://$PROJECT_DIR$/files/input/Publisher.mxml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="499" column="13" lean-forward="true" selection-start-line="499" selection-start-column="13" selection-end-line="499" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/Stage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ImportStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="17" column="8" lean-forward="false" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/FxDeclarationStage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -2219,30 +2254,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/oldasf/reader/FileReader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-383">
-          <caret line="14" column="46" lean-forward="false" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/oldasf/reader/FileReader.java" />
     <entry file="file://$PROJECT_DIR$/files/output/TabEstateOwner.txt" />
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/writer/Writer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="24" column="69" lean-forward="false" selection-start-line="24" selection-start-column="69" selection-end-line="24" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/Parser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="12" column="11" lean-forward="false" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/output" />
     <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/components.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/finder/StagesFinder.java">
@@ -2252,31 +2265,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/files/javaCodeByRJ.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="18" column="36" lean-forward="false" selection-start-line="18" selection-start-column="36" selection-end-line="18" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/output/TabEstateOwnerFlash.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1088">
-          <caret line="68" column="8" lean-forward="false" selection-start-line="68" selection-start-column="8" selection-end-line="68" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/files/input/TabEstateOwner.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="400">
           <caret line="25" column="6" lean-forward="false" selection-start-line="25" selection-start-column="6" selection-end-line="25" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/TabEstateOwnerJAVA.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16">
-          <caret line="4" column="32" lean-forward="false" selection-start-line="4" selection-start-column="32" selection-end-line="4" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -2289,7 +2281,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/files/spostrzeżenia.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16">
+        <state relative-caret-position="13">
           <caret line="1" column="33" lean-forward="false" selection-start-line="1" selection-start-column="33" selection-end-line="1" selection-end-column="33" />
           <folding />
         </state>
@@ -2313,7 +2305,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="752">
           <caret line="49" column="1" lean-forward="false" selection-start-line="49" selection-start-column="1" selection-end-line="49" selection-end-column="1" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2325,85 +2316,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/code/IOEntity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding>
-            <element signature="e#1034#1035#0" expanded="true" />
-            <element signature="e#1074#1075#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/stages/StagesController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="611">
-          <caret line="58" column="31" lean-forward="false" selection-start-line="58" selection-start-column="31" selection-end-line="58" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/reader/Reader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="24" column="9" lean-forward="true" selection-start-line="24" selection-start-column="9" selection-end-line="24" selection-end-column="9" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ActionScriptStage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/actionscript/ActionScriptParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="204" column="3" lean-forward="true" selection-start-line="204" selection-start-column="3" selection-end-line="204" selection-end-column="3" />
-          <folding />
+        <state relative-caret-position="3616">
+          <caret line="235" column="3" lean-forward="false" selection-start-line="235" selection-start-column="3" selection-end-line="235" selection-end-column="3" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/newash/regex/Regex.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
+        <state relative-caret-position="800">
           <caret line="54" column="27" lean-forward="false" selection-start-line="54" selection-start-column="27" selection-end-line="54" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1308#1309#0" expanded="true" />
-            <element signature="e#1346#1347#0" expanded="true" />
-            <element signature="e#1372#1373#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/Controller.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16">
-          <caret line="22" column="51" lean-forward="false" selection-start-line="22" selection-start-column="40" selection-end-line="22" selection-end-column="51" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/coponents/ComponentsParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
-          <caret line="9" column="25" lean-forward="true" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
-          <folding />
+          <caret line="9" column="21" lean-forward="false" selection-start-line="9" selection-start-column="21" selection-end-line="9" selection-end-column="21" />
         </state>
       </provider>
     </entry>
@@ -2411,40 +2341,305 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
           <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/output/FrmMeterTypeFlashFlash.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="45" column="6" lean-forward="true" selection-start-line="45" selection-start-column="6" selection-end-line="45" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/files/input/FrmMeterTypeFlash.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="195" column="53" lean-forward="true" selection-start-line="195" selection-start-column="53" selection-end-line="195" selection-end-column="53" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/fxDeclaration/FxDeclarationParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="17" column="25" lean-forward="false" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
+        <state relative-caret-position="239">
+          <caret line="120" column="49" lean-forward="false" selection-start-line="120" selection-start-column="49" selection-end-line="120" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/oldasf/parser/Parser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1118">
+          <caret line="91" column="3" lean-forward="false" selection-start-line="91" selection-start-column="3" selection-end-line="91" selection-end-column="3" />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#17820#17821#0" expanded="false" />
+            <element signature="e#17847#17848#0" expanded="false" />
+            <element signature="e#17901#17902#0" expanded="false" />
+            <element signature="e#17941#17942#0" expanded="false" />
+            <element signature="e#17977#17978#0" expanded="false" />
+            <element signature="e#17998#17999#0" expanded="false" />
+            <element signature="e#18043#18044#0" expanded="false" />
+            <element signature="e#18071#18072#0" expanded="false" />
+            <element signature="e#18111#18112#0" expanded="false" />
+            <element signature="e#18135#18136#0" expanded="false" />
+            <element signature="e#18187#18188#0" expanded="false" />
+            <element signature="e#18221#18222#0" expanded="false" />
+            <element signature="e#18261#18262#0" expanded="false" />
+            <element signature="e#18285#18286#0" expanded="false" />
+            <element signature="e#18337#18338#0" expanded="false" />
+            <element signature="e#18371#18372#0" expanded="false" />
+            <element signature="e#18424#18425#0" expanded="false" />
+            <element signature="e#18449#18450#0" expanded="false" />
+            <element signature="e#18515#18516#0" expanded="false" />
+            <element signature="e#18551#18552#0" expanded="false" />
+            <element signature="e#18607#18608#0" expanded="false" />
+            <element signature="e#18635#18636#0" expanded="false" />
+            <element signature="e#18707#18708#0" expanded="false" />
+            <element signature="e#18749#18750#0" expanded="false" />
+            <element signature="e#18805#18806#0" expanded="false" />
+            <element signature="e#18833#18834#0" expanded="false" />
+            <element signature="e#18905#18906#0" expanded="false" />
+            <element signature="e#18947#18948#0" expanded="false" />
+            <element signature="e#18998#18999#0" expanded="false" />
+            <element signature="e#19034#19035#0" expanded="false" />
+            <element signature="e#19227#19228#0" expanded="false" />
+            <element signature="e#19271#19272#0" expanded="false" />
+            <element signature="e#19482#19483#0" expanded="false" />
+            <element signature="e#19512#19513#0" expanded="false" />
+            <element signature="e#19576#19577#0" expanded="false" />
+            <element signature="e#19622#19623#0" expanded="false" />
+            <element signature="e#19673#19674#0" expanded="false" />
+            <element signature="e#19709#19710#0" expanded="false" />
+            <element signature="e#19891#19892#0" expanded="false" />
+            <element signature="e#19925#19926#0" expanded="false" />
+            <element signature="e#19997#19998#0" expanded="false" />
+            <element signature="e#20051#20052#0" expanded="false" />
+            <element signature="e#20113#20114#0" expanded="false" />
+            <element signature="e#20154#20155#0" expanded="false" />
+            <element signature="e#20374#20375#0" expanded="false" />
+            <element signature="e#20414#20415#0" expanded="false" />
+            <element signature="e#20610#20611#0" expanded="false" />
+            <element signature="e#20639#20640#0" expanded="false" />
+            <element signature="e#20697#20698#0" expanded="false" />
+            <element signature="e#20741#20742#0" expanded="false" />
+            <element signature="e#20795#20796#0" expanded="false" />
+            <element signature="e#20828#20829#0" expanded="false" />
+            <element signature="e#20903#20904#0" expanded="false" />
+            <element signature="e#20955#20956#0" expanded="false" />
+            <element signature="e#21023#21024#0" expanded="false" />
+            <element signature="e#21063#21064#0" expanded="false" />
+            <element signature="e#21272#21273#0" expanded="false" />
+            <element signature="e#21298#21299#0" expanded="false" />
+            <element signature="e#21359#21360#0" expanded="false" />
+            <element signature="e#21397#21398#0" expanded="false" />
+            <element signature="e#21529#21530#0" expanded="false" />
+            <element signature="e#21548#21549#0" expanded="false" />
+            <element signature="e#21589#21590#0" expanded="false" />
+            <element signature="e#21615#21616#0" expanded="false" />
+            <element signature="e#21666#21667#0" expanded="false" />
+            <element signature="e#21696#21697#0" expanded="false" />
+            <element signature="e#21765#21766#0" expanded="false" />
+            <element signature="e#21813#21814#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/files/TabEstateOwnerJAVA.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ImportStage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="15" column="0" lean-forward="true" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/files/imports/ListOfAllImports.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="620">
+          <caret line="43" column="4" lean-forward="false" selection-start-line="43" selection-start-column="4" selection-end-line="44" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/code/IOCodeEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="14" column="3" lean-forward="false" selection-start-line="14" selection-start-column="3" selection-end-line="14" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/code/entity/IOEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/code/IOImportEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8">
+          <caret line="17" column="3" lean-forward="false" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/writers/ImportWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8">
+          <caret line="21" column="27" lean-forward="false" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/files/output/TabEstateOwnerFlash.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/mapBAD/stage/bad/BoundariesOfStages.java" />
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/writers/CodeWriter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="18" column="38" lean-forward="false" selection-start-line="18" selection-start-column="19" selection-end-line="18" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="60" column="39" lean-forward="true" selection-start-line="60" selection-start-column="39" selection-end-line="60" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/AllStages.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/Stage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="18" column="3" lean-forward="true" selection-start-line="18" selection-start-column="3" selection-end-line="18" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/actionscript/stage/stages/ActionScriptStage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding>
+            <marker date="1520274262902" expanded="true" signature="1382:1387" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/CodeReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="39" column="4" lean-forward="false" selection-start-line="39" selection-start-column="4" selection-end-line="39" selection-end-column="4" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/oldasf/parser/Parser.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/writers/writer/Writer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="55" column="16" lean-forward="true" selection-start-line="55" selection-start-column="16" selection-end-line="55" selection-end-column="16" />
+        <state relative-caret-position="91">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/ImportReader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="32" column="63" lean-forward="false" selection-start-line="32" selection-start-column="63" selection-end-line="32" selection-end-column="63" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/files/input/FrmMeterTypeFlash.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/files/javaCodeByRJ.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="28" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/files/output/FrmMeterTypeFlashFlash.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="565">
+          <caret line="455" column="0" lean-forward="false" selection-start-line="455" selection-start-column="0" selection-end-line="455" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/reader/Reader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="15" column="21" lean-forward="false" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/imports/ImportListParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/current/CodeLineEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="6" column="2" lean-forward="false" selection-start-line="6" selection-start-column="2" selection-end-line="25" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/parser/stages/Parser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/io/readers/current/ImportLineEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="24" column="1" lean-forward="false" selection-start-line="24" selection-start-column="1" selection-end-line="24" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/stages/ListImportController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="65">
+          <caret line="5" column="33" lean-forward="false" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/stages/StagesController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/newash/controller/Controller.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="44" column="38" lean-forward="false" selection-start-line="44" selection-start-column="38" selection-end-line="44" selection-end-column="38" />
           <folding />
         </state>
       </provider>

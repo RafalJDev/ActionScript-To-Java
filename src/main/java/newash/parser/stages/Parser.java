@@ -1,6 +1,6 @@
 package newash.parser.stages;
 
-import newash.io.reader.current.LineEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.regex.Regex;
 
 /**
@@ -8,7 +8,7 @@ import newash.regex.Regex;
  */
 public abstract class Parser extends Regex {
 
-  protected LineEntity lineEntity;
+  protected CodeLineEntity codeLineEntity;
 
   public abstract void parseThisStage();
 }

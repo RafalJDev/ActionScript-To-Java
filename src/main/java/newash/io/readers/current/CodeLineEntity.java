@@ -1,20 +1,20 @@
-package newash.io.reader.current;
+package newash.io.readers.current;
 
 /**
  * Created by Jaszczynski.Rafal on 01.03.2018.
  */
-public class LineEntity {
-  private static LineEntity ourInstance = new LineEntity();
+public class CodeLineEntity {
+  private static CodeLineEntity ourInstance = new CodeLineEntity();
 
   private String line;
 
   private int totalLineCount;
 
-  public static LineEntity getInstance() {
+  public static CodeLineEntity getInstance() {
     return ourInstance;
   }
 
-  private LineEntity() {
+  private CodeLineEntity() {
   }
 
   public String getLine() {
@@ -35,7 +35,7 @@ public class LineEntity {
 
   @Override
   public String toString() {
-    return "LineEntity{" +
+    return "CodeLineEntity{" +
        "totalLineCount=" + totalLineCount +
        '}';
   }

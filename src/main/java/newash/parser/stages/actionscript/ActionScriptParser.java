@@ -2,8 +2,8 @@ package newash.parser.stages.actionscript;
 
 import newash.actionscript.stage.stages.ActionScriptStage;
 import newash.actionscript.stage.stages.UiDesignStage;
-import newash.io.code.IOEntity;
-import newash.io.reader.current.LineEntity;
+import newash.io.code.IOCodeEntity;
+import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class ActionScriptParser extends Parser {
 
   UiDesignStage uiDesignStage;
   ActionScriptStage actionScriptStage;
-  IOEntity ioEntity;
+  IOCodeEntity ioCodeEntity;
 
   public int braces = 0;
   private boolean isClassAndConstructorAdded = false;
@@ -32,8 +32,8 @@ public class ActionScriptParser extends Parser {
   public ActionScriptParser() {
     uiDesignStage = UiDesignStage.getInstance();
     actionScriptStage = ActionScriptStage.getInstance();
-    ioEntity = IOEntity.getInstance();
-    lineEntity = LineEntity.getInstance();
+    ioCodeEntity = IOCodeEntity.getInstance();
+    codeLineEntity = CodeLineEntity.getInstance();
 
     prepareReplaceMap();
   }
@@ -41,7 +41,7 @@ public class ActionScriptParser extends Parser {
   @Override
   public void parseThisStage() {
 
-    line = lineEntity.getLine();
+    line = codeLineEntity.getLine();
 
     if (!line.contains("/*")) {
       simpleReplaceAll();
@@ -183,11 +183,11 @@ public class ActionScriptParser extends Parser {
       String classAndConstructor =
          "@UiDesign(formName = \"" + uiDesignStage.getFormName()
             + "\", guid = \"" + uiDesignStage.getGUID() + "\")\n" +
-            "public class " + ioEntity.getFileName() + " extends " + uiDesignStage.getClassToExtend() + " \n" +
+            "public class " + ioCodeEntity.getFileName() + " extends " + uiDesignStage.getClassToExtend() + " \n" +
             "{\n\n" +
             "APPEND_HERE_FIELDS\n\n" +
             "  /** Konstruktor */\n" +
-            "  public " + ioEntity.getFileName() + "()\n" +
+            "  public " + ioCodeEntity.getFileName() + "()\n" +
             "  {\n" +
             "\tUiCreator.getInstance(self).executeXML();\n" +
             "  }" +
