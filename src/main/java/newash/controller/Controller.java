@@ -22,24 +22,18 @@ public class Controller {
 
   CodeLineEntity codeLineEntity = CodeLineEntity.getInstance();
 
-  UiDesignStage uiDesignStage;
-  ImportStage importStage = ImportStage.getInstance(); //TODO the fucken machen
-  ActionScriptStage actionScriptStage;
-  FxDeclarationStage fxDeclarationStage;
-  ComponentsStage componentsStage;
+  UiDesignStage uiDesignStage = UiDesignStage.getInstance();
+  ImportStage importStage = ImportStage.getInstance(); //TODO the fucken machen package name set, and its null
+  ActionScriptStage actionScriptStage = ActionScriptStage.getInstance();
+  FxDeclarationStage fxDeclarationStage = FxDeclarationStage.getInstance();
+  ComponentsStage componentsStage= ComponentsStage.getInstance();
 
   StagesController stagesController;
 
   public Controller() {
-    uiDesignStage = UiDesignStage.getInstance();
-    importStage = ImportStage.getInstance();
-    actionScriptStage = ActionScriptStage.getInstance();
-    fxDeclarationStage = FxDeclarationStage.getInstance();
-    componentsStage = ComponentsStage.getInstance();
 
     codeReader = new CodeReader();
     codeWriter = new CodeWriter();
-
 
 
     stagesFinder = new StagesFinder();
