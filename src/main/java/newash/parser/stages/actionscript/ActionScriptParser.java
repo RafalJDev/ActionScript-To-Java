@@ -3,6 +3,7 @@ package newash.parser.stages.actionscript;
 import newash.actionscript.stage.stages.ActionScriptStage;
 import newash.actionscript.stage.stages.ImportStage;
 import newash.actionscript.stage.stages.UiDesignStage;
+import newash.actionscript.stage.stages.field.ComponentField;
 import newash.io.code.IOCodeEntity;
 import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
@@ -57,6 +58,8 @@ public class ActionScriptParser extends Parser {
 
     changeToSetCall();
 
+    findCandidateToImport();
+
     if (thereIsRoCall && line.contains("ro.call")) {
 
       String spaces = line.substring(0, line.indexOf("r") - 1);
@@ -67,6 +70,8 @@ public class ActionScriptParser extends Parser {
         line = spaces + "DataMap dataMap = ROUiEventService.call(" + callArguments + ");";
         if (!methodToCallAfterRo.isEmpty()) {
           line += "\n" + spaces + methodToCallAfterRo + "()";
+          addCandidateToImport("ROUiEventService");
+          addCandidateToImport("DataMap");
         }
       }
       thereIsRoCall = false;
@@ -120,6 +125,7 @@ public class ActionScriptParser extends Parser {
         line = line.replace(", ", ", event -> ");
         line = line.replaceAll("\"valueChanged\"", "BaseEvent.VALUE_CHANGED");
         line = line.replaceAll("\"indexChanged\"", "BaseEvent.VALUE_CHANGED");
+        addCandidateToImport("BaseEvent");
       }
     }
     for (String method : methodsForEventListeners) {
@@ -159,8 +165,11 @@ public class ActionScriptParser extends Parser {
           boolean firstArgument = true;
           for (String oneArgument : argumentsWithTypes) {
             String[] split = oneArgument.split(":");
-            String addArgument = split[1] + " " + split[0];
+            String argumentType = split[1];
+            String argumentName = split[0];
+            String addArgument = argumentType + " " + argumentName;
 
+            addCandidateToImport(argumentType);
             if (firstArgument) {
               line = line.replace("(", "(" + addArgument);
               firstArgument = false;
@@ -169,6 +178,7 @@ public class ActionScriptParser extends Parser {
             line = line.replace(")", ", " + addArgument + ")");
           }
         }
+        addCandidateToImport(returnTypeWithoutSpace);
       }
     }
   }
@@ -199,6 +209,7 @@ public class ActionScriptParser extends Parser {
 
       line = classAndConstructor + line;
       isClassAndConstructorAdded = true;
+      addCandidateToImport(uiDesignStage.getClassToExtend());
     }
   }
 
@@ -216,9 +227,10 @@ public class ActionScriptParser extends Parser {
       if (!(line.contains("break;") || line.contains("return;") || line.contains("continue;"))) {
         foundRegex("\\s+(\\w+);", 1);
         String foundWithFirstLetterToLower = ((Character) found.toCharArray()[0]).toString().toLowerCase() + found.substring(1);
-        actionScriptStage.getComponentsThatNeedField().put(foundWithFirstLetterToLower, found);
-        importStage.addCandidateToSet(found);
 
+        actionScriptStage.addComponentThatNeedField(found, foundWithFirstLetterToLower);
+
+        addCandidateToImport(found);
         line = "";
       }
     }
@@ -236,7 +248,9 @@ public class ActionScriptParser extends Parser {
     if (line.contains(" = ") && line.contains(" as ")) {
       if (isFoundRegex(" as \\w+")) {
         line = line.replaceAll(found, "");
-        line = line.replaceAll("= ", "= (" + found.substring(4) + ") ");
+        String classToCat = found.substring(4);
+        addCandidateToImport(classToCat);
+        line = line.replaceAll("= ", "= (" + classToCat + ") ");
       }
     }
   }
@@ -245,9 +259,15 @@ public class ActionScriptParser extends Parser {
 
     String oldValue = "APPEND_HERE_FIELDS";
     String componentFields = "\n";
-    for (Map.Entry<String, String> entry : actionScriptStage.getComponentsThatNeedField().entrySet()) {
-      componentFields += "  public " + entry.getValue() + " " + entry.getKey() + ";\t//import or create ME\n\n";
+//    for (Map.Entry<String, String> entry : actionScriptStage.getComponentsThatNeedField().entrySet()) {
+//      componentFields += "  public " + entry.getValue() + " " + entry.getKey() + ";\t//import or create ME\n\n";
+//    }
+
+    List<ComponentField> componentsThatNeedField222 = actionScriptStage.getComponentsThatNeedField();
+    for (int i = 0; i < actionScriptStage.getComponentsThatNeedField().size(); i++) {
+      componentFields += componentsThatNeedField222.get(i).createField();
     }
+
     int hanysIndex = actionScriptStage.getCode().indexOf(oldValue);
 
     actionScriptStage.getCode().replace(hanysIndex, hanysIndex + oldValue.length(), componentFields);
@@ -268,6 +288,12 @@ public class ActionScriptParser extends Parser {
   public void appendEndClassBraces() {
     actionScriptStage.appendCode("\nAPPEND_HERE_METHODS\n\n" +
        "}\n");
+  }
+
+  public void findCandidateToImport() {
+    if (isFoundRegex("([A-Z]{1}\\w+)\\.", 1)) {
+      addCandidateToImport(found);
+    }
   }
 
   public void addCandidateToImport(String candidate) {
@@ -301,6 +327,6 @@ public class ActionScriptParser extends Parser {
     replaceMap.put("\\.isResultOK", "\\.isResultOk");
     replaceMap.put("StringUtils\\.IsNullOrEmpty", "StringUtils.isNullOrEmpty");
     replaceMap.put("\\*", "Object");
-    replaceMap.put("@id", "getId()");
+    replaceMap.put("@id", "getFieldId()");
   }
 }

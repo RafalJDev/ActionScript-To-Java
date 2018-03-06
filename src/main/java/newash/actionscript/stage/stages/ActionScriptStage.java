@@ -1,11 +1,10 @@
 package newash.actionscript.stage.stages;
 
 import newash.actionscript.stage.Stage;
+import newash.actionscript.stage.stages.field.ComponentField;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Jaszczynski.Rafal on 01.03.2018.
@@ -13,7 +12,6 @@ import java.util.Map;
 public class ActionScriptStage extends Stage {
 
   private List<String> candidatesForComponents = new ArrayList<>();
-  private Map<String, String> componentsThatNeedField = new HashMap<>();
 
   private List<String> dbMethods = new ArrayList<>();
 
@@ -36,19 +34,21 @@ public class ActionScriptStage extends Stage {
     this.candidatesForComponents = candidatesForComponents;
   }
 
-  public Map<String, String> getComponentsThatNeedField() {
-    return componentsThatNeedField;
-  }
-
-  public void setComponentsThatNeedField(Map<String, String> componentsThatNeedField) {
-    this.componentsThatNeedField = componentsThatNeedField;
-  }
-
   public List<String> getDbMethods() {
     return dbMethods;
   }
 
   public void setDbMethods(List<String> dbMethods) {
     this.dbMethods = dbMethods;
+  }
+
+  private List<ComponentField> componentsThatNeedField = new ArrayList<>();
+
+  public List<ComponentField> getComponentsThatNeedField() {
+    return componentsThatNeedField;
+  }
+
+  public void addComponentThatNeedField(String componentClass, String id) {
+    componentsThatNeedField.add(new ComponentField(componentClass, id));
   }
 }

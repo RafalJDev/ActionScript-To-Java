@@ -376,7 +376,7 @@
 								offset: metadata.offset,
 								time: new Date()
 							};
-							trace("Sync-point [" + metadata.id + "] offset [" + metadata.offset + "] now [" + lastSyncPoint.time + "]");
+							trace("Sync-point [" + metadata.fieldId + "] offset [" + metadata.offset + "] now [" + lastSyncPoint.time + "]");
 							btnAddCuePoint.enabled = true;
 							break;
 						
@@ -456,7 +456,7 @@
 			{
 				var metaData:Object = new Object(); 
 				metaData.objectType = "KalturaAdCuePoint"; 
-				metaData.id = "test" + (adId++);  
+				metaData.fieldId = "test" + (adId++);
 				metaData.startTime = 4000; 
 				metaData.endTime = 14000;  
 				metaData.duration = 10000; 
@@ -499,7 +499,7 @@
 			public function onCuePointAdd(event:KalturaEvent) : void
 			{
 				var cuePoint:KalturaAdCuePoint = event.data as KalturaAdCuePoint; 
-				trace("Added new live cue-point [" + cuePoint.id + "]");
+				trace("Added new live cue-point [" + cuePoint.fieldId + "]");
 			}
 			
 			public function onCuePointFailed(event:KalturaEvent) : void
@@ -510,42 +510,42 @@
 		]]>
 	</fx:Script>
 	<mx:VBox>
-		<mx:UIComponent id="playDisplay" width="400" height="300" visible="true" />
+		<mx:UIComponent fieldId="playDisplay" width="400" height="300" visible="true" />
 		<mx:HBox>
 			<s:Label text="URL: "/>
-			<s:TextInput id="txtServer"/>
+			<s:TextInput fieldId="txtServer"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Backup URL: "/>
-			<s:TextInput id="txtBackupServer"/>
+			<s:TextInput fieldId="txtBackupServer"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Arguments: "/>
-			<s:TextInput id="txtConnectArguments"/>
+			<s:TextInput fieldId="txtConnectArguments"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Stream Name: "/>
-			<s:TextInput id="txtStreamName"/>
+			<s:TextInput fieldId="txtStreamName"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Entry ID: "/>
-			<s:TextInput id="txtEntryId"/>
+			<s:TextInput fieldId="txtEntryId"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Play URL: "/>
-			<s:TextInput id="txtPlayUrl"/>
+			<s:TextInput fieldId="txtPlayUrl"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Username: "/>
-			<s:TextInput id="txtUsername"/>
+			<s:TextInput fieldId="txtUsername"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Password: "/>
-			<s:TextInput id="txtPassword"/>
+			<s:TextInput fieldId="txtPassword"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Type: "/>
-			<s:DropDownList id="listType">
+			<s:DropDownList fieldId="listType">
 				<mx:ArrayCollection>
 					<fx:String>live</fx:String>
 					<fx:String>record</fx:String>
@@ -555,7 +555,7 @@
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Audio Codec: "/>
-			<s:DropDownList id="listAudioCodec">
+			<s:DropDownList fieldId="listAudioCodec">
 				<mx:ArrayCollection>
 					<fx:String>NellyMoser</fx:String>
 					<fx:String>pcma</fx:String>
@@ -565,44 +565,44 @@
 			</s:DropDownList>
 		</mx:HBox>
 		<mx:HBox>
-			<s:CheckBox id="chkAudio" label="Enable Audio" selected="true" />
-			<s:CheckBox id="chkVideo" label="Enable Video" selected="true" />
-			<s:CheckBox id="chkH264" label="H.264" />
-			<s:CheckBox id="chkAkamai" label="Akamai" />
+			<s:CheckBox fieldId="chkAudio" label="Enable Audio" selected="true" />
+			<s:CheckBox fieldId="chkVideo" label="Enable Video" selected="true" />
+			<s:CheckBox fieldId="chkH264" label="H.264" />
+			<s:CheckBox fieldId="chkAkamai" label="Akamai" />
 		</mx:HBox>
 		<mx:HBox>
-			<s:Button id="btnConnect" label="connect" click="connect()"/>
-			<s:Button id="btnDisconnect" label="disconnect" click="disconnect()" enabled="false"/>
+			<s:Button fieldId="btnConnect" label="connect" click="connect()"/>
+			<s:Button fieldId="btnDisconnect" label="disconnect" click="disconnect()" enabled="false"/>
 		</mx:HBox>
 		<mx:HBox>
-			<s:Button id="btnPublish" label="publish" click="publish()" enabled="false"/>
-			<s:Button id="btnPausePublish" label="pause publish" click="pausePublish()"
+			<s:Button fieldId="btnPublish" label="publish" click="publish()" enabled="false"/>
+			<s:Button fieldId="btnPausePublish" label="pause publish" click="pausePublish()"
 					  enabled="false"/>
-			<s:Button id="btnResumePublish" label="resume publish" click="resumePublish()"
+			<s:Button fieldId="btnResumePublish" label="resume publish" click="resumePublish()"
 					  enabled="false"/>
-			<s:Button id="btnStopPublish" label="stop publish" click="stopPublish()" enabled="false"/>
+			<s:Button fieldId="btnStopPublish" label="stop publish" click="stopPublish()" enabled="false"/>
 		</mx:HBox>
 		<mx:HBox>
-			<s:Button id="btnPlay" label="play" click="play()" enabled="false"/>
-			<s:Button id="btnPausePlay" label="pause play" click="pausePlay()" enabled="false"/>
-			<s:Button id="btnResumePlay" label="resume play" click="resumePlay()" enabled="false"/>
-			<s:Button id="btnStopPlay" label="stop play" click="stopPlay()" enabled="false"/>
+			<s:Button fieldId="btnPlay" label="play" click="play()" enabled="false"/>
+			<s:Button fieldId="btnPausePlay" label="pause play" click="pausePlay()" enabled="false"/>
+			<s:Button fieldId="btnResumePlay" label="resume play" click="resumePlay()" enabled="false"/>
+			<s:Button fieldId="btnStopPlay" label="stop play" click="stopPlay()" enabled="false"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="API domain: "/>
-			<s:TextInput id="txtApiDomain"/>
+			<s:TextInput fieldId="txtApiDomain"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Partner ID: "/>
-			<s:TextInput id="txtPartnerId"/>
+			<s:TextInput fieldId="txtPartnerId"/>
 		</mx:HBox>
 		<mx:HBox>
 			<s:Label text="Secret: "/>
-			<s:TextInput id="txtSecret"/>
+			<s:TextInput fieldId="txtSecret"/>
 		</mx:HBox>
 		<mx:HBox>
-			<s:Button id="btnSendCuePoint" label="send cue-point (RTMP)" click="sendCuePoint()" enabled="false"/>
-			<s:Button id="btnAddCuePoint" label="add cue-point (API)" click="addMetadata()" enabled="false"/>
+			<s:Button fieldId="btnSendCuePoint" label="send cue-point (RTMP)" click="sendCuePoint()" enabled="false"/>
+			<s:Button fieldId="btnAddCuePoint" label="add cue-point (API)" click="addMetadata()" enabled="false"/>
 		</mx:HBox>
 	</mx:VBox>
 </s:Application>

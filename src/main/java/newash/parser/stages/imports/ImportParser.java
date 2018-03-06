@@ -74,10 +74,9 @@ public class ImportParser extends Parser {
     importStage.appendCode("\n");
     for (String candidate : importStage.getCandidatesToImportSet()) {
       String importLineForCandidate = getImportLineForCandidate(candidate);
-      if (importLineForCandidate != null) {
-        if (!importLineForCandidate.isEmpty()) {
+      if (importLineForCandidate != null && importLineForCandidate != "") {
+        if (!checkIfThisImportIsNotAlreadyInCode(importLineForCandidate))
           importStage.appendCode(importLineForCandidate + "\n");
-        }
       }
     }
     importStage.appendCode("\n");
@@ -89,5 +88,15 @@ public class ImportParser extends Parser {
        .map(Map.Entry::getValue)
        .findFirst()
        .orElse(null);
+  }
+
+  public boolean checkIfThisImportIsNotAlreadyInCode(String importLineForCandidate) {
+    String[] splitLines = importStage.getCode().toString().split("\n");
+    for (String line : splitLines) {
+      if (line.contains(importLineForCandidate)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

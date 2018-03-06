@@ -8,42 +8,44 @@ import pl.logicsynergy.skins.TextInputDecimalSkin;
 import pl.logicsynergy.utils.StringUtils;
 import pl.logicsynergy.utils.UiUtils;
 
-import pl.logicsynergy.components.ComboBox;
 import pl.logicsynergy.components.Label;
-import pl.logicsynergy.components.mdi.View;
 import pl.logicsynergy.components.TextInput;
+import pl.logicsynergy.events.MenuEvent;
+import pl.logicsynergy.components.ComboBox;
+import pl.logicsynergy.events.BaseEvent;
+import pl.logicsynergy.components.ui.UiDictionary;
 
 @UiDesign(formName = "Typy liczników", guid = "5524CA75")
 public class FrmMeterTypeFlash extends UiDictionary 
 {
 
-  public ViewTypePairTemperatureSensor viewTypePairTemperatureSensor;	//import or create ME
+  public ViewTypeIntegrator viewTypeIntegrator;
 
-  public Label lblMeter2Digit;	//import or create ME
+  public ViewTypeCounter viewTypeCounter;
 
-  public TextInput txtMeter1MinNo;	//import or create ME
+  public ViewTypeHeatCounter viewTypeHeatCounter;
 
-  public ViewTypeCounter viewTypeCounter;	//import or create ME
+  public ViewTypeWaterCounter viewTypeWaterCounter;
 
-  public ViewTypeWaterCounter viewTypeWaterCounter;	//import or create ME
+  public ViewTypePairTemperatureSensor viewTypePairTemperatureSensor;
 
-  public TextInput txtMeter2No;	//import or create ME
+  public ViewTypeFlowCounter viewTypeFlowCounter;
 
-  public ViewTypeHeatCounter viewTypeHeatCounter;	//import or create ME
+  public ComboBox cbMeterKind;
 
-  public ComboBox cbMeterKind;	//import or create ME
+  public TextInput txtMeter1No;
 
-  public TextInput txtMeter1No;	//import or create ME
+  public TextInput txtMeter1MinNo;
 
-  public Label lblMeter1Digit;	//import or create ME
+  public Label lblMeter1Digit;
 
-  public ViewTypeFlowCounter viewTypeFlowCounter;	//import or create ME
+  public TextInput txtMeter2No;
 
-  public TextInput txtMeter2MinNo;	//import or create ME
+  public TextInput txtMeter2MinNo;
 
-  public NavigatorContent ncData;	//import or create ME
+  public Label lblMeter2Digit;
 
-  public ViewTypeIntegrator viewTypeIntegrator;	//import or create ME
+  public NavigatorContent ncData;
 
   /** Konstruktor */
   public FrmMeterTypeFlash()
@@ -184,7 +186,7 @@ public class FrmMeterTypeFlash extends UiDictionary
           return;
 
         Boolean stopPropagation = true;
-        switch (xml.getId().toString())
+        switch (xml.getFieldId().toString())
         {
           case "DEFAULT_VALUE_CONFIG":
             if(grid.getDBManager().getRecordCount() < 1)

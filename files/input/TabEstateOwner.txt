@@ -165,7 +165,7 @@
           return;
 
         var stopPropagation:Boolean = true;
-        switch (xml.@id.toString())
+        switch (xml.@fieldId.toString())
         {
           case "DEFAULT_VALUE_CONFIG":
             if(grid.dbManager.recordCount < 1)
@@ -190,16 +190,16 @@
     ]]>
   </fx:Script>
   <fx:Declarations>
-    <db:DBQuery id="dbQuery" sqlFrom="Network_MeterType"
+    <db:DBQuery fieldId="dbQuery" sqlFrom="Network_MeterType"
                 sqlField="{dbField}"
                 sqlOrderBy="Id"
                 sqlIdentityColumn="Id" sqlTable="Network_MeterType"/>
 
-    <db:DBQuery id="dbDescMeterProducer" sqlFrom="Network_MeterProducer"
+    <db:DBQuery fieldId="dbDescMeterProducer" sqlFrom="Network_MeterProducer"
                 sqlFieldString="Id, Symbol, Name" sqlOrderBy="Symbol"
                 sqlTable="Network_MeterProducer" sqlIdentityColumn="Id"  />
 
-    <fx:XML id="dbField" xmlns="">
+    <fx:XML fieldId="dbField" xmlns="">
       <fields>
         <field name="Id" dataField="ID" displayText="Id" width="100"/>
         <field name="Symbol" dataField="SYMBOL" displayText="Symbol" width="100"/>
@@ -258,73 +258,73 @@
       </fields>
     </fx:XML>
 
-    <fx:XML id="menuEx" xmlns="">
+    <fx:XML fieldId="menuEx" xmlns="">
       <menu xmlNodePosition="-1">
-        <menuitem id="OPTIONS" labelName="Opcje" xmlNodePosition="6" enabledInWriteMode='false'>
-          <meuitem id="DEFAULT_VALUE_CONFIG" labelName="Konfiguracja wartości domyślnych"/>
+        <menuitem fieldId="OPTIONS" labelName="Opcje" xmlNodePosition="6" enabledInWriteMode='false'>
+          <meuitem fieldId="DEFAULT_VALUE_CONFIG" labelName="Konfiguracja wartości domyślnych"/>
         </menuitem>
       </menu>
     </fx:XML>
 
   </fx:Declarations>
-  <s:VGroup id="grMain" left="0" right="0" top="0" bottom="25" minWidth="780">
+  <s:VGroup fieldId="grMain" left="0" right="0" top="0" bottom="25" minWidth="780">
     <s:HGroup width="100%">
-      <c:TextInput id="txtSymbol" width="40" label="Symbol" columnName="Symbol"
+      <c:TextInput fieldId="txtSymbol" width="40" label="Symbol" columnName="Symbol"
                    dataField="SYMBOL" dbProvider="{grid.dbManager}"/>
-      <c:TextInput id="txtName" width="100%" label="Nazwa" columnName="Name"
+      <c:TextInput fieldId="txtName" width="100%" label="Nazwa" columnName="Name"
                    dataField="NAME" dbProvider="{grid.dbManager}"/>
     </s:HGroup>
 
     <s:HGroup width="100%">
-      <c:ComboBox id="cbMeterKind" label="Rodzaj" width="220"
+      <c:ComboBox fieldId="cbMeterKind" label="Rodzaj" width="220"
                     columnName="MeterKind"
                     dataField="METER_KIND" dbProvider="{grid.dbManager}"/>
-      <c:DatabaseField id="dbfMeterProducer" width="100%" label="Producent" columnName="MeterProducerId" dataField="METER_PRODUCER_ID" dbProvider="{grid.dbManager}"
+      <c:DatabaseField fieldId="dbfMeterProducer" width="100%" label="Producent" columnName="MeterProducerId" dataField="METER_PRODUCER_ID" dbProvider="{grid.dbManager}"
                        idField="Id" sqlTable="Network_MeterProducer" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterProducer}"
                        swfClassName="pl.logicsynergy.ui.common.FrmDictionary" swfFile="eMediaUiCommon.swf"
                        dataExchange="{{'dbQuery.sqlTable':'Network_MeterProducer', 'dbQuery.sqlFrom':'Network_MeterProducer', formName:'Producent licznika', type: 1 }}"
                        />
     </s:HGroup>
-    <s:TabBar id="tbMain" width="100%" height="25" dataProvider="{vcTab}"/>
-    <mx:ViewStack id="vcTab" width="100%" height="100%" creationPolicy="all" minHeight="300">
-      <s:NavigatorContent id="ncMain" width="100%" height="100%" label="Dane ogólne">
-        <s:VGroup id="grMainData" width="100%">
-          <c:Panel id="pMeter1" width="100%" height="55"
+    <s:TabBar fieldId="tbMain" width="100%" height="25" dataProvider="{vcTab}"/>
+    <mx:ViewStack fieldId="vcTab" width="100%" height="100%" creationPolicy="all" minHeight="300">
+      <s:NavigatorContent fieldId="ncMain" width="100%" height="100%" label="Dane ogólne">
+        <s:VGroup fieldId="grMainData" width="100%">
+          <c:Panel fieldId="pMeter1" width="100%" height="55"
                    label="Licznik 1" dbProvider="{grid.dbManager}">
             <s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingTop="15" verticalAlign="middle">
-              <c:TextInput id="txtMeter1No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter1No"
+              <c:TextInput fieldId="txtMeter1No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter1No"
                            dataField="METER_1_NO" dbProvider="{grid.dbManager}"/>
-              <c:TextInput id="txtMeter1MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter1MinNo"
+              <c:TextInput fieldId="txtMeter1MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter1MinNo"
                            dataField="METER_1_MIN_NO" dbProvider="{grid.dbManager}"
                            skinClass="pl.logicsynergy.skins.TextInputSkin"/>
-              <s:Label id="lblMeter1Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
-              <c:TextInput id="txtMeter1MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter1MaxValue"
+              <s:Label fieldId="lblMeter1Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
+              <c:TextInput fieldId="txtMeter1MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter1MaxValue"
                            dataField="METER_1_MAX_VALUE" dbProvider="{grid.dbManager}"
                            skinClass="pl.logicsynergy.skins.TextInputSkin"/>
 
             </s:HGroup>
           </c:Panel>
 
-          <c:Panel id="pMeter2" width="100%" height="55"
+          <c:Panel fieldId="pMeter2" width="100%" height="55"
                    label="Licznik 2" dbProvider="{grid.dbManager}">
             <s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingTop="15" verticalAlign="middle">
-              <c:TextInput id="txtMeter2No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter2No"
+              <c:TextInput fieldId="txtMeter2No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter2No"
                            dataField="METER_2_NO" dbProvider="{grid.dbManager}"/>
-              <c:TextInput id="txtMeter2MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter2MinNo"
+              <c:TextInput fieldId="txtMeter2MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter2MinNo"
                            dataField="METER_2_MIN_NO" dbProvider="{grid.dbManager}"
                            skinClass="pl.logicsynergy.skins.TextInputSkin"/>
-              <s:Label id="lblMeter2Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
-              <c:TextInput id="txtMeter2MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter2MaxValue"
+              <s:Label fieldId="lblMeter2Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
+              <c:TextInput fieldId="txtMeter2MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter2MaxValue"
                            dataField="METER_2_MAX_VALUE" dbProvider="{grid.dbManager}"
                            skinClass="pl.logicsynergy.skins.TextInputSkin"/>
             </s:HGroup>
           </c:Panel>
 
-          <c:TextArea id="txtaDescription" width="100%" height="80" label="Opis"
+          <c:TextArea fieldId="txtaDescription" width="100%" height="80" label="Opis"
                       columnName="Description" dataField="DESCRIPTION" dbProvider="{grid.dbManager}" />
         </s:VGroup>
       </s:NavigatorContent>
-      <s:NavigatorContent id="ncData" width="100%" height="100%" label="Dane typu">
+      <s:NavigatorContent fieldId="ncData" width="100%" height="100%" label="Dane typu">
 
       </s:NavigatorContent>
 

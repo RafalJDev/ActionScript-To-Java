@@ -58,8 +58,7 @@ public class ComponentsParser extends Parser {
 
       for (String candidateForComponent : actionScriptStage.getCandidatesForComponents()) {
         if (id.equals(candidateForComponent)) {
-          actionScriptStage.getComponentsThatNeedField()
-             .put(id, componentClass);
+          actionScriptStage.addComponentThatNeedField(componentClass, id);
           importStage.addCandidateToSet(componentClass);
           break;
         }

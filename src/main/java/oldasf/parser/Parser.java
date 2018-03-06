@@ -388,7 +388,7 @@ public class Parser {
 //                "\t * \n" +
 //                "\t * @return obiekt Element zawierający nazwy pól\n" +
 //                "\t */\n" +
-//                "\t private Element " + XmlField.getId() + "()\n" +
+//                "\t private Element " + XmlField.getFieldId() + "()\n" +
 //                "\t {\n" +
 //                "\t\treturn XMLUtils.getXMLElement(\"";
 //

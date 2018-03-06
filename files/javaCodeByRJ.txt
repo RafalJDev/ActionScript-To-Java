@@ -132,7 +132,7 @@ public class YOURCLASSNAME extends null
 
     if (orderId == null)
     {
-      UiMessageBox.show(this, "Brak id zlecenia", "Komunikat");
+      UiMessageBox.show(this, "Brak fieldId zlecenia", "Komunikat");
       return false;
     }
 
@@ -166,7 +166,7 @@ public class YOURCLASSNAME extends null
     frm.dataExchange["chbIsPlan.defaultValue"] = isPlan;
     frm.dataExchange["chbIsPlan.visible"] = false;
     frm.dataExchange["chbIsPlan.includeInLayout"] = false;
-    frm.dataExchange["formName"] = "Zadanie do zlecenia o id " + orderId + (isPlan == 1 ? " (plan)" : " (realizacja)");
+    frm.dataExchange["formName"] = "Zadanie do zlecenia o fieldId " + orderId + (isPlan == 1 ? " (plan)" : " (realizacja)");
 
     if (values[0] < 1)
       frm.dataExchange["dfStartDate.defaultValue"] = getDbManager().getCurrentValue("START_DATE");
@@ -190,7 +190,7 @@ public class YOURCLASSNAME extends null
     frm.dataExchange["dbfOrder.enabledInNewMode"] = false;
     frm.dataExchange["chbIsPlan.visible"] = false;
     frm.dataExchange["chbIsPlan.includeInLayout"] = false;
-    frm.dataExchange["formName"] = "Zadanie o id " + taskId + (isPlan == 1 ? " (plan)" : " (realizacja)");
+    frm.dataExchange["formName"] = "Zadanie o fieldId " + taskId + (isPlan == 1 ? " (plan)" : " (realizacja)");
     frm.getMode()AfterLoad = 2;
     frm.closeAfterSave = true;
     frm.openInContent(UiUtils.getContent(this), onResult);
@@ -242,7 +242,7 @@ public class YOURCLASSNAME extends null
     frm.dataExchange["dbQuery.sqlWhere"] = "Id = " + taskId;
     frm.dataExchange["chbIsPlan.visible"] = false;
     frm.dataExchange["chbIsPlan.includeInLayout"] = false;
-    frm.dataExchange["formName"] = "Zadanie o id " + taskId + (isPlan == 1 ? " (plan)" : " (realizacja)");
+    frm.dataExchange["formName"] = "Zadanie o fieldId " + taskId + (isPlan == 1 ? " (plan)" : " (realizacja)");
     frm.openInContent(UiUtils.getContent(this));
   }
 
@@ -305,7 +305,7 @@ public class YOURCLASSNAME extends null
     }
 
     FrmOrderPosition frm = new FrmOrderPosition();
-    frm.dataExchange["formName"] = "Plan zlecenia o id " + orderId;
+    frm.dataExchange["formName"] = "Plan zlecenia o fieldId " + orderId;
     frm.isPlan = 1
     frm.openInContent(UiUtils.getContent(this), frmGetPlanResult);
     frm.tOrderPosition.additionalSqlWhere = "NOT EXISTS (select 1 From Gis_Task t Where t.IsValid = 1 And t.PlanTaskId = GIS_Task.Id)";
@@ -338,14 +338,14 @@ public class YOURCLASSNAME extends null
 
     XML myMenu =
       <menu>
-        <menu id="SHOW_ACTION" labelName="Czynności"/>
-        <menu id="SHOW_USER_TEAM" labelName="Zespoły"/>
-        <menu id="SHOW_USER" labelName="Osoby"/>
-        <menu id="SHOW_EQUIPMENT" labelName="Sprzęt/pojazdy"/>
-        <menu id="SHOW_MATERIAL" labelName="Materiał"/>
-        <menu id="SHOW_OTHER" labelName="Inne/dodatkowe"/>
-        <menu id="SHOW_DOCUMENT_TYPE" labelName="Wymagane dokumenty"/>
-        <menu id="SHOW_ATTACHMENT" labelName="Załączniki"/>
+        <menu fieldId="SHOW_ACTION" labelName="Czynności"/>
+        <menu fieldId="SHOW_USER_TEAM" labelName="Zespoły"/>
+        <menu fieldId="SHOW_USER" labelName="Osoby"/>
+        <menu fieldId="SHOW_EQUIPMENT" labelName="Sprzęt/pojazdy"/>
+        <menu fieldId="SHOW_MATERIAL" labelName="Materiał"/>
+        <menu fieldId="SHOW_OTHER" labelName="Inne/dodatkowe"/>
+        <menu fieldId="SHOW_DOCUMENT_TYPE" labelName="Wymagane dokumenty"/>
+        <menu fieldId="SHOW_ATTACHMENT" labelName="Załączniki"/>
       </menu>;
 
     Menu menu = Menu.createMenu(null, myMenu, false);
@@ -378,7 +378,7 @@ public class YOURCLASSNAME extends null
     if (xml == null)
       return;
 
-    switch (xml.@id.toString())
+    switch (xml.@fieldId.toString())
     {
       case "SHOW_ACTION":
         showTaskRelation(new TaskToAction(), "czynności");
@@ -419,7 +419,7 @@ public class YOURCLASSNAME extends null
     FrmTaskResource frm = new FrmTaskResource();
     frm.taskId = taskId;
     frm.resourceType = resourceType;
-    frm.dataExchange["formName"] = "Zadanie o id " + taskId + " - " + name;
+    frm.dataExchange["formName"] = "Zadanie o fieldId " + taskId + " - " + name;
     frm.openInContent(UiUtils.getContent(this));
   }
 
@@ -435,14 +435,14 @@ public class YOURCLASSNAME extends null
     FrmTaskRelation frm = new FrmTaskRelation();
     frm.taskId = taskId;
     frm.taskRelation = taskRelation;
-    frm.dataExchange["formName"] = "Zadanie o id " + taskId + " - " + name;
+    frm.dataExchange["formName"] = "Zadanie o fieldId " + taskId + " - " + name;
     frm.openInContent(UiUtils.getContent(this));
   }
                   ]]>
 
                   <fx:Declarations>
 
-                  <db:DBQuery id="dbTaskQuery" sqlFrom="GIS_Task"
+                  <db:DBQuery fieldId="dbTaskQuery" sqlFrom="GIS_Task"
             sqlField="{dbTaskField/**
  * Zwrócenie obiektu DBQuery dla tabeli XXXXXX
  * 
@@ -484,14 +484,14 @@ AddMethods
 
                   </fx:Declarations>
                   <c:VGroup width="100%" height="100%">
-                  <c:Label id="lbl" text="Lista zadań"/>
+                  <c:Label fieldId="lbl" text="Lista zadań"/>
                   <c:HGroup width="100%" verticalAlign="middle">
-  <grid:GridToolBar id="gtbTask" width="100%"
+  <grid:GridToolBar fieldId="gtbTask" width="100%"
                   grid="{gridTask}" />
-  <c:Button id="btnFromPlan" label="Dodaj z planu" fontWeight="bold" visible="false" includeInLayout="false"
+  <c:Button fieldId="btnFromPlan" label="Dodaj z planu" fontWeight="bold" visible="false" includeInLayout="false"
             click="btnFromPlanClickHandler(event)"/>
                   </c:HGroup>
-                  <grid:Grid id="gridTask" width="100%" height="100%" showErrorMessage="false"
+                  <grid:Grid fieldId="gridTask" width="100%" height="100%" showErrorMessage="false"
                   
                   SQLQuery="{dbTaskQuery}"/>
                   </c:VGroup>

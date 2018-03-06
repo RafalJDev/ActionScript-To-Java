@@ -30,15 +30,15 @@ APPEND_HERE_METHODS
 
 }
     
-    <db:DBQuery id="dbEstateOwnerType" sqlFrom="Common_EstateOwnerType" 
-                sqlFieldString="id as inputCode, name" sqlOrderBy="Id"
+    <db:DBQuery fieldId="dbEstateOwnerType" sqlFrom="Common_EstateOwnerType"
+                sqlFieldString="fieldId as inputCode, name" sqlOrderBy="Id"
                 sqlTable="Common_EstateOwnerType" sqlIdentityColumn="Id"/>
     
-    <db:DBQuery id="dbEstateToCoOwner" sqlFrom="Common_EstateToCoOwner"
+    <db:DBQuery fieldId="dbEstateToCoOwner" sqlFrom="Common_EstateToCoOwner"
                 sqlField="{dbEstateCoOwnerField}" sqlIdentityColumn="Id"
                 sqlOrderBy="Id" sqlTable="Common_EstateToCoOwner" sqlWhere="EstateId=?"/>
     
-    <fx:XML xmlns="" id="dbEstateCoOwnerField">
+    <fx:XML xmlns="" fieldId="dbEstateCoOwnerField">
       <fields>
         <field name="Id" dataField="ID" width="-1" bindable="false"/>
         <field name="EstateId" dataField="ESTATE_ID" width="-1"/>
@@ -80,28 +80,28 @@ APPEND_HERE_METHODS
     </fx:XML>
     
 
-    <c:VGroup id="groupMain" left="5" right="5" top="5" bottom="5">
+    <c:VGroup fieldId="groupMain" left="5" right="5" top="5" bottom="5">
       <c:HGroup width="100%">
-        <c:DatabaseField id="dbfCustomer" width="100%" label="Właściciel"
+        <c:DatabaseField fieldId="dbfCustomer" width="100%" label="Właściciel"
                          columnName="CustomerCode" dataField="CUSTOMER_CODE" dbProvider="{getDbManager}"
                          descField="Name" history="true" idField="Code" sqlTable="Common_Customer"
                          frmClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
                          />
-        <c:ComboBox id="cbEstateOwnerType" width="300" label="Rodzaj właściciela"
+        <c:ComboBox fieldId="cbEstateOwnerType" width="300" label="Rodzaj właściciela"
                     columnName="EstateOwnerTypeId" dataField="ESTATE_OWNER_TYPE_ID"
                     dbProvider="{getDbManager}" dbQuery="{dbEstateOwnerType}"/>
       </c:HGroup>
-      <c:DatabaseField id="dbfRecipient" width="100%" label="Adresat"
+      <c:DatabaseField fieldId="dbfRecipient" width="100%" label="Adresat"
                        dataField="RECIPIENT_CODE" dbProvider="{getDbManager}" descField="Name"
                        history="true" idField="Code" columnName="RecipientCode"
                        sqlTable="Common_Customer" frmClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
                        />
-      <c:DatabaseField id="dbfPayer" width="100%" label="Płatnik"
+      <c:DatabaseField fieldId="dbfPayer" width="100%" label="Płatnik"
                        dataField="PAYER_CODE" dbProvider="{getDbManager}" descField="Name"
                        history="true" idField="Code" columnName="PayerCode"
                        sqlTable="Common_Customer" frmClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
                        />
-      <c:ListDatabase id="ldbCoOwnerList" width="100%" height="100%" label="Lista współwłaścicieli"
+      <c:ListDatabase fieldId="ldbCoOwnerList" width="100%" height="100%" label="Lista współwłaścicieli"
                       dbQuery="{dbEstateToCoOwner}" dbProvider="{getDbManager}" dataField="ID" 
                       relationFieldName="EstateId" isBindable="false"
                       >
