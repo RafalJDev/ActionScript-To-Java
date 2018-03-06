@@ -1,12 +1,17 @@
 package files.input;
 
-      import pl.logicsynergy.common.FrmObject;
-      import pl.logicsynergy.components.mdi.View;
-      import pl.logicsynergy.components.ui.UiCommon;
-      import pl.logicsynergy.components.ui.UiMessageBox;
-      import pl.logicsynergy.skins.TextInputDecimalSkin;
-      import pl.logicsynergy.utils.StringUtils;
-      import pl.logicsynergy.utils.UiUtils;
+import pl.logicsynergy.common.FrmObject;
+import pl.logicsynergy.components.mdi.View;
+import pl.logicsynergy.components.ui.UiCommon;
+import pl.logicsynergy.components.ui.UiMessageBox;
+import pl.logicsynergy.skins.TextInputDecimalSkin;
+import pl.logicsynergy.utils.StringUtils;
+import pl.logicsynergy.utils.UiUtils;
+
+import pl.logicsynergy.components.ComboBox;
+import pl.logicsynergy.components.Label;
+import pl.logicsynergy.components.mdi.View;
+import pl.logicsynergy.components.TextInput;
 
 @UiDesign(formName = "Typy liczników", guid = "5524CA75")
 public class FrmMeterTypeFlash extends UiDictionary 

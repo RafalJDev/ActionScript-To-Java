@@ -74,7 +74,7 @@ public class StagesController {
       e.printStackTrace();
       log.info("OCCURED ON LINE :" + lineCount);
     }
-
+    importParser.addImportLineIfCandidateHaveLine();
     addOutputCode();
 
     Formatter formatter = new Formatter();

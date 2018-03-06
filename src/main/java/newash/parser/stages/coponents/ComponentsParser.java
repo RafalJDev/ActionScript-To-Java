@@ -2,6 +2,7 @@ package newash.parser.stages.coponents;
 
 import newash.actionscript.stage.stages.ActionScriptStage;
 import newash.actionscript.stage.stages.ComponentsStage;
+import newash.actionscript.stage.stages.ImportStage;
 import newash.actionscript.stage.stages.UiDesignStage;
 import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
@@ -17,6 +18,7 @@ public class ComponentsParser extends Parser {
   ActionScriptStage actionScriptStage;
   ComponentsStage componentsStage;
   UiDesignStage uiDesignStage;
+  ImportStage importStage = ImportStage.getInstance();
 
   private String idValueForCurrentComponent = "";
   private String methodBodyForDataExchange = "";
@@ -43,7 +45,7 @@ public class ComponentsParser extends Parser {
     findComponents();
     simpleReplaceAll();
 
-    componentsStage.getCode().append(line + "\n");
+    componentsStage.appendCode(line + "\n");
   }
 
   public void findComponents() {
@@ -58,6 +60,7 @@ public class ComponentsParser extends Parser {
         if (id.equals(candidateForComponent)) {
           actionScriptStage.getComponentsThatNeedField()
              .put(id, componentClass);
+          importStage.addCandidateToSet(componentClass);
           break;
         }
       }

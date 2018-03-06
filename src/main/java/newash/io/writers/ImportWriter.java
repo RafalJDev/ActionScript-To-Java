@@ -14,14 +14,15 @@ import java.io.IOException;
 @Log
 public class ImportWriter extends Writer {
 
-  private String outputDirectoryPath;
-
   public void saveFile() {
+    log.info("In ImportWriter");
 
+    outputDirectory = "importsFile";
     ioEntity = IOImportEntity.getInstance();
+    findPathForOutputDirectory(System.getProperty("user.dir"));
     outputDirectoryPath = ((IOImportEntity)ioEntity).getFileDirectory();
-    log.info("In CodeWriter");
 
+//    outputDirectoryPath += "\\" + ioEntity.getFileName() + ".txt";
     save();
   }
 }

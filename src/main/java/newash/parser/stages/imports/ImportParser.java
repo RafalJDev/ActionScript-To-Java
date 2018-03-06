@@ -1,5 +1,6 @@
 package newash.parser.stages.imports;
 
+import newash.actionscript.stage.imports.list.ImportList;
 import newash.actionscript.stage.stages.ImportStage;
 import newash.io.code.IOCodeEntity;
 import newash.io.readers.current.CodeLineEntity;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class ImportParser extends Parser {
 
   ImportStage importStage;
+  ImportList importList = ImportList.getInstance();
   IOCodeEntity ioCodeEntity;
 
   private boolean isPackageAdded = false;
@@ -33,7 +35,7 @@ public class ImportParser extends Parser {
   @Override
   public void parseThisStage() {
 
-    line = codeLineEntity.getLine();
+    line = codeLineEntity.getLine().trim();
 
     simpleReplaceAll();
 
@@ -50,7 +52,7 @@ public class ImportParser extends Parser {
       Regex regex = new Regex();
       regex.setLine(ioCodeEntity.getFilePackage());
       String packageWithoutDots = regex.foundRegex("\\.(.*)\\.", 1);
-      packageName = "package " + packageWithoutDots + ";\n\n";
+      packageName = "package " + packageWithoutDots + ";\n";
       line = packageName + line;
       isPackageAdded = true;
     }
@@ -66,5 +68,26 @@ public class ImportParser extends Parser {
 
   public void prepareReplaceMap() {
     replaceMap.put("Swf", "Frm");
+  }
+
+  public void addImportLineIfCandidateHaveLine() {
+    importStage.appendCode("\n");
+    for (String candidate : importStage.getCandidatesToImportSet()) {
+      String importLineForCandidate = getImportLineForCandidate(candidate);
+      if (importLineForCandidate != null) {
+        if (!importLineForCandidate.isEmpty()) {
+          importStage.appendCode(importLineForCandidate + "\n");
+        }
+      }
+    }
+    importStage.appendCode("\n");
+  }
+
+  public String getImportLineForCandidate(String candidate) {
+    return importList.getImportMap().entrySet().stream()
+       .filter(e -> e.getKey().equals(candidate))
+       .map(Map.Entry::getValue)
+       .findFirst()
+       .orElse(null);
   }
 }

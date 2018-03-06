@@ -8,7 +8,7 @@ import java.io.BufferedReader;
 public class IOEntity {
 
   private BufferedReader inputCode;
-  private StringBuilder outputCode;
+  private StringBuilder outputCode = new StringBuilder();
   private String fileName;
 
   public BufferedReader getInputCode() {
@@ -33,5 +33,13 @@ public class IOEntity {
 
   public void setFileName(String fileName) {
     this.fileName = fileName;
+  }
+
+  public void appendOutputCode(String append) {
+    outputCode.append(append);
+  }
+
+  public String outputCodeToString() {
+    return outputCode.toString();
   }
 }

@@ -42,7 +42,7 @@ public class FxDeclarationParser extends Parser {
       parseXmlFields();
     }
 
-    fxDeclarationStage.getCode().append(line + "\n");
+    fxDeclarationStage.appendCode(line + "\n");
   }
 
   public void parseDbQuery() {

@@ -29,7 +29,7 @@ public class ImportReader extends Reader {
       e.printStackTrace();
     }
     ioEntity.setInputCode(new BufferedReader(new InputStreamReader(fstream)));
-//    ioImportEntity.setFileName(fileName.replaceAll("\\.\\w+", ""));
+    ioEntity.setFileName(fileName.replaceAll("\\.\\w+", ""));
     ((IOImportEntity)ioEntity).setFileDirectory(filePathToReadFrom);
   }
 }

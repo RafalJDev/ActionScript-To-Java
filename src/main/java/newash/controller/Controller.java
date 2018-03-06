@@ -1,8 +1,10 @@
 package newash.controller;
 
 import newash.actionscript.stage.stages.*;
+import newash.controller.stages.ListImportController;
 import newash.controller.stages.StagesController;
 import newash.io.readers.CodeReader;
+import newash.io.readers.ImportReader;
 import newash.io.readers.current.CodeLineEntity;
 import newash.io.writers.CodeWriter;
 import newash.io.writers.ImportWriter;
@@ -15,10 +17,11 @@ public class Controller {
 
   private CodeReader codeReader;
   private CodeWriter codeWriter;
-
-  private ImportWriter importWriter;
-
   private StagesFinder stagesFinder;
+
+  private ImportReader importReader = new ImportReader();
+  private ImportWriter importWriter = new ImportWriter();
+  private ListImportController listImportController = new ListImportController();
 
   CodeLineEntity codeLineEntity = CodeLineEntity.getInstance();
 
@@ -32,15 +35,17 @@ public class Controller {
 
   public Controller() {
 
+
     codeReader = new CodeReader();
     codeWriter = new CodeWriter();
-
 
     stagesFinder = new StagesFinder();
     stagesController = new StagesController();
   }
 
   public void launchIt() {
+
+    importListLauncher();
 
     codeReader.openFileAndGetBufferedReader();
     stagesFinder.findStages();
@@ -53,7 +58,13 @@ public class Controller {
     saveOutputCode();
 
     printData();
+  }
 
+  public void importListLauncher() {
+    importReader.openFileAndGetBufferedReader();
+    listImportController.parseImportList();
+    importReader.closeBufferedReader();
+    importWriter.saveFile();
   }
 
   public void saveOutputCode() {

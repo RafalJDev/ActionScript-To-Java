@@ -1,6 +1,7 @@
 package newash.parser.stages.actionscript;
 
 import newash.actionscript.stage.stages.ActionScriptStage;
+import newash.actionscript.stage.stages.ImportStage;
 import newash.actionscript.stage.stages.UiDesignStage;
 import newash.io.code.IOCodeEntity;
 import newash.io.readers.current.CodeLineEntity;
@@ -25,6 +26,7 @@ public class ActionScriptParser extends Parser {
   UiDesignStage uiDesignStage;
   ActionScriptStage actionScriptStage;
   IOCodeEntity ioCodeEntity;
+  ImportStage importStage = ImportStage.getInstance();
 
   public int braces = 0;
   private boolean isClassAndConstructorAdded = false;
@@ -100,8 +102,10 @@ public class ActionScriptParser extends Parser {
     }
     if (line.contains("var")) {
       if (isFoundRegex(":[a-zA-Z0-9]*\\s{0}")) {
-        line = line.replace("var", found.replace(":", ""));
+        String type = found.replace(":", "");
+        line = line.replace("var", type);
         line = line.replace(found, "");
+        addCandidateToImport(type);
       }
     }
 
@@ -134,7 +138,7 @@ public class ActionScriptParser extends Parser {
 
     appendClassAndConstructor();
 
-    actionScriptStage.getCode().append(line + "\n");
+    actionScriptStage.appendCode(line + "\n");
   }
 
   private void convertFunctionToJavaMethod() {
@@ -213,6 +217,8 @@ public class ActionScriptParser extends Parser {
         foundRegex("\\s+(\\w+);", 1);
         String foundWithFirstLetterToLower = ((Character) found.toCharArray()[0]).toString().toLowerCase() + found.substring(1);
         actionScriptStage.getComponentsThatNeedField().put(foundWithFirstLetterToLower, found);
+        importStage.addCandidateToSet(found);
+
         line = "";
       }
     }
@@ -260,8 +266,12 @@ public class ActionScriptParser extends Parser {
   }
 
   public void appendEndClassBraces() {
-    actionScriptStage.getCode().append("\nAPPEND_HERE_METHODS\n\n" +
+    actionScriptStage.appendCode("\nAPPEND_HERE_METHODS\n\n" +
        "}\n");
+  }
+
+  public void addCandidateToImport(String candidate) {
+    importStage.addCandidateToSet(candidate);
   }
 
   private void simpleReplaceAll() {

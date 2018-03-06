@@ -42,6 +42,10 @@ public class Stage {
     this.code = code;
   }
 
+  public void appendCode(String stringCode) {
+    code.append(stringCode);
+  }
+
   @Override
   public String toString() {
     return "Stage{" +
