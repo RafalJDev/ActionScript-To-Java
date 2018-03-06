@@ -328,5 +328,6 @@ public class ActionScriptParser extends Parser {
     replaceMap.put("StringUtils\\.IsNullOrEmpty", "StringUtils.isNullOrEmpty");
     replaceMap.put("\\*", "Object");
     replaceMap.put("@id", "getFieldId()");
+    replaceMap.put("IndexChangeEvent.CHANGE", "BaseEvent.VALUE_CHANGED");
   }
 }

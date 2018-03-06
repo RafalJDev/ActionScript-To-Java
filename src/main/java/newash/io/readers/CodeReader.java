@@ -16,7 +16,7 @@ public class CodeReader extends Reader {
 
   public CodeReader() {
     ioEntity = IOCodeEntity.getInstance();
-    fileName = "FrmMeterTypeFlash.txt"; //FrmMeterTypeFlash.txt, TabEstateOwner.txt
+    fileName = "FrmOrderType.txt"; //FrmMeterTypeFlash.txt, TabEstateOwner.txt
   }
 
   public void openFileAndGetBufferedReader() {

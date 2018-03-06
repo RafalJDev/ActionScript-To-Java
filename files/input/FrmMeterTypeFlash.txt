@@ -1,333 +1,314 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ui:UiDictionary  xmlns:fx="http://ns.adobe.com/mxml/2009"
-                  xmlns:s="library://ns.adobe.com/flex/spark"
-                  xmlns:mx="library://ns.adobe.com/flex/mx"
-                  xmlns:ui="pl.logicsynergy.components.ui.*"
-                  xmlns:c="pl.logicsynergy.components.*"
-                  xmlns:db="pl.logicsynergy.database.*"
-                  width="1300" height="800"  minWidth="800" minHeight="500"
-                  formName="Typy liczników"
-                  skinClass="pl.logicsynergy.skins.ui.UiDictionaryHSkin"
-                  GUID="5524CA75">
+<mdi:UiMDITab xmlns:fx="http://ns.adobe.com/mxml/2009"
+              xmlns:s="library://ns.adobe.com/flex/spark"
+              xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:mdi="pl.logicsynergy.components.mdi.*"
+              xmlns:db="pl.logicsynergy.database.*"
+              xmlns:c="pl.logicsynergy.components.*"
+              width="100%" height="100%"
+              formName="Dane"
+              GUID="54BCCED1">
   <fx:Script>
     <![CDATA[
       import mx.events.FlexEvent;
-      import mx.events.MenuEvent;
-      import mx.rpc.Responder;
-      import mx.rpc.events.FaultEvent;
+      import mx.rpc.events.ResultEvent;
+      import mx.utils.StringUtil;
 
-      import pl.logicsynergy.common.SwfObject;
-      import pl.logicsynergy.components.mdi.View;
-      import pl.logicsynergy.components.ui.UiCommon;
       import pl.logicsynergy.components.ui.UiMessageBox;
-      import pl.logicsynergy.skins.TextInputDecimalSkin;
+      import pl.logicsynergy.database.DBManager;
+      import pl.logicsynergy.events.DBEvent;
+      import pl.logicsynergy.events.MDIEvent;
+      import pl.logicsynergy.ro.ROManager;
+      import pl.logicsynergy.ro.ROUiEventService;
       import pl.logicsynergy.utils.StringUtils;
-      import pl.logicsynergy.utils.UiUtils;
+      import pl.logicsynergy.validator.NipValidator;
+      import pl.logicsynergy.validator.PeselValidator;
+      import pl.logicsynergy.validator.RegonValidator;
 
-      ViewTypeIntegrator;
-      ViewTypeCounter;
-      ViewTypeHeatCounter;
-      ViewTypeWaterCounter;
-      ViewTypePairTemperatureSensor;
-      ViewTypeFlowCounter;
+      private var _checkNipPeselRegonTimer:int = 0;
+      /** Flagi wskazujące na to czy istnieje rekord z pesel/nip/regon */
+      private var _customerWithSomethingElseExists:Object = {};
 
-      private var m_viewList:Object =
-        {
-          I:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeIntegrator"},
-          L:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeCounter"},
-          C:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeHeatCounter"},
-          W:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeWaterCounter"},
-          T:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypePairTemperatureSensor"},
-          P:{SWF:"eMediaUiNetwork.swf", FUNC:"pl.logicsynergy.ui.network.meter.ViewTypeFlowCounter"}
-        };
-      /** Aktualnie załądowany widok*/
-      private var m_currentView:View = null;
-
-      protected override function  load(event:FlexEvent):void
+      override protected function load(event:FlexEvent):void
       {
         super.load(event);
-
-        cbMeterKind.addItem("I", "I - Integrator");
-        cbMeterKind.addItem("L", "L - Licznik");
-        cbMeterKind.addItem("C", "C - Ciepłomierz");
-        cbMeterKind.addItem("W", "W - Wodomierz");
-        cbMeterKind.addItem("T", "T - Para czujników temperatur");
-        cbMeterKind.addItem("P", "P - Przepływomierz");
-
-
-        cbMeterKind.addEventListener("valueChanged", cbMeterKindChanged);
-
-        txtMeter1No.addEventListener("valueChanged", txtMeter1NoChanged);
-        txtMeter1MinNo.addEventListener("valueChanged", txtMeter1NoChanged);
-
-        txtMeter2No.addEventListener("valueChanged", txtMeter2NoChanged);
-        txtMeter2MinNo.addEventListener("valueChanged", txtMeter2NoChanged);
       }
 
-      private function txtMeter1NoChanged(event:Event):void
+      override protected function mdiMainSetDbManager(event:MDIEvent):void
       {
-        lblMeter1Digit.text = getDigitLabel(txtMeter1No.value, txtMeter1MinNo.value);
+        super.mdiMainSetDbManager(event);
+        setEvents();
       }
 
-      private function txtMeter2NoChanged(event:Event):void
+      private function setEvents():void
       {
-        lblMeter2Digit.text = getDigitLabel(txtMeter2No.value, txtMeter2MinNo.value);
+        txtPESEL.addEventListener("valueChanged", checkNipPeselRegon);
+        txtNIP.addEventListener("valueChanged", checkNipPeselRegon);
+        txtREGON.addEventListener("valueChanged", checkNipPeselRegon);
+
+        _dbManager.addEventListener(DBEvent.BEGIN_SAVE, gridDbManagerBeginSave);
+        _dbManager.addEventListener(DBEvent.SAVE_RESULT, gridDbManagerSaveResult);
+        _dbManager.addEventListener(DBEvent.SAVE_FAULT, gridDbManagerSaveResult);
       }
 
-      private function getDigitLabel(meterNo:String, precisionNo:String):String
+      override public function set dbManager(value:DBManager):void
       {
-        var no:Number = parseInt(meterNo);
-        if (isNaN(no))
-          no = 0;
-
-        var precision:Number = parseInt(precisionNo);
-        if (isNaN(precision))
-          precision = 0;
-
-        var digit:String = "";
-        while (no-- > 0)
-          digit += "0";
-
-        if (precision > 0)
-          digit += ",";
-
-        while (precision-- > 0)
-          digit += "0";
-
-        return digit;
+        super.dbManager = value;
+        setEvents();
       }
 
-      private function cbMeterKindChanged(event:Event):void
+      protected function checkNipPeselRegon(event:Event):void
       {
-        var oldView:View = m_currentView;
-        m_currentView =  getView(cbMeterKind.value);
-        if(m_currentView == null) //załadowanie
-        {
-          if (oldView)
-            ncData.removeElement(oldView);
-
-          loadView(cbMeterKind.value);
-        }
-        else if (oldView && oldView.className != m_currentView.className)
-        {
-          ncData.removeElement(oldView);
-          ncData.addElement(m_currentView);
-        }
-        else if (!oldView)
-          ncData.addElement(m_currentView);
-      }
-
-      private function getView(meterKind:String):*
-      {
-        var o:Object = m_viewList[meterKind];
-        if(o == null)
-          return null;
-
-        return o["VIEW"];
-      }
-
-      private function loadView(meterKind:String):void
-      {
-        var o:Object = m_viewList[meterKind];
-        if(o == null)
+        if (_dbManager.mode == 0)
           return;
 
-        var swf:String = o["SWF"];
-        var func:String = o["FUNC"];
+        // co należy sprawdzić, czyli id pola tekstowego
+        var componentId:String = event.target["id"];
 
-
-        var frm:SwfObject = new SwfObject(this.stage);
-        frm.addResponder(new mx.rpc.Responder(createModalClassResult, showFaultEvent));
-        frm.CreateObject(swf,func);
-      }
-      private function createModalClassResult(data:Object):void
-      {
-        m_currentView = UiCommon.getObject(data) as View;
-        if (m_currentView == null)
-          return;
-
-        m_currentView.dbManager = grid.dbManager;
-        ncData.addElement(m_currentView);
-        var o:Object = m_viewList[cbMeterKind.value];
-        o.VIEW = m_currentView;
+        clearTimeout(_checkNipPeselRegonTimer);
+        _checkNipPeselRegonTimer = setTimeout(checkIfCustomerExists, 500, componentId);
       }
 
-
-      private function showFaultEvent(event:FaultEvent):void
+      /** Sprawdzenie czy istnieje kontrahent z podanym... (PESEL/NIP/REGON w zależności od pola). Sprawdzamy tylko jedno pole na raz.
+       * @param checkWhat - id pola do sprawdzenia
+       */
+      protected function checkIfCustomerExists(componentId:String):void
       {
-        UiMessageBox.show(this, "Błąd ładowania widoku", "Uwaga");
-      }
+        _customerWithSomethingElseExists[componentId] = false;
 
-      public override function menuItemClick(event:MenuEvent):void
-      {
-        var xml:XML = event.item as XML;
-        if (xml == null)
-          return;
+        var sqlWhere:String = "Active=1";
+        var sqlParams:Array = [];
 
-        var stopPropagation:Boolean = true;
-        switch (xml.@id.toString())
+        if (componentId == "txtPESEL" && !StringUtils.IsNullOrEmpty(txtPESEL.value))
         {
-          case "DEFAULT_VALUE_CONFIG":
-            if(grid.dbManager.recordCount < 1)
-            {
-              UiMessageBox.show(this, "Brak wybranego typu licznika", "Komunikat");
-              break;
-            }
-
-            var frm:FrmDefaultValue = new FrmDefaultValue();
-            frm.meterTypeId = grid.getValue("ID");
-            frm.openInContent(UiUtils.getNavigatorContent(this));
-            break;
-          default:
-            stopPropagation = false;
-            break;
+          sqlWhere += " And Pesel=? ";
+          sqlParams.push(StringUtil.trim(txtPESEL.value as String));
         }
 
-        if (!stopPropagation)
-          super.menuItemClick(event);
+        if (componentId == "txtNIP" && !StringUtils.IsNullOrEmpty(txtNIP.value))
+        {
+          sqlWhere += " And NIP=? ";
+          sqlParams.push(StringUtil.trim(txtNIP.value as String));
+        }
+
+        if (componentId == "txtREGON" && !StringUtils.IsNullOrEmpty(txtREGON.value))
+        {
+          sqlWhere += " And Regon=? ";
+          sqlParams.push(StringUtil.trim(txtREGON.value as String));
+        }
+
+        if (sqlParams.length < 1)  // nie było zmiany w kontrolkach
+          return;
+
+        if(_dbManager.mode == 2) //podczas modyfikacji rekordu pominąć rekordy modyfikowanego kontrahenta
+        {
+          var customerCode:* = _dbManager.getCurrentValue("CODE");
+          if(customerCode != null)
+          {
+            sqlWhere += " And Code <> ?";
+            sqlParams.push(customerCode);
+          }
+        }
+
+        var data:Object = {
+          // sprawdź ilość rekordów, dodaj jeszcze id pola sprawdzanego, tak abyśmy mogli dowiedzieć się co za pole uległo sprawdzaniu
+          "Select":   "count(1) as CNT, '" + componentId + "' as CHECKEDFIELD",
+            "From":     "Common_Customer",
+            "Where":    sqlWhere,
+            "PARAMS":   sqlParams
+        };
+
+        var ro:ROUiEventService = new ROUiEventService(checkCustomerExistsResult);
+          ro.call("logica.uiservice.db.DatabaseManager", "getData", data);
       }
+
+      private function checkCustomerExistsResult(event:ResultEvent):void
+      {
+        var data:Object = event.result;
+        if (!ROManager.isResultOK(this, data))
+          return;
+
+        var cnt:int = data["DataTable"][0]["CNT"];
+        var field:String = data["DataTable"][0]["CHECKEDFIELD"];
+        if (cnt > 0)
+          _customerWithSomethingElseExists[field] = true; // rekord istnieje
+      }
+
+      protected function gridDbManagerBeginSave(event:Event):void
+      {
+        var fields:Array = [];
+        if (!PeselValidator.validate(txtPESEL.value as String))
+          fields.push(" PESEL");
+        if (!NipValidator.validate(txtNIP.value as String))
+          fields.push(" NIP");
+        if (!RegonValidator.validate(txtREGON.value as String))
+          fields.push(" REGON");
+
+        var customerExistsMsg:Array = [];
+        for (var field:String in _customerWithSomethingElseExists)
+        {
+          if (_customerWithSomethingElseExists[field])
+            customerExistsMsg.push(field.replace("txt", " ").toUpperCase());
+        }
+
+        // jeśli są błędy, nie pozwól na zapis, usuń listenera i wyświetl okienko z pytaniem o potwierdzenie
+        if (fields.length > 0 || customerExistsMsg.length > 0)
+        {
+          _dbManager.allowSave = false;
+          var o:Object =  {"TextField" : fields[0]};
+
+          var msg:Array = [];
+          if (fields.length > 0)
+            msg.push("Nieprawidłowe wartości pól: " + fields + ".");
+          if (customerExistsMsg.length > 0)
+            msg.push("Istnieje już kontrahent z podanym numerem: " + customerExistsMsg + ".");
+
+          msg.push("Czy chcesz zatwierdzić wprowadzanie rekordu?");
+
+          UiMessageBox.showYESNO(this, msg.join("\n\n"), "Błędna walidacja pól", onValidationMessage, o);
+        }
+      }
+
+      private function onValidationMessage(data:Object):void
+      {
+        _dbManager.allowSave = true;
+        if (data && data["DialogResult"] != "YES")
+          return;
+
+        // potwierdzenie zapisu rekordu mimo niepoprawnych wartości NIP/PESEL/REGON
+        _dbManager.removeEventListener(DBEvent.BEGIN_SAVE, gridDbManagerBeginSave);
+        _dbManager.save();
+        _dbManager.mode = 0;
+
+        // przywróć listenera nasłuchującego na beginsave
+        _dbManager.addEventListener(DBEvent.BEGIN_SAVE, gridDbManagerBeginSave);
+      }
+
+      protected function gridDbManagerSaveResult(event:Event):void
+      {
+        // po zapisie rekordu wyczyść flagi
+        _customerWithSomethingElseExists = {};
+      }
+
 
     ]]>
   </fx:Script>
   <fx:Declarations>
-    <db:DBQuery id="dbQuery" sqlFrom="Network_MeterType"
-                sqlFi eld="{dbField}"
-                sqlOrderBy="Id"
-                sqlIdentityColumn="Id" sqlTable="Network_MeterType"/>
 
-    <db:DBQuery id="dbDescMeterProducer" sqlFrom="Network_MeterProducer"
-                sqlFieldString="Id, Symbol, Name" sqlOrderBy="Symbol"
-                sqlTable="Network_MeterProducer" sqlIdentityColumn="Id"  />
+    <db:DBQuery id="dbConsultant" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_CustomerConsultant"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_CustomerConsultant"/>
 
-    <fx:XML id="dbField" xmlns="">
-      <fields>
-        <field name="Id" dataField="ID" displayText="Id" width="100"/>
-        <field name="Symbol" dataField="SYMBOL" displayText="Symbol" width="100"/>
-        <field name="Name" dataField="NAME" displayText="Nazwa" width="100"/>
-        <field name="Description" dataField="DESCRIPTION" displayText="Opis" width="250"/>
-        <field name="Meter1No" dataField="METER_1_NO" displayText="Liczba cyfr liczydła 1" width="100"/>
-        <field name="Meter1MinNo" dataField="METER_1_MIN_NO" displayText="L. cyfr po ',' liczydła 1" width="100"/>
-        <field name="Meter2No" dataField="METER_2_NO" displayText="Liczba cyfr liczydła 2" width="100"/>
-        <field name="Meter2MinNo" dataField="METER_2_MIN_NO" displayText="L. cyfr po ',' liczydła 2" width="100"/>
-        <field name="Meter1MaxValue" dataField="METER_1_MAX_VALUE" displayText="Maksymalna wartość dla liczydła 1" width="100"/>
-        <field name="Meter2MaxValue" dataField="METER_2_MAX_VALUE" displayText="Maksymalna wartość dla liczydła 2" width="100"/>
-        <field name="MeterKind" dataField="METER_KIND" displayText="Rodzaj" width="100"/>
-        <field name="MeterProducerId" dataField="METER_PRODUCER_ID" displayText="Id producenta" width="50"/>
-        <field name="ViewSwfName" dataField="VIEW_SWF_NAME" displayText="Biblioteka swf" width="150"/>
-        <field name="ViewClassName" dataField="VIEW_CLASS_NAME" displayText="Klasa formularza" width="150"/>
+    <db:DBQuery id="dbDataSource" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_CustomerDataSource"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_CustomerDataSource"/>
 
+    <db:DBQuery id="dbStatus" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_CustomerStatus"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_CustomerStatus"/>
 
-        <field name="FlowNominal" dataField="FLOW_NOMINAL" displayText="Przepływ nominalny" width="-1"/>
-        <field name="FlowMin" dataField="FLOW_MIN" displayText="Przepływ minimalny" width="-1" />
-        <field name="FlowMid" dataField="FLOW_MID" displayText="Przepływ pośredni" width="-1"/>
-        <field name="FlowMax" dataField="FLOW_MAX" displayText="Przepływ maksymalny" width="-1"/>
+    <db:DBQuery id="dbCustomer" sqlFieldString="Id, Symbol , Name"
+                sqlFrom="Common_Customer"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_Customer"/>
 
-        <field name="DailyLoadMin" dataField="DAILY_LOAD_MIN" displayText="Minimalne dzienne obciążenie" width="-1" />
-        <field name="DailyLoadMax" dataField="DAILY_LOAD_MAX" displayText="Maksymalne dzienne obciążenie" width="-1" />
+    <db:DBQuery id="dbGroupCustomer1" sqlFieldString="Id, Symbol, Name, Description"
+                sqlFrom="Common_GroupCustomer1"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_GroupCustomer1"/>
 
-        <field name="MeterKindId" dataField="METER_KIND_ID"  displayText="Id rodzaju" width="-1"/>
-        <field name="TempMax" dataField="TEMP_MAX" displayText="Maksymalna temperatura pracy" width="-1"/>
-        <field name="WorkTimeCountType" dataField="WORK_TIME_COUNT_TYPE"  displayText="Sposób liczenia czasu pracy" width="-1"/>
+    <db:DBQuery id="dbGroupCustomer2" sqlFieldString="Id, Symbol, Name, Description"
+                sqlFrom="Common_GroupCustomer2"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_GroupCustomer2"/>
 
-        <field name="DiameterNominal" dataField="DIAMETER_NOMINAL" displayText="Średnica nominalna" width="-1"/>
-        <field name="DiameterMin" dataField="DIAMETER_MIN" displayText="Średnica przyłączeniowa od" width="-1"/>
-        <field name="DiameterMax" dataField="DIAMETER_MAX" displayText="Średnica przyłączeniowa do" width="-1"/>
-
-
-        <field name="MeterInstallId" dataField="METER_INSTALL_ID"  displayText="Id miejsca instalacji" width="-1"/>
-        <field name="UnitId" dataField="UNIT_ID"  displayText="Id jednostki licznika" width="-1"/>
-
-        <field name="CanMeasureHeatPoint" dataField="CAN_MEASURE_HEAT_POINT"  displayText="Możliwość pomiaru - ciepło chwilowe" width="-1"/>
-        <field name="CanMeasureHeatMax" dataField="CAN_MEASURE_HEAT_MAX"  displayText="Możliwość pomiaru - ciepło maksymalne" width="-1"/>
-        <field name="CanMeasureHeatOver" dataField="CAN_MEASURE_HEAT_OVER"  displayText="Możliwość pomiaru - przekroczenia mocy" width="-1"/>
-        <field name="CanMeasureConsumptionHeatOver" dataField="CAN_MEASURE_CONSUMPTION_HEAT_OVER"  displayText="Możliwość pomiaru - zużycia przy przekroczenia mocy" width="-1"/>
-        <field name="CanMeasureFlowHeatOver" dataField="CAN_MEASURE_FLOW_HEAT_OVER"  displayText="Możliwość pomiaru - przepływu przy przekroczenia mocy" width="-1"/>
-        <field name="CanMeasureFlowPoint" dataField="CAN_MEASURE_FLOW_POINT"  displayText="Możliwość pomiaru - przepływ chwilowy" width="-1"/>
-        <field name="CanMeasureFlowMax" dataField="CAN_MEASURE_FLOW_MAX"  displayText="Możliwość pomiaru - przepływ maksymalny" width="-1"/>
-        <field name="CanMeasureCapacity" dataField="CAN_MEASURE_CAPACITY"  displayText="Możliwość pomiaru - objętość" width="-1"/>
-        <field name="CanMeasureTempSupply" dataField="CAN_MEASURE_TEMP_SUPPLY"  displayText="Możliwość pomiaru - temperatura zasilania" width="-1"/>
-        <field name="CanMeasureTempReturn" dataField="CAN_MEASURE_TEMP_RETURN"  displayText="Możliwość pomiaru - temperatura powrotu" width="-1"/>
-
-        <field name="MeterDeviceCode1" dataField="METER_DEVICE_CODE_1" displayText="Kod licznika powiązanego nr 1" width="-1"/>
-        <field name="MeterDeviceCode2" dataField="METER_DEVICE_CODE_2" displayText="Kod licznika powiązanego nr 2" width="-1"/>
-        <field name="MeterDeviceCode3" dataField="METER_DEVICE_CODE_3" displayText="Kod licznika powiązanego nr 3" width="-1"/>
-        <field name="MeterDeviceCode4" dataField="METER_DEVICE_CODE_4" displayText="Kod licznika powiązanego nr 4" width="-1"/>
-
-        <field name="MeterTempSensorTypeId" dataField="METER_TEMP_SENSOR_TYPE" displayText="Id rodzaju czujnika temp." width="-1"/>
-        <field name="MeterPowerTypeId" dataField="METER_POWER_TYPE_ID" displayText="Id sposobu zasilania" width="-1"/>
-      </fields>
-    </fx:XML>
-
-    <fx:XML id="menuEx" xmlns="">
-      <menu xmlNodePosition="-1">
-        <menuitem id="OPTIONS" labelName="Opcje" xmlNodePosition="6" enabledInWriteMode='false'>
-          <meuitem id="DEFAULT_VALUE_CONFIG" labelName="Konfiguracja wartości domyślnych"/>
-        </menuitem>
-      </menu>
-    </fx:XML>
+    <db:DBQuery id="dbGroupCustomer3" sqlFieldString="Id, Symbol, Name, Description"
+                sqlFrom="Common_GroupCustomer3"
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="Common_GroupCustomer3"/>
 
   </fx:Declarations>
-  <s:VGroup id="grMain" left="0" right="0" top="0" bottom="25" minWidth="780">
-    <s:HGroup width="100%">
-      <c:TextInput id="txtSymbol" width="40" label="Symbol" columnName="Symbol"
-                   dataField="SYMBOL" dbProvider="{grid.dbManager}"/>
-      <c:TextInput id="txtName" width="100%" label="Nazwa" columnName="Name"
-                   dataField="NAME" dbProvider="{grid.dbManager}"/>
-    </s:HGroup>
+  <s:Scroller left="5" right="5" top="5" bottom="5">
+    <s:VGroup id="groupMain" width="100%" height="100%">
+      <s:HGroup width="100%" minWidth="600">
+        <c:TextInput id="txtPESEL" width="25%" label="Pesel" dataField="PESEL"
+                     columnName="Pesel" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtNIP" width="25%" label="NIP" dataField="NIP"
+                     columnName="Nip" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtREGON" width="25%" label="REGON" dataField="REGON"
+                     columnName="Regon" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtFamilyName" width="25%" label="Nazwisko rodowe" columnName="FamilyName"
+                     dataField="FAMILY_NAME" dbProvider="{_dbManager}"/>
+      </s:HGroup>
+      <s:HGroup width="100%" minWidth="600">
+        <c:TextInput id="txtFirstName" width="25%" label="Imię" columnName="FirstName"
+                     dataField="FIRST_NAME" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtLastName" width="25%" label="Nazwisko"
+                     columnName="LastName" dataField="LAST_NAME" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtFatherName" width="25%" label="Imię ojca"
+                     columnName="FatherName" dataField="FATHER_NAME" dbProvider="{_dbManager}"/>
+        <c:TextInput id="txtMotherName" width="25%" label="Imię matki"
+                     columnName="MotherName" dataField="MOTHER_NAME" dbProvider="{_dbManager}"/>
+      </s:HGroup>
+      <s:HGroup width="100%" minWidth="600">
+        <c:DateField id="dfBirthDate" width="120" label="Data urodzenia" columnName="BirthDate"
+                     dataField="BIRTH_DATE" dbProvider="{_dbManager}" useDefaultHours="true"/>
+        <c:ComboBox id="cbCustomerStatus" width="50%" label="Status kontrahenta" columnName="CustomerStatusId"
+                    dataField="CUSTOMER_STATUS_ID" dbProvider="{_dbManager}"
+                    descField="[Symbol] | [Name]" dbQuery="{dbStatus}"/>
+        <c:ComboBox id="cbDataSource" width="50%"
+                    label="Źródło pozyskiwania danych" columnName="DataSourceId"
+                    dataField="DATA_SOURCE_ID" dbProvider="{_dbManager}"
+                    descField="[Symbol] | [Name]" dbQuery="{dbDataSource}"/>
+      </s:HGroup>
+      <c:DatabaseField id="dbfParentCustomer" width="100%" label="Kontrahent nadrzędny"
+                       columnName="ParentCustomerCode" dataField="PARENT_CUSTOMER_CODE" dbProvider="{_dbManager}"
+                       descField="Name" history="true" idField="Code" sqlTable="Common_Customer"
+                       swfClassName="pl.logicsynergy.ui.common.customer.MDICustomer"
+                       swfFile="eMediaUiCommon.swf"/>
+      <c:DatabaseField id="dbfGroup1" width="100%" minWidth="600" label="Grupa podziału I"
+                       columnName="GroupCustomer1Id"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_GroupCustomer1', 'dbQuery.sqlFrom':'Common_GroupCustomer1', formName:'Grupa podziału I'}}"
+                       dataField="GROUP_CUSTOMER_1_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbGroupCustomer1}" descField ="[Name] | [Description]" idField="Id"
+                       sqlTable="Common_GroupCustomer1" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+      <c:DatabaseField id="dbfGroup2" width="100%" minWidth="600" label="Grupa podziału II"
+                       columnName="GroupCustomer2Id"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_GroupCustomer2', 'dbQuery.sqlFrom':'Common_GroupCustomer2', formName:'Grupa podziału II'}}"
+                       dataField="GROUP_CUSTOMER_2_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbGroupCustomer2}" descField ="[Name] | [Description]" idField="Id"
+                       sqlTable="Common_GroupCustomer2" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+      <c:DatabaseField id="dbfGroup3" width="100%" minWidth="600" label="Grupa podziału III"
+                       columnName="GroupCustomer3Id"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_GroupCustomer3', 'dbQuery.sqlFrom':'Common_GroupCustomer3', formName:'Grupa podziału III'}}"
+                       dataField="GROUP_CUSTOMER_3_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbGroupCustomer3}" descField ="[Name] | [Description]" idField="Id"
+                       sqlTable="Common_GroupCustomer3" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
+      <c:DatabaseField id="dbfCustomerConsultant" width="100%" minWidth="600" label="Opiekun kontrahenta"
+                       columnName="CustomerConsultantId"
+                       dataExchange="{{'type':1, 'dbQuery.sqlTable':'Common_CustomerConsultant', 'dbQuery.sqlFrom':'Common_CustomerConsultant', formName:'Opiekunowie kontrahentów'}}"
+                       dataField="CUSTOMER_CONSULTANT_ID" dbProvider="{_dbManager}"
+                       dbDescQuery="{dbConsultant}" descField="[Symbol] | [Name]"
+                       idField="Id"
+                       sqlTable="Common_CustomerConsultant" swfClassName="pl.logicsynergy.ui.common.FrmDictionary"
+                       swfFile="eMediaUiCommon.swf" valueType="Integer"
+                       skinClass="pl.logicsynergy.skins.DatabaseFieldSymbolSkin"/>
 
-    <s:HGroup width="100%">
-      <c:ComboBox id="cbMeterKind" label="Rodzaj" width="220"
-                    columnName="MeterKind"
-                    dataField="METER_KIND" dbProvider="{grid.dbManager}"/>
-      <c:DatabaseField id="dbfMeterProducer" width="100%" label="Producent" columnName="MeterProducerId" dataField="METER_PRODUCER_ID" dbProvider="{grid.dbManager}"
-                       idField="Id" sqlTable="Network_MeterProducer" descField="[Symbol] | [Name]" dbDescQuery="{dbDescMeterProducer}"
-                       swfClassName="pl.logicsynergy.ui.common.FrmDictionary" swfFile="eMediaUiCommon.swf"
-                       dataExchange="{{'dbQuery.sqlTable':'Network_MeterProducer', 'dbQuery.sqlFrom':'Network_MeterProducer', formName:'Producent licznika', type: 1 }}"
-                       />
-    </s:HGroup>
-    <s:TabBar id="tbMain" width="100%" height="25" dataProvider="{vcTab}"/>
-    <mx:ViewStack id="vcTab" width="100%" height="100%" creationPolicy="all" minHeight="300">
-      <s:NavigatorContent id="ncMain" width="100%" height="100%" label="Dane ogólne">
-        <s:VGroup id="grMainData" width="100%">
-          <c:Panel id="pMeter1" width="100%" height="55"
-                   label="Licznik 1" dbProvider="{grid.dbManager}">
-            <s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingTop="15" verticalAlign="middle">
-              <c:TextInput id="txtMeter1No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter1No"
-                           dataField="METER_1_NO" dbProvider="{grid.dbManager}"/>
-              <c:TextInput id="txtMeter1MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter1MinNo"
-                           dataField="METER_1_MIN_NO" dbProvider="{grid.dbManager}"
-                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
-              <s:Label id="lblMeter1Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
-              <c:TextInput id="txtMeter1MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter1MaxValue"
-                           dataField="METER_1_MAX_VALUE" dbProvider="{grid.dbManager}"
-                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
+      <s:HGroup width="100%" verticalAlign="bottom">
+        <c:CheckBox id="chbDataProcessingConsent" width="200" height="23"
+                    label="Zgoda na przetwarzanie danych" columnName="DataProcesingConset"
+                    dataField="DATA_PROCESSING_CONSENT" dbProvider="{_dbManager}" defaultValue="true"/>
+        <c:CheckBox id="chbMarketingProcessingConsent" width="400" height="23"
+                    label="Zgoda na przetwarzanie danych w celach marketingowych"
+                    dataField="MARKETING_PROCESSING_CONSENT" dbProvider="{_dbManager}"
+                    columnName="MarketingProcesingConset"
+                    defaultValue="false"/>
+      </s:HGroup>
+      <c:TextArea id="txtaDescription" width="100%" minWidth="600" label="Opis"
+                  columnName="Description"
+                  dataField="DESCRIPTION" dbProvider="{_dbManager}"/>
 
-            </s:HGroup>
-          </c:Panel>
-
-          <c:Panel id="pMeter2" width="100%" height="55"
-                   label="Licznik 2" dbProvider="{grid.dbManager}">
-            <s:HGroup width="100%" paddingLeft="5" paddingRight="5" paddingTop="15" verticalAlign="middle">
-              <c:TextInput id="txtMeter2No" width="80" label="Liczba cyfr" restrict="0-9" columnName="Meter2No"
-                           dataField="METER_2_NO" dbProvider="{grid.dbManager}"/>
-              <c:TextInput id="txtMeter2MinNo" width="80" label="L. cyfr po ','" restrict="0-9" columnName="Meter2MinNo"
-                           dataField="METER_2_MIN_NO" dbProvider="{grid.dbManager}"
-                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
-              <s:Label id="lblMeter2Digit" fontSize="18" fontWeight="bold" width="140" textAlign="center" maxDisplayedLines="1"/>
-              <c:TextInput id="txtMeter2MaxValue" width="100%" label="Maksymalna wartość" restrict="0-9" columnName="Meter2MaxValue"
-                           dataField="METER_2_MAX_VALUE" dbProvider="{grid.dbManager}"
-                           skinClass="pl.logicsynergy.skins.TextInputSkin"/>
-            </s:HGroup>
-          </c:Panel>
-
-          <c:TextArea id="txtaDescription" width="100%" height="80" label="Opis"
-                      columnName="Description" dataField="DESCRIPTION" dbProvider="{grid.dbManager}" />
-        </s:VGroup>
-      </s:NavigatorContent>
-      <s:NavigatorContent id="ncData" width="100%" height="100%" label="Dane typu">
-
-      </s:NavigatorContent>
-
-    </mx:ViewStack>
-  </s:VGroup>
-</ui:UiDictionary>
+    </s:VGroup>
+  </s:Scroller>
+</mdi:UiMDITab>

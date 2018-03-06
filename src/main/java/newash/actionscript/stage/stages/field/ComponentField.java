@@ -14,6 +14,6 @@ public class ComponentField {
   }
 
   public String createField() {
-    return "  public " + componentClass + " " + fieldId + "\n\n";
+    return "  public " + componentClass + " " + fieldId + ";\n\n";
   }
 }

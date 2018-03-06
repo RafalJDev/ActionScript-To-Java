@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UiDictionary xmlns:fx="http://ns.adobe.com/mxml/2009"
+                 xmlns:s="library://ns.adobe.com/flex/spark"
+                 xmlns:mx="library://ns.adobe.com/flex/mx"
+                 xmlns:ui="pl.logicsynergy.components.ui.*"
+                 xmlns:c="pl.logicsynergy.components.*"
+                 xmlns:db="pl.logicsynergy.database.*"
+                 width="1200" height="600" minWidth="800" minHeight="500"
+                 formName="Typy zleceń"
+                 GUID="570DF00A"
+                 skinClass="pl.logicsynergy.skins.ui.UiDictionaryHSkin">
+  <fx:Script>
+    <![CDATA[
+      import mx.collections.ArrayCollection;
+      import mx.events.FlexEvent;
+      import mx.events.MenuEvent;
+      import mx.rpc.events.ResultEvent;
+      
+      import pl.logicsynergy.ro.ROManager;
+      import pl.logicsynergy.ro.ROUiEventService;
+      import pl.logicsynergy.utils.UiUtils;
+      
+      import spark.events.IndexChangeEvent;
+
+      protected override function  load(event:FlexEvent):void
+      {
+        super.load(event);
+        
+        cbNumeration.addItem("M", "Miesięczna");
+        cbNumeration.addItem("R", "Roczna");
+        cbNumeration.addItem("C", "Ciągła");
+        cbNumeration.addItem("K", "Kwartalna");
+        
+        completeCbAlgorithmComponents();
+        
+        cbTemplateElement.addEventListener(IndexChangeEvent.CHANGE, addTemplateElement);
+        cbTemplateElement.addItem("[NAZWA_ZL]", "Nazwa zlecenia");
+        cbTemplateElement.addItem("[DATA_OD]", "Data od");
+        cbTemplateElement.addItem("[DATA_DO]", "Data do");
+      }
+      
+      private function addTemplateElement(event:IndexChangeEvent):void
+      {
+        var index:int = txtaMessageTemplate.selectionActivePosition;
+        if (index < 0)
+          index = 0;
+        
+        var text:String = txtaMessageTemplate.value;
+        if (!text)
+        {
+          text = "";
+          index = 0;
+        }
+        
+        txtaMessageTemplate.value = text.substr(0, index) +
+          cbTemplateElement.value + text.substr(index);
+        cbTemplateElement.currentIndex = -1;
+      }
+      
+      private function completeCbAlgorithmComponents():void
+      {
+        cbAlgorithmComponents.addItem("[NR]", "NR - numer w ramach typu");
+        cbAlgorithmComponents.addItem("[RR]", "RR - rok w formie dwucyfrowej (data zlecenia)");
+        cbAlgorithmComponents.addItem("[RRRR]", "RRRR - rok w pełnej formie (data zlecenia)");
+        cbAlgorithmComponents.addItem("[MM]", "MM - miesiąc (data zlecenia)");
+        cbAlgorithmComponents.addItem("[KW]", "KW - kwartał (data zlecenia)");       
+        
+        var data:Object = new Object();
+        data["From"] = "GIS_OrderNumerationParam";     
+        data["Select"] = "Symbol as SYMBOL, NAME as NAME";   
+        
+        var ro:ROUiEventService = new ROUiEventService(onGetNumerationParam);
+        ro.call("logica.uiservice.db.DatabaseManager", "getData", data);
+      }
+      
+      private function onGetNumerationParam(event:ResultEvent):void
+      {
+        var data:Object = event.result;
+        if (!ROManager.isResultOK(this, data))
+          return;
+        
+        var list:ArrayCollection = data["DataTable"];
+        
+        for each(var item:Object in list)
+        {
+          var name:String = "[" + item["SYMBOL"] + "] - " + item["NAME"];
+          cbAlgorithmComponents.addItem("[" + item["SYMBOL"] + "]", name);
+        }
+        
+        cbAlgorithmComponents.addEventListener(IndexChangeEvent.CHANGE, addAlgorithmComponent);
+      }
+      
+      private function addAlgorithmComponent(event:IndexChangeEvent):void
+      {
+        var index:int = txtNumerationPattern.selectionActivePosition;
+        if (index < 0)
+          index = 0;
+        
+        var text:String = txtNumerationPattern.value;
+        if (!text)
+        {
+          text = "";
+          index = 0;
+        }
+        
+        txtNumerationPattern.value = text.substr(0, index) +
+          cbAlgorithmComponents.value + text.substr(index);
+        cbAlgorithmComponents.currentIndex = -1;
+      }
+      
+      public override function menuItemClick(event:MenuEvent):void
+      {
+        var id:uint;
+        var findNode:XMLList = event.item.@id;
+        if (findNode.length() == 0)
+          return super.menuItemClick(event);
+        
+        var code:String = findNode[0].toString(); 
+        switch (code)
+        {
+          case "NUMERATION_PARAM":
+            var frm:FrmOrderNumerationParam = new FrmOrderNumerationParam();
+            frm.openInContent(UiUtils.getNavigatorContent(this), onCloseNumerationParam);
+            break;
+        }
+        
+        super.menuItemClick(event);
+      }
+      
+      protected function onCloseNumerationParam(o:Object):void
+      {
+        cbAlgorithmComponents.removeEventListener(IndexChangeEvent.CHANGE, addAlgorithmComponent);
+        cbAlgorithmComponents.clear();
+        completeCbAlgorithmComponents();
+      }
+      
+    ]]>
+  </fx:Script>
+  <fx:Declarations>
+    <db:DBQuery id="dbQuery" 
+                sqlField="{dbField}" sqlTable="GIS_OrderType" sqlFrom="GIS_OrderType"
+                sqlIdentityColumn="Id"
+                sqlOrderBy="Id"/>
+    
+    <db:DBQuery id="dbDateFunctionQuery" sqlFrom="GIS_OrderDateFunction" 
+                sqlFieldString="Id, Name"
+                sqlOrderBy="Id"
+                sqlIdentityColumn="Id" sqlTable="GIS_OrderDateFunction"/>
+    
+    <db:DBQuery id="dbPrintManager" sqlFieldString="Id, Name"
+                sqlFrom="System_PrintManager" 
+                sqlOrderBy="Id" sqlIdentityColumn="Id" sqlTable="System_PrintManager"/>
+    
+    <fx:XML id="dbField" xmlns="">
+      <fields>
+        <field name="Id" dataField="ID" displayText="Id" width="100"/>
+        <field name="Symbol" dataField="SYMBOL" displayText="Symbol" width="100"/>
+        <field name="Name" dataField="NAME" displayText="Nazwa" width="150"/>
+        <field name="NumerationType" dataField="NUMERATION_TYPE" displayText="Sposób numeracji" width="50"/>
+        <field name="NumerationPattern" dataField="NUMERATION_PATTERN" displayText="Algorytm algorytm numeracji" width="100"/>
+        <field name="NotifySMS" dataField="NOTIFY_SMS" displayText="Powiadomienie SMS" width="100"/>
+        <field name="MessageTemplate" dataField="MESSAGE_TEMPLATE" displayText="Szablon wiadomości SMS" width="100"/>
+        <field name="IsCyclic" dataField="IS_CYCLIC" displayText="Czy zlecenie cykliczne" width="100"/>
+        <field name="CyclicCount" dataField="CYCLIC_COUNT" displayText="Ilość kolejnych zleceń" width="100"/>
+        <field name="OrderDateFunctionId" dataField="ORDER_DATE_FUNCTION_ID" displayText="Id funkcji do wyliczania kolejnogo zlecenia" width="100"/>
+        <field name="FromEndDate" dataField="FROM_END_DATE" displayText="Licz od końca poprzednego zlecenia" width="100"/>
+        <field name="PrintManagerId" dataField="PRINT_MANAGER_ID" displayText="Id szablonu wydruku" width="100"/>
+        <field name="Description" dataField="DESCRIPTION" displayText="Opis" width="250"/>
+      </fields>
+    </fx:XML>
+    
+    <fx:XML id="menuEx" xmlns="">
+      <menu xmlNodePosition="-1"> 
+        <menuitem id="DICRIONARY" labelName="Słowniki" xmlNodePosition="-1">
+          <menuitem id="NUMERATION_PARAM" labelName="Parametry numeracji"/>
+        </menuitem>
+      </menu>
+    </fx:XML> 
+    
+  </fx:Declarations>
+  <s:Scroller left="0" right="0" top="0" bottom="25" width="600">
+    <s:VGroup id="grMain" width="100%" height="100%">
+      <c:TextInput id="txtSymbol" width="120" label="Symbol"
+                   dbProvider="{grid.dbManager}" columnName="Symbol" dataField="SYMBOL"/>
+      <c:TextInput id="txtName" width="100%" label="Nazwa" columnName="Name"
+                   dataField="NAME" dbProvider="{grid.dbManager}"/>
+      <c:DatabaseField id="dbfReport" width="100%"
+                       label="Szablon wydruku" columnName="PrintManagerId"
+                       dataField="PRINT_MANAGER_ID" dbDescQuery="{dbPrintManager}"
+                       dbProvider="{grid.dbManager}" descField="[Name]" idField="Id" restrict="0-9"
+                       sqlTable="System_PrintManager"
+                       swfClassName="pl.logicsynergy.ui.creator.FrmPrintManager"
+                       swfFile="eMediaUiCreator.swf" valueType="Integer"/>  
+      <s:HGroup width="100%">
+        <c:ComboBox id="cbNumeration" width="120" label="Numeracja" columnName="NumerationType"
+                    dataField="NUMERATION_TYPE" dbProvider="{grid.dbManager}"/>
+        <c:TextInput id="txtNumerationPattern" width="120" label="Algorytm numeracji"
+                     columnName="NumerationPattern" dataField="NUMERATION_PATTERN"
+                     dbProvider="{grid.dbManager}"/>
+        <c:ComboBox id="cbAlgorithmComponents" width="100%" label="Składniki algorytmu numeracji" enabled="false"
+                    dbProvider="{grid.dbManager}"/>
+      </s:HGroup>
+      <c:TextArea id="txtaDescription" width="100%" height="100" label="Opis" dataField="DESCRIPTION"
+                  dbProvider="{grid.dbManager}" skinClass="pl.logicsynergy.skins.TextAreaSkin"/>
+      <s:ButtonBar id="tbMain" width="100%" height="25" dataProvider="{vcTab}" skinClass="spark.skins.spark.ButtonBarSkin"/>
+      <mx:ViewStack id="vcTab" width="100%" height="100%" creationPolicy="all">
+        <s:NavigatorContent id="ncSMSNotify" width="100%" height="100%" label="Powiadomienia SMS">
+          <s:Scroller left="0" right="0" top="0" bottom="25" width="600">
+          <s:VGroup width="100%" height="100%">
+            <c:CheckBox id="chbNotifySMS" label="Powiadomienie SMS zasobów"
+                        columnName="NotifySMS" dataField="NOTIFY_SMS" dbProvider="{grid.dbManager}"/>
+            <c:TextArea id="txtaMessageTemplate" width="100%" label="Szablon wiadomości SMS"
+                        columnName="MessageTemplete" dataField="MESSAGE_TEMPLATE"
+                        dbProvider="{grid.dbManager}"/>
+            <c:ComboBox id="cbTemplateElement" label="Parametry szablonu wiadomości"
+                        dbProvider="{grid.dbManager}"/>
+          </s:VGroup>
+          </s:Scroller>
+        </s:NavigatorContent>
+        <s:NavigatorContent id="ncCyclic" width="100%" height="100%" label="Cykliczność">
+          <s:VGroup width="100%" height="100%">
+            <c:CheckBox id="chbCyclic" label="Zlecenie cykliczne"
+                        columnName="IsCyclic" dataField="IS_CYCLIC" dbProvider="{grid.dbManager}"/>
+            <c:TextInput id="txtCount" label="Ilość kolejnych zleceń"
+                         restrict="0-9" valueType="Integer" textAlign="right"
+                         columnName="CyclicCount" dataField="CYCLIC_COUNT" dbProvider="{grid.dbManager}"/>
+            <s:HGroup width="100%">
+              <c:ComboBox id="cbDateFunction" width="50%" label="Data kolejnego zlecenia"
+                          dbQuery="{dbDateFunctionQuery}"
+                          columnName="OrderDateFunctionId" dataField="ORDER_DATE_FUNCTION_ID" dbProvider="{grid.dbManager}"/>
+              <c:CheckBox id="chbFromEndDate" label="Licz od końca poprzedniego zlecenia"
+                          columnName="FromEndDate" dataField="FROM_END_DATE" dbProvider="{grid.dbManager}"
+                          stateFalse="{0}" stateTrue="{1}"/>
+            </s:HGroup>
+          </s:VGroup>
+        </s:NavigatorContent>
+      </mx:ViewStack>
+    </s:VGroup>
+  </s:Scroller>
+</ui:UiDictionary>
