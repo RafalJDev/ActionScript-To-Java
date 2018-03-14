@@ -60,32 +60,32 @@ public class ActionScriptParser extends Parser {
 
     findCandidateToImport();
 
-    if (thereIsRoCall && line.contains("ro.call")) {
-
-      String spaces = line.substring(0, line.indexOf("r") - 1);
-      String callArguments = "";
-      if (isFoundRegex("\\(.*\\)")) {
-        callArguments = found.substring(1);
-
-        line = spaces + "DataMap dataMap = ROUiEventService.call(" + callArguments + ");";
-        if (!methodToCallAfterRo.isEmpty()) {
-          line += "\n" + spaces + methodToCallAfterRo + "()";
-          addCandidateToImport("ROUiEventService");
-          addCandidateToImport("DataMap");
-        }
-      }
-      thereIsRoCall = false;
-      return;
-    }
-    if (line.contains("ROUiEventService") && !line.contains(" import ")) {
-      thereIsRoCall = true;
-
-      if (isFoundRegex("\\(.*\\)")) {
-        methodToCallAfterRo = found.substring(1, found.length() - 2);
-        line = "";
-        return;
-      }
-    }
+//    if (thereIsRoCall && line.contains("ro.call")) {
+//
+//      String spaces = line.substring(0, line.indexOf("r") - 1);
+//      String callArguments = "";
+//      if (isFoundRegex("\\(.*\\)")) {
+//        callArguments = found.substring(1);
+//
+//        line = spaces + "DataMap dataMap = ROUiEventService.call(" + callArguments + ");";
+//        if (!methodToCallAfterRo.isEmpty()) {
+//          line += "\n" + spaces + methodToCallAfterRo + "()";
+//          addCandidateToImport("ROUiEventService");
+//          addCandidateToImport("DataMap");
+//        }
+//      }
+//      thereIsRoCall = false;
+//      return;
+//    }
+//    if (line.contains("ROUiEventService") && !line.contains(" import ")) {
+//      thereIsRoCall = true;
+//
+//      if (isFoundRegex("\\(.*\\)")) {
+//        methodToCallAfterRo = found.substring(1, found.length() - 2);
+//        line = "";
+//        return;
+//      }
+//    }
 
 
     if (line.trim().startsWith("for") && line.contains(" in ")) {
@@ -114,9 +114,9 @@ public class ActionScriptParser extends Parser {
       }
     }
 
-    if (line.contains("protected void load")) {
+    if (line.contains("protected void  load")) {
       line = "  /** Nadpisana metoda load z klasy bazowej */\n" + line;
-      line = line.replace("protected void load", "public void load");
+      line = line.replace("protected void  load", "public void load");
     }
     if (line.contains("addEventListener(")) {
       if (line.contains(")")) {
@@ -210,6 +210,8 @@ public class ActionScriptParser extends Parser {
       line = classAndConstructor + line;
       isClassAndConstructorAdded = true;
       addCandidateToImport(uiDesignStage.getClassToExtend());
+      addCandidateToImport("UiDesign");
+      addCandidateToImport("UiCreator");
     }
   }
 
@@ -237,7 +239,7 @@ public class ActionScriptParser extends Parser {
   }
 
   public void changeToSetCall() {
-    if (isFoundRegex("\\w+\\.(\\w+) = .+;", 1)) {
+    if (isFoundRegex("\\w+\\.(\\w+) = .+;", 1) && !line.contains("\"")) {
       String createSetToReplace = "\\.set" + ((Character) found.charAt(0)).toString().toUpperCase() + found.substring(1) + "(";
       line = line.replaceAll("\\." + found + " = ", createSetToReplace)
          .replaceAll(";", ");");
@@ -329,5 +331,7 @@ public class ActionScriptParser extends Parser {
     replaceMap.put("\\*", "Object");
     replaceMap.put("@id", "getFieldId()");
     replaceMap.put("IndexChangeEvent.CHANGE", "BaseEvent.VALUE_CHANGED");
+    replaceMap.put("SQLQuery", "getDBQuery()");
+    replaceMap.put("event:FlexEvent", "");
   }
 }

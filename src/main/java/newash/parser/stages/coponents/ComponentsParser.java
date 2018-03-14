@@ -52,7 +52,7 @@ public class ComponentsParser extends Parser {
     if (isFoundRegex("id=\"[^\"]*\"")) {
       String id = found.substring(4, found.length() - 1);
       String componentClass = "";
-      if (isFoundRegex("<\\w:(\\w+) \\w", 1)) {
+      if (isFoundRegex("<\\w+:(\\w+) \\w", 1)) {
         componentClass = found.trim();
       }
 

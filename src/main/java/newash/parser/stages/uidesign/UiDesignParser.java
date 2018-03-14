@@ -25,26 +25,14 @@ public class UiDesignParser extends Parser {
   public void parseThisStage() {
     line = codeLineEntity.getLine();
 
-    switch (regexIndex) {
-      case 1:
-        if (isFoundRegex(REGEX_CLASS_TO_EXTEND, 1)) {
-          uiDesignStage.setClassToExtend(found);
-          regexIndex++;
-        }
-        break;
-      case 2:
-        if (isFoundRegex(REGEX_FORMNAME, 1)) {
-          uiDesignStage.setFormName(found);
-          regexIndex++;
-        }
-        break;
-      case 3:
-        if (isFoundRegex(REGEX_GUID, 1)) {
-          uiDesignStage.setGUID(found);
-        }
-        break;
-      default:
-        throw new IllegalArgumentException("Regex Index can't be > 3, regexIndex" + regexIndex);
+    if (isFoundRegex(REGEX_CLASS_TO_EXTEND, 1)) {
+      uiDesignStage.setClassToExtend(found);
+      regexIndex++;
+    } else if (isFoundRegex(REGEX_FORMNAME, 1)) {
+      uiDesignStage.setFormName(found);
+      regexIndex++;
+    } else if (isFoundRegex(REGEX_GUID, 1)) {
+      uiDesignStage.setGUID(found);
     }
   }
 }

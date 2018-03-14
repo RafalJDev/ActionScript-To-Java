@@ -24,7 +24,7 @@ public class CodeWriter extends Writer {
     outputDirectory = "output";
     ioEntity = (IOCodeEntity)IOCodeEntity.getInstance();
     findPathForOutputDirectory(System.getProperty("user.dir"));
-    outputDirectoryPath += "\\" + ioEntity.getFileName() + "Flash.txt";
+    outputDirectoryPath += "\\" + ioEntity.getFileName() + "Przeparsowane.txt";
 
     save();
   }

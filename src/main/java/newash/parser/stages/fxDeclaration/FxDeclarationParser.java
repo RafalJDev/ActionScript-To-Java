@@ -2,6 +2,7 @@ package newash.parser.stages.fxDeclaration;
 
 import newash.actionscript.stage.stages.ActionScriptStage;
 import newash.actionscript.stage.stages.FxDeclarationStage;
+import newash.actionscript.stage.stages.ImportStage;
 import newash.io.readers.current.CodeLineEntity;
 import newash.parser.stages.Parser;
 
@@ -24,6 +25,7 @@ public class FxDeclarationParser extends Parser {
 
   FxDeclarationStage fxDeclarationStage;
   ActionScriptStage actionScriptStage;
+  ImportStage importStage = ImportStage.getInstance();
 
   public FxDeclarationParser() {
     codeLineEntity = CodeLineEntity.getInstance();
@@ -127,6 +129,7 @@ public class FxDeclarationParser extends Parser {
     methodString += "    return result;\n }\n\n";
     actionScriptStage.getDbMethods().add(methodString);
     dbQueryAtributes.clear();
+    addCandidateToImport("DBQuery");
   }
 
   public void createMethodForFields() {
@@ -152,7 +155,12 @@ public class FxDeclarationParser extends Parser {
     actionScriptStage.getDbMethods().add(methodString);
     XmlField.setId("");
     XmlField.getXmlFieldLines().clear();
+    addCandidateToImport("Element");
+    addCandidateToImport("XMLUtils");
   }
 
+  public void addCandidateToImport(String candidate) {
+    importStage.addCandidateToSet(candidate);
+  }
 
 }
