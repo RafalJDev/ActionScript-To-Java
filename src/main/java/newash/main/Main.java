@@ -13,4 +13,8 @@ public class Main {
 
     controller.launchIt();
   }
+
+  public static void clearAllEntitys() {
+
+  }
 }

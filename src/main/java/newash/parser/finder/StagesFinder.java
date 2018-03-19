@@ -1,7 +1,6 @@
 package newash.parser.finder;
 
 import lombok.extern.java.Log;
-import newash.actionscript.stage.AllStages;
 import newash.actionscript.stage.stages.*;
 import newash.io.code.IOCodeEntity;
 import newash.io.readers.current.CodeLineEntity;

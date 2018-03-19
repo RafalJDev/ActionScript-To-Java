@@ -1,19 +1,19 @@
-package newash.actionscript.stage.imports.list;
+package newash.actionscript.stage.imports;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class ImportList {
+public class ImportSet {
 
-  private static ImportList ourInstance = new ImportList();
+  private static ImportSet ourInstance = new ImportSet();
 
-  public static ImportList getInstance() {
+  public static ImportSet getInstance() {
     return ourInstance;
   }
 
-  private ImportList() {
+  private ImportSet() {
   }
 
   private Set<String> importSet = new HashSet<>();

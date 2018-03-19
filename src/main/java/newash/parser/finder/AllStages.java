@@ -1,4 +1,4 @@
-package newash.actionscript.stage;
+package newash.parser.finder;
 
 public enum AllStages {
   UIDESIGN,

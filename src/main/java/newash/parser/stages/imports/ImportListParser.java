@@ -1,6 +1,6 @@
 package newash.parser.stages.imports;
 
-import newash.actionscript.stage.imports.list.ImportList;
+import newash.actionscript.stage.imports.ImportSet;
 import newash.io.code.IOImportEntity;
 import newash.io.code.entity.IOEntity;
 import newash.io.readers.current.ImportLineEntity;
@@ -15,7 +15,7 @@ public class ImportListParser extends Regex {
 
   ImportLineEntity importLineEntity = ImportLineEntity.getInstance();
   IOEntity ioEntity = IOImportEntity.getInstance();
-  ImportList importList = ImportList.getInstance();
+  ImportSet importSet = ImportSet.getInstance();
 
   public void parseImportList() {
     line = importLineEntity.getLine().trim();
@@ -23,18 +23,18 @@ public class ImportListParser extends Regex {
     if (isFoundRegex("import .*;")) {
       if (found.contains(".")) {
         if (!found.matches(".*;.*;.*")) {
-          importList.addToSet(found);
+          importSet.addToSet(found);
         }
       }
     }
   }
 
   public void setToOutputCodeAndPrepareImportMap() throws BadAttributeValueExpException {
-    for (String importLine : importList.getImportSet()) {
+    for (String importLine : importSet.getImportSet()) {
       ioEntity.appendOutputCode(importLine + "\n");
       line = importLine;
       if (isFoundRegex("\\.(\\w+);", 1)) {
-        importList.putOnMap(found, importLine);
+        importSet.putOnMap(found, importLine);
       } else {
         throw new BadAttributeValueExpException("Line: " + line + " .Don't match import regex");
       }

@@ -1,6 +1,6 @@
 package newash.parser.stages.imports;
 
-import newash.actionscript.stage.imports.list.ImportList;
+import newash.actionscript.stage.imports.ImportSet;
 import newash.actionscript.stage.stages.ImportStage;
 import newash.io.code.IOCodeEntity;
 import newash.io.readers.current.CodeLineEntity;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class ImportParser extends Parser {
 
   ImportStage importStage;
-  ImportList importList = ImportList.getInstance();
+  ImportSet importSet = ImportSet.getInstance();
   IOCodeEntity ioCodeEntity;
 
   private boolean isPackageAdded = false;
@@ -83,7 +83,7 @@ public class ImportParser extends Parser {
   }
 
   public String getImportLineForCandidate(String candidate) {
-    return importList.getImportMap().entrySet().stream()
+    return importSet.getImportMap().entrySet().stream()
        .filter(e -> e.getKey().equals(candidate))
        .map(Map.Entry::getValue)
        .findFirst()
