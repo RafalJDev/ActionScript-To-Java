@@ -16,7 +16,7 @@ public class CodeReader extends Reader {
 
   public CodeReader() {
     ioEntity = IOCodeEntity.getInstance();
-    fileName = "TaskToUserTeam.mxml"; //FrmMeterTypeFlash.txt, TabEstateOwner.txt
+    fileName = "TaskToAttachment.mxml"; //FrmMeterTypeFlash.txt, TabEstateOwner.txt
   }
 
   public void openFileAndGetBufferedReader() {

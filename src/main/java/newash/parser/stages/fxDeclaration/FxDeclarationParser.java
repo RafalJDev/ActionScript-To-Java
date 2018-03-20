@@ -85,6 +85,7 @@ public class FxDeclarationParser extends Parser {
         if (!line.contains("<fields>")) {
           plusSign = "\t\t+ ";
         }
+//        line.replaceAll("\"", "\\");
         XmlField.getXmlFieldLines().add(plusSign + "\"" + line + "\"");
       }
     }
